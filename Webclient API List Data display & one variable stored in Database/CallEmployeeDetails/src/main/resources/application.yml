@@ -1,0 +1,13 @@
+server:
+  port: 9193
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: Purna@123
+    url: jdbc:mysql://localhost:3306/employeedetails
+    username: Purnachander
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true

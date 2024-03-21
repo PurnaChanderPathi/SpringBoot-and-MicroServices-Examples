@@ -1,0 +1,55 @@
+{
+    "userName":"Ram",
+    "userDob" : "2024/03/20",
+    "address":"Hyd",
+    "phoneNumber": 8803456893,
+    "customerInfo" : {
+        "customerName":"Ram",
+        "aadharNumber":"128945783489",
+
+        "kids": [
+            {
+            "firstName":"Appari",
+            "lastName":"Ajeeth",
+            "Dob":"2010-01-12",
+            "department" : {
+                "deptName" : "CSE",
+                "deptAdmin" : "Pavan",
+                "course" : [
+                    {
+                        "courseName":"Java",
+                        "courseFee":"25000"
+                    },
+                                        {
+                        "courseName":"Python",
+                        "courseFee":"30000"
+                    }
+                ]
+               
+            }
+        },
+        {
+            "firstName":"Appari",
+            "lastName":"pallavi",
+            "Dob":"2012-01-01",
+            "department" : {
+                "deptName" : "ECE",
+                "deptAdmin" : "SaiRam",
+                "course" : [
+                    {
+                        "courseName":"SpringBoot",
+                        "courseFee":"30000"
+                    },
+                                        {
+                        "courseName":"DotNet",
+                        "courseFee":"20000"
+                    }
+                ]
+            }
+        }            
+        ]
+    
+    }
+    
+}
+
