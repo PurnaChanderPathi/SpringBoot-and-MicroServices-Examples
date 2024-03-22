@@ -1,0 +1,9 @@
+Post Api Call using Webclient
+
+here we have two Services Message-Service & Callmessage-Service
+
+firstly i am writen insert Method to insert Message data in Database in Message-Service and writen get Method to get List of Data from database in Message-Service, so i am inserted 2 rows using insert Method, and  get listData from DataBase using get Method
+
+in Callmessage-Service i am using same Entity what i am used in Message-Service, so here i am implemented  Post Method
+
+So my task is post API call so i implemented post Api call in Message-Service to call PostMethod from Callmessage-Service to Message-Service  and doing Post Api call by setting Message-Service Entity BO To CallMessage-Service DTO

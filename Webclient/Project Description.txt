@@ -1,0 +1,5 @@
+here we have two micro-services
+1) in Aadhar-Service we have Aadhar Details like Aadhar Number, State etc
+2) in UserDetails Service we have to insert userDetails like firstName, lastName, AadharNumber etc
+
+so here my task:- when i am insert UserDetails into DataBase i have a condition when i click send URL in Postman by given UserDetails in json format, an API call should happen to Aadhar_service using WebClient by using AadharNumber if data exist  search for state, if state is Telangana or AndhraPradesh then only insert Operation should do, if not show message "Aadhar not belong to AP or TG";
