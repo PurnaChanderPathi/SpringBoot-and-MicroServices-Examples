@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,12 @@ public class CallmessageController {
 	@PostMapping("/save")
 	public String saveCallMessages(@RequestBody CallmessageDto callmessageDto) {
 		return callmessageService.saveCallMessage(callmessageDto);
+	}
+	
+	@PostMapping("/SaveListMessages")
+	public String saveListMessages(@RequestBody List<CallmessageDto> callmessageDtos) {
+		callmessageService.saveListMessages(callmessageDtos);
+		return "";
 	}
 
 }

@@ -22,6 +22,8 @@ public class MessageServiceImpl implements MessageService {
 	WebClient webClient = WebClient.create();
 	
 	private static final String resturl = "http://localhost:9193/CallMessage/save";
+	
+	private static final String resturls = "http://localhost:9193/CallMessage/SaveListMessages";
 
 	@Autowired
 	private MessageRepository messageRepository;
@@ -75,6 +77,18 @@ public class MessageServiceImpl implements MessageService {
 			
 		 }		 
 		 return "message not found with id: "+id;
+	}
+	
+	public String saveListData() {
+		List<Message> getAllmessages = messageRepository.findAll();
+		List<CallmessageDto> getCallmessageDtos = getAllmessages.stream().map(getAllmessage -> new CallmessageDto(0l, getAllmessage.getBusinessUnit(), getAllmessage.getSystemId(), getAllmessage.getUnit(), getAllmessage.getCaseCreatedDate())).collect(Collectors.toList());
+
+		//CallmessageDto getCallmessageDto =  (CallmessageDto) getAllmessages.stream().map(getAllmessage -> new CallmessageDto(0l, getAllmessage.getBusinessUnit(), getAllmessage.getSystemId(), getAllmessage.getUnit(), getAllmessage.getCaseCreatedDate()));
+	    List<String> callMessage = webClient.post().uri(resturls).body(BodyInserters.fromValue(getCallmessageDtos)).retrieve().bodyToFlux(String.class).collectList().block();
+
+		System.out.println(callMessage);
+		return "List Data inserted M";
+		
 	}
 	
 

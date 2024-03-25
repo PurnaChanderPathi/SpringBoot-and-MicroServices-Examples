@@ -43,6 +43,11 @@ public class MessageController {
 		
 	}
 	
+	@GetMapping("/getAndSetListData")
+	public String saveListData() {
+		return messageService.saveListData();
+	}
+	
 
 
 }

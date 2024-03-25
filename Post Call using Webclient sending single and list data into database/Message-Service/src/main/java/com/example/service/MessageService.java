@@ -12,6 +12,8 @@ public interface MessageService {
 	public String getAllMessages();
 	
 	public String findById(Long id);
+	
+	public String saveListData();
 
 
 }

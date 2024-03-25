@@ -1,7 +1,7 @@
 package com.example.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +41,40 @@ public class CallmesssageServiceImpl implements CallmessageService {
 	@Override
 	public String saveListMessages(List<CallmessageDto> callmessageDtos) {
 		
-		Callmessage c1 = new Callmessage();
-		
-		BeanUtils.copyProperties(callmessageDtos, c1);
-
-		System.out.println("Post List method executed successfully..! ");
-		
-		//callmessageRepository.saveAll(c1); 
-		return "List Data Saved";
+		List<Callmessage> callmessages = callmessageDtos.stream().map(dto -> 
+		{
+			Callmessage callmessage = new Callmessage();
+			callmessage.setCaseId(0l);
+			callmessage.setBusinessUnit(dto.getBusinessUnit());
+			callmessage.setSystemId(dto.getSystemId());
+			callmessage.setUnit(dto.getUnit());
+			callmessage.setCaseCreatedDate(dto.getCaseCreatedDate());
 			
+			return callmessage;
+		}).collect(Collectors.toList());
+		callmessageRepository.saveAll(callmessages);
+		return "List Data Inserted...!!";
 		
 	}
+	
+	
+	
+//	@Override
+//	public String saveListMessages(List<CallmessageDto> callmessageDtos) {
+//		
+//		Callmessage c1 = new Callmessage();
+//		
+//		BeanUtils.copyProperties(callmessageDtos, c1);
+//
+//		System.out.println("Post List method executed successfully..! ");
+//		
+//		//callmessageRepository.saveAll(c1); 
+//		return "List Data Saved";
+//			
+//		
+//	}
+	
+	
 
 
 
