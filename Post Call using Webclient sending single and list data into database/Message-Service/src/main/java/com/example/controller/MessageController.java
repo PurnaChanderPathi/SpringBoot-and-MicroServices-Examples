@@ -48,6 +48,17 @@ public class MessageController {
 		return messageService.saveListData();
 	}
 	
+	@GetMapping("getByMessageId/{id}")
+	public Message response(@PathVariable Long id) {
+		return messageService.getDataById(id);
+	}
+	
+	@GetMapping("/getListByStringId/{id}")
+	public ResponseEntity<List<Message>> findBySystemId(@PathVariable Long id){
+		List<Message> response = messageService.findBySystemId(id);
+		return new ResponseEntity<List<Message>>(response,HttpStatus.OK);
+	}
+	
 
 
 }

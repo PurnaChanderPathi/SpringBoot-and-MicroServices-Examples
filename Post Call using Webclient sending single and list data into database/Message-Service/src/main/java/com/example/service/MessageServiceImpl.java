@@ -16,6 +16,8 @@ import com.example.model.Callmessage;
 import com.example.model.Message;
 import com.example.repository.MessageRepository;
 
+import reactor.core.publisher.Mono;
+
 @Service
 public class MessageServiceImpl implements MessageService {
 	
@@ -24,6 +26,8 @@ public class MessageServiceImpl implements MessageService {
 	private static final String resturl = "http://localhost:9193/CallMessage/save";
 	
 	private static final String resturls = "http://localhost:9193/CallMessage/SaveListMessages";
+	
+	private static final String restUrlss = "http://localhost:9193/CallMessage";
 
 	@Autowired
 	private MessageRepository messageRepository;
@@ -70,7 +74,7 @@ public class MessageServiceImpl implements MessageService {
 			 CallmessageDto c1 = new CallmessageDto();
 			 BeanUtils.copyProperties(message, c1);
 			 
-			 Stream<Object> callmessageDto = findByIds.stream().map(u -> new CallmessageDto());
+			// Stream<Object> callmessageDto = findByIds.stream().map(u -> new CallmessageDto());
 			
 			String response =  webClient.post().uri(resturl).body(BodyInserters.fromValue(c1)).retrieve().bodyToMono(String.class).block();
 			return response; 
@@ -84,12 +88,31 @@ public class MessageServiceImpl implements MessageService {
 		List<CallmessageDto> getCallmessageDtos = getAllmessages.stream().map(getAllmessage -> new CallmessageDto(0l, getAllmessage.getBusinessUnit(), getAllmessage.getSystemId(), getAllmessage.getUnit(), getAllmessage.getCaseCreatedDate())).collect(Collectors.toList());
 
 		//CallmessageDto getCallmessageDto =  (CallmessageDto) getAllmessages.stream().map(getAllmessage -> new CallmessageDto(0l, getAllmessage.getBusinessUnit(), getAllmessage.getSystemId(), getAllmessage.getUnit(), getAllmessage.getCaseCreatedDate()));
-	    List<String> callMessage = webClient.post().uri(resturls).body(BodyInserters.fromValue(getCallmessageDtos)).retrieve().bodyToFlux(String.class).collectList().block();
+	    //List<String> callMessage = webClient.post().uri(resturls).body(BodyInserters.fromValue(getCallmessageDtos)).retrieve().bodyToFlux(String.class).collectList().block();
+		String callMessage = webClient.post().uri(resturls).body(BodyInserters.fromValue(getCallmessageDtos)).retrieve().bodyToMono(String.class).block();
 
-		System.out.println(callMessage);
-		return "List Data inserted M";
+		System.out.println("Call-Message-Service Response " + callMessage);
+		return callMessage;
 		
 	}
+
+	@Override
+	public Message getDataById(Long id) {
+		
+		Message response = webClient.get().uri(restUrlss+"/getMessage/{id}",id).retrieve().bodyToMono(Message.class).block();
+		
+		return response;
+	}
+
+	@Override
+	public List<Message> findBySystemId(Long id) {
+		
+		List<Message> response = webClient.get().uri(restUrlss+"/getListBySystemId/{id}",id).retrieve().bodyToFlux(Message.class).collectList().share().block();
+		
+		return response;
+	}
+	
+	
 	
 
 }
