@@ -1,0 +1,63 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: ORDER-SERVICE
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+          filters:                  # is used to restrict without token to access ORDER-SERVICE
+            - AuthenticationFilter
+
+        - id: IDENTITY-SERVICE
+          uri: lb://IDENTITY-SERVICE
+          predicates:
+            - Path=/auth/**
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: USER-SERVICE
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - path=/users/**
+#
+#        - id: HOTEL-SERVICE
+#          uri: lb://HOTEL-SERVICE
+#          predicates:
+#            - path=/hotels/**
+#
+#        - id: RATING-SERVICE
+#          uri: lb://RATING-SERVICE
+#          predicates:
+#            - path=/ratings/**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

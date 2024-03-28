@@ -1,0 +1,21 @@
+server:
+  port: 8087
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/searchandfilter
+    username: Purnachander
+    password: Purna@123
+  jpa:
+    properties:
+      hibernate:
+      format-sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+
+  application:
+    name: IDENTITY-SERVICE
