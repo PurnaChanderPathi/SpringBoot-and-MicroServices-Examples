@@ -1,19 +1,17 @@
 package com.example.service;
 
+import java.util.List;
 import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.dto.UserDetailsDto;
 import com.example.model.UserDetails;
 import com.example.repo.UserRepo;
-
-
+import com.itextpdf.text.DocumentException;
 
 @Service
 @Transactional
@@ -24,6 +22,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JavaMailSender mailSender;
+	
+    @Autowired
+    private PdfService pdfService;
 
 	@Override
 	public UserDetails createUser(UserDetailsDto userDetailsDto) {
@@ -77,6 +78,20 @@ public class UserServiceImpl implements UserService {
 
         }
     }
+
+    public byte[] getAllUsersAsPDF() {
+        List<UserDetails> userDetailsList = userRepo.findAll();
+        try {
+            return pdfService.generatePDF(userDetailsList);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+            // Handle exception appropriately, perhaps return an error PDF
+            return new byte[0]; // or null, depending on your design
+        }
+    }
+	
+
+
 	
 	
 
