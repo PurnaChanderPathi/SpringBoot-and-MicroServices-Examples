@@ -10,4 +10,6 @@ public interface UserService {
 	public UserDetails createUser(UserDetailsDto userDetailsDto);
 	
     public byte[] getAllUsersAsPDF();
+    
+
 }
