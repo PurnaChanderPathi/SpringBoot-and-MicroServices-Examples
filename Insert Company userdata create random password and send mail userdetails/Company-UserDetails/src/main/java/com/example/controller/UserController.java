@@ -25,7 +25,7 @@ import com.example.service.UserService;
 public class UserController {
 	
 	@Autowired
-	private UserService userService;
+	private UserService userService; 
 	
 	@Autowired
 	private ExcelService excelService;
@@ -38,13 +38,13 @@ public class UserController {
 	}
 	
     @GetMapping("/userpdf")  // show PDF in output Screen
-    public ResponseEntity<byte[]> getAllUsersAsPDF() {
-        byte[] pdfBytes = userService.getAllUsersAsPDF();
+    public ResponseEntity<byte[]> getAllUsersAsPDF() { // object containing a byte array representing a PDF file.
+        byte[] pdfBytes = userService.getAllUsersAsPDF(); // It invokes the getAllUsersAsPDF method of the userService to retrieve the byte array representing the PDF content.
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("filename", "user_details.pdf");
-        headers.setContentLength(pdfBytes.length);
+        HttpHeaders headers = new HttpHeaders(); // Creates an instance of HttpHeaders to set response headers.
+        headers.setContentType(MediaType.APPLICATION_PDF); //  Sets the content type of the response to indicate that it is a PDF file.
+        headers.setContentDispositionFormData("filename", "user_details.pdf"); //  Sets the Content-Disposition header to instruct the browser to prompt the user to download the file with the specified filename ("user_details.pdf").
+        headers.setContentLength(pdfBytes.length); //  Sets the Content-Length header to specify the length of the PDF content in bytes.
         
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }

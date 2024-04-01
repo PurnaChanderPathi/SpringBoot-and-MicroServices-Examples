@@ -14,10 +14,10 @@ import java.util.List;
 public class PdfService {
 
     public byte[] generatePDF(List<UserDetails> userDetailsList) throws DocumentException {
-        Document document = new Document();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, byteArrayOutputStream);
-        document.open();
+        Document document = new Document();  // Inside the method, a new Document object is created. This represents the PDF document.
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); // A ByteArrayOutputStream is created to store the generated PDF content in memory.
+        PdfWriter.getInstance(document, byteArrayOutputStream); // A PdfWriter instance is created, associating it with the Document and the ByteArrayOutputStream.
+        document.open(); // will open document
         
         // Add title
         document.add(new Paragraph("User Details"));
