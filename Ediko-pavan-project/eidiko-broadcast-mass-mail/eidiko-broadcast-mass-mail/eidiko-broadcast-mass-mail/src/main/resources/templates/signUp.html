@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>eidiko</title>
+  <style th:inline="text">
+    body {
+      padding-top: 50px;
+    }
+
+    form {
+      width: 300px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid green;
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    h2 {
+      margin-left: 100px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .button-container {
+      text-align: center;
+    }
+
+    .signInButton {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+  <script th:inline="javascript">
+  function showSuccessSwal() {
+    swal({
+      title: "Success!",
+      text: "Password reset successfully.",
+      icon: "success",
+      timer: 1500, // Display for 1.5 seconds
+      buttons: false // Disable buttons
+    });
+  }
+
+  function showErrorSwal() {
+    swal({
+      title: "Error!",
+      text: "Password reset failed. Please try again.",
+      icon: "error"
+    });
+  }
+</script>
+
+</head>
+
+<body>
+<form id="resetPasswordForm" action="/reset-password" method="post" onsubmit="showSuccessSwal()">
+  <h2>Reset Password</h2>
+  <label for="oldPassword">Random Password (received via email):</label>
+  <input type="text" id="oldPassword" name="oldPassword" required><br><br>
+  <label for="newPassword">New Password:</label>
+  <input type="password" id="newPassword" name="newPassword" required><br><br>
+  <div class="button-container">
+    <button type="submit" class="signInButton">Reset Password</button>
+  </div>
+</form>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</body>
+
+</html>

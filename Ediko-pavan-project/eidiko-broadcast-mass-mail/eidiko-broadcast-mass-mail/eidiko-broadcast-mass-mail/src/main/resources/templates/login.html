@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>eidiko</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <style>
+    body{
+    background-color:#cad2d9;
+    }
+        .form-container {
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 20px;
+            background-color:#fff;;
+            width: 400px;
+            height: 400px;
+        }
+
+        h2 {
+            color: blue;
+        }
+        .button-container{
+        margin-top:40px;
+        }
+        .signInButton{
+        margin-left:10px;
+        margin-right:10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <form id="loginForm" th:action="@{/loginn}" method="post" class="form-container">
+        <h2 class="text-center">Login</h2>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div class="button-container text-center">
+            <button type="submit" id="loginButton" class="btn btn-primary signInButton">Login</button>
+            <a th:href="@{/forgot-password}" class="btn btn-primary button">Reset Password</a>
+        </div>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var form = event.target;
+
+        fetch(form.action, {
+            method: form.method,
+            body: new FormData(form)
+        })
+        .then(response => {
+            console.log("Response received:", response);
+            if (response.redirected) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successful',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    window.location.href = response.url;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Credentials',
+                    text: 'Please check your email and password',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>eidiko</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+<!--        body {-->
+<!--            padding-top: 50px;-->
+<!--        }-->
+
+        .form-container {
+            margin-top: 20px; /* Add margin to create space */
+        }
+
+        form {
+            width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid green;
+            border-radius: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        h2 {
+            margin-left: 50px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        .signInButton {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .navbar {
+            background-color: #13DFFE;
+        }
+
+        .navbar-brand, .nav-link {
+            color: #ffffff;
+        }
+
+        .navbar-brand:hover, .nav-link:hover {
+            color: #f8f9fa;
+        }
+
+        .navbar-right {
+            float: left;
+            margin-left: 20px;
+            margin-top: 15px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+             margin-top: 15px;
+        }
+<!--        /* Dropdown hover */-->
+<!--        .dropdown:hover .dropdown-menu {-->
+<!--            display: block;-->
+<!--        }-->
+
+
+    </style>
+</head>
+<body>
+
+<div class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="#">EIDIKO</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Settings
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                    <a class="dropdown-item" href="/register">Add Mail Credentials</a>
+                    <a class="dropdown-item" href="/listUsers">View Saved Emails</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Folder
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                    <a class="dropdown-item" href="/get-all-folders">Folder List</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="confirmLogout()">Log Out</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="form-container">
+    <form id="registerForm" action="/saveRegister" method="post">
+        <h2>Mail Credentials</h2>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <div class="button-container">
+            <button type="submit" class="signInButton">save</button>
+        </div>
+    </form>
+</div>
+<div class="text-center">
+    <a th:href="@{/home}" class="button">Back to Home</a>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration successful!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(function () {
+                form.submit();
+            });
+        });
+    });
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Are you sure you want to log out?',
+            text: 'You will be logged out of your account.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, log me out!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                location.href = '/logout';
+            }
+        });
+    }
+</script>
+
+<!-- Bootstrap JavaScript and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
