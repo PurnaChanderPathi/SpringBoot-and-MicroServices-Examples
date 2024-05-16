@@ -1,0 +1,279 @@
+1) // Online Java Compiler
+// Use this editor to write, compile and run your Java code online
+import java.util.Scanner;
+
+class HelloWorld {
+
+    public static void main(String[] args) {
+            Scanner sc=new Scanner(System.in);
+            System.out.println("================================");
+            for(int i=0;i<1;i++){
+                String s1=sc.next();
+                int x=sc.nextInt();
+                //Complete this line
+                System.out.printf("%-15s%03d%n",s1,x); 
+            }
+            
+            System.out.println("================================");
+
+    }
+
+}
+
+output :- 
+java -cp /tmp/KjEz2Wb8nO/HelloWorld
+================================
+qwerty
+12
+qwerty         012
+================================
+
+=== Code Execution Successful ===
+
+note :- System.out.printf: This is a method used in Java to format and print text to the console.
+"%-15s%03d%n": This is a format string that specifies how the text should be formatted before printing. Let's break it down further:
+%-15s: This part is a placeholder for a string (s). The - sign indicates that the output should be left-justified (aligned to the left), and 15 specifies the minimum width of the output, which is 15 characters. If the string is less than 15 characters long, spaces will be added after the string to make it 15 characters long.
+%03d: This part is a placeholder for an integer (d). The 0 sign indicates that leading zeros should be added to the number if it's less than three digits long. The 3 specifies the minimum width of the output, which is 3 characters. If the number is less than three digits long, leading zeros will be added to make it three digits long.
+%n: This is a platform-independent newline character. It adds a newline after printing the formatted text.
+s1 and x: These are variables used to fill in the placeholders in the format string. s1 is a string variable, and x is an integer variable.
+Putting it all together, let's say s1 contains the string "Hello" and x contains the integer 7. The statement System.out.printf("%-15s%03d%n", s1, x); would:
+
+Format the string "Hello" with a minimum width of 15 characters, left-justified, and print it.
+Format the integer 7 with leading zeros and a minimum width of 3 characters, and print it.
+Add a newline character after printing.
+
+2) import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        int a = scan.nextInt();
+        // Complete this line
+        // Complete this line
+        int b = scan.nextInt();
+        int c = scan.nextInt();
+        
+
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+        // Complete this line
+        // Complete this line
+        scan.close();
+ 
+    }
+}
+
+output : - 
+java -cp /tmp/48cUHt2wBE/Solution
+12
+13
+14
+12
+13
+14
+
+=== Code Execution Successful ===
+
+3) import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.*;
+
+public class Solution {
+
+
+
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int n = scanner.nextInt();
+    if(n%2!=0){ 
+        System.out.println("Weird");
+    }
+    else if(n%2==0 && (n>=2 && n<=5)){
+        System.out.println("Not Weird");
+    }
+    else if (n%2==0 && (n>=6 && n<=20)){
+        System.out.println("Weird");
+    }
+     else if(n%2==0 && (n>20)){
+         System.out.println("Not Weird");
+     }  
+        
+
+        scanner.close();
+    }
+}
+
+output :- 
+java -cp /tmp/rmo06cFqZf/Solution
+12
+Weird
+
+=== Code Execution Successful ===
+
+4) import java.util.Scanner;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+   
+        int i = scan.nextInt();
+        scan.nextLine();
+        Double d=scan.nextDouble();
+        scan.nextLine();
+        String s=scan.nextLine();
+  
+        
+
+        // Write your code here.
+
+        System.out.println("String: " + s);
+        System.out.println("Double: " + d);
+        System.out.println("Int: " + i);
+        scan.close();
+    }
+}
+
+output : -
+java -cp /tmp/eviPTKQVS1/Solution
+132
+145
+purna
+String: purna
+Double: 145.0
+Int: 132
+
+=== Code Execution Successful ===
+
+5) import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.*;
+
+
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        int N = Integer.parseInt(bufferedReader.readLine().trim());
+        for(int i=1; i<=10; i++){
+            int j = N * i;
+            System.out.println(N+ "x" + i +"="+ j);
+        }
+        bufferedReader.close();
+    }
+}
+
+output :- 
+java -cp /tmp/ooxb2LWPou/Solution
+2
+2x1=2
+2x2=4
+2x3=6
+2x4=8
+2x5=10
+2x6=12
+2x7=14
+2x8=16
+2x9=18
+2x10=20
+
+=== Code Execution Successful ===
+
+6) import java.util.*;
+import java.io.*;
+
+
+
+class Solution{
+    public static void main(String []argh)
+    {
+        Scanner sc = new Scanner(System.in);
+        int t=sc.nextInt();
+
+        for(int i=0;i<t;i++)
+        {
+            try
+            {
+                long x=sc.nextLong();
+                System.out.println(x+" can be fitted in:");
+                if(x>=-128 && x<=127)System.out.println("* byte");
+                //Complete the code
+                if(x>=-32768 && x<=32767)System.out.println("* short");
+                if(x>=-2147483648 && x<=2147483647)System.out.println("*  int");
+                if(x>= Long.MIN_VALUE && x<=Long.MAX_VALUE)System.out.println("*  long");
+            }
+            catch(Exception e)
+            {
+                System.out.println(sc.next()+" can't be fitted anywhere.");
+            }
+
+        }
+    }
+}
+
+
+o/p :- 
+java -cp /tmp/j6NuC2mcYm/Solution
+5
+-150
+-150 can be fitted in:
+* short
+*  int
+*  long
+15000
+15000 can be fitted in:
+* short
+*  int
+*  long
+1500000000
+1500000000 can be fitted in:
+*  int
+*  long
+213333333333333333333333333333333333333333333333333333333
+213333333333333333333333333333333333333333333333333333333 can't be fitted anywhere.
+-10000000000000000000000
+-10000000000000000000000 can't be fitted anywhere.
+
+=== Code Execution Successful ===
+
+7) 
+// insertion sorting
+import java.util.*;
+
+class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Try programiz.pro");
+        int[] a= {2,5,9,4,6,8};
+        
+        for(int i=0; i<a.length-1; i++){
+            for(int j=i+1; j>0; j--){
+                if(a[j]<a[j-1]){
+                    int temp = a[j-1];
+                    a[j-1]=a[j];
+                    a[j]=temp;
+                }else{
+                    break;
+                }
+            }
+        }
+        System.out.println(Arrays.toString(a));
+    }
+}
+o/p :- 
+java -cp /tmp/PiIRJ5idFm/HelloWorld
+Try programiz.pro
+[2, 4, 5, 6, 8, 9]
+
+=== Code Execution Successful ===
