@@ -1,9 +1,9 @@
 package com.example.BinarySearch;
 
-public class BinarySearch {
+public class BinarySearchDO {
 	public static void main(String[] args) {
-		int[] arr = {-19,-10,-5,0,2,8,12,18,23,28,34,39,42};
-		int target = -5; 
+		int[] arr = {90,75,18,12,6,4,3,1};
+		int target = 4; 
 		System.out.println(binarySearch(arr, target));
 	}
 	
@@ -19,9 +19,9 @@ public class BinarySearch {
 			int mid = start + (end - start)/2;
 			
 			if(target < arr[mid]) {
-				end = mid -1;
-			}else if(target > arr[mid]) {
 				start = start +1;
+			}else if(target > arr[mid]) {
+				end = mid -1;
 			}else {
 				// ans found
 				return mid;
