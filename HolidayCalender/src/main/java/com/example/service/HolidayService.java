@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +53,7 @@ public class HolidayService {
 
     public List<Holiday> getAllHolidays() {
         List<Holiday> holidays = holidayRepository.findAll();
+       /* 
         for (Holiday holiday : holidays) {
             String filePath = holiday.getFilePath();
             try {
@@ -64,6 +64,8 @@ public class HolidayService {
                 e.printStackTrace();
             }
         }
+        */
+        
         return holidays;
     }
 
