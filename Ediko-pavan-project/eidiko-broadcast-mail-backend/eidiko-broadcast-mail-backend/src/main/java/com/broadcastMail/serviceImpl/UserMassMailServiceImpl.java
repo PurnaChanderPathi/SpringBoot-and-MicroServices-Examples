@@ -92,7 +92,7 @@ public class UserMassMailServiceImpl implements UserMassMailService {
 
     public static final String Subject="Forgot-password";
 
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     Map<String, Object> resultMap = new HashMap<>();
     List<String> notSentEmails = new CopyOnWriteArrayList<>();
@@ -105,19 +105,24 @@ public class UserMassMailServiceImpl implements UserMassMailService {
     @Override
     public Map<String, Object> massMails(UploadExcelDto excelDto) throws IOException {
         String extractedFileName = unZipFile2(excelDto.getZipFile());
-        log.info(" The Following Folder was  {}", extractedFileName, "unZipped");
+        log.info("The Following Folder was {} unZipped", extractedFileName);
+
         FolderEntity folderEntity = new FolderEntity();
         folderEntity.setFolderName(extractedFileName);
         FolderEntity folder = this.folderRepository.findByFolderName(extractedFileName);
+
         if (folder == null) {
             this.folderRepository.save(folderEntity);
         }
+
         String fileName = excelDto.getFile().getOriginalFilename();
         String fileExtension = StringUtils.getFilenameExtension(fileName);
-        ArrayList<String> allowedExtensions = new ArrayList<>(Arrays.asList("xls", "xlsx", "csv"));
+        List<String> allowedExtensions = Arrays.asList("xls", "xlsx", "csv");
+
         if (!allowedExtensions.contains(fileExtension)) {
             throw new InvalidFileExtensionException("Please provide an Excel file.");
         }
+
         XSSFWorkbook workbook = new XSSFWorkbook(excelDto.getFile().getInputStream());
         XSSFSheet sheet = workbook.getSheetAt(0);
         List<Callable<Void>> emailTasks = new ArrayList<>();
@@ -131,18 +136,47 @@ public class UserMassMailServiceImpl implements UserMassMailService {
                 for (int j = 0; j < row.getLastCellNum(); j++) {
                     XSSFCell cell = row.getCell(j);
                     if (cell != null) {
-                        String cellValue = String.valueOf(cell);
+                        String cellValue;
+                        switch (cell.getCellType()) {
+                            case STRING:
+                                cellValue = cell.getStringCellValue();
+                                break;
+                            case NUMERIC:
+                                double numericValue = cell.getNumericCellValue();
+                                if (numericValue == (int) numericValue) {
+                                    cellValue = Integer.toString((int) numericValue);
+                                } else {
+                                    cellValue = Double.toString(numericValue);
+                                }
+                                break;
+                            case BOOLEAN:
+                                cellValue = Boolean.toString(cell.getBooleanCellValue());
+                                break;
+                            case FORMULA:
+                                cellValue = cell.getCellFormula();
+                                break;
+                            case BLANK:
+                                cellValue = "";
+                                break;
+                            default:
+                                cellValue = cell.toString();
+                                break;
+                        }
                         String columnName = getColumnName(sheet.getRow(0).getCell(j));
+
                         if (columnName.equalsIgnoreCase(Email_Id) || columnName.equalsIgnoreCase(File_Name)) {
                             filenameAndEmpidCells.add(cellValue);
                         }
                         entireRowCells.add(cellValue);
                     }
                 }
+
                 allMailIds.add(filenameAndEmpidCells.get(0));
                 log.info("All MailIds from Excel sheet {}", allMailIds);
+
                 emailTasks.add(() -> {
                     try {
+                        Thread.sleep(1000);
                         sendEmail(excelDto, filenameAndEmpidCells, entireRowCells, extractedFileName);
                     } catch (MessagingException e) {
                         if (e.getMessage().contains("Invalid Addresses")) {
@@ -171,7 +205,7 @@ public class UserMassMailServiceImpl implements UserMassMailService {
         List<String> remainingMailIds = new ArrayList<>(allMailIds);
 
         unSentMailIdsRepository.deleteAll();
-        if (remainingMailIds != null && !remainingMailIds.isEmpty()) {
+        if (!remainingMailIds.isEmpty()) {
             List<UnSentMailIds> unSentMailIdsList = new ArrayList<>();
             for (String mailId : remainingMailIds) {
                 UnSentMailIds unSentMailIds = new UnSentMailIds();
@@ -179,7 +213,7 @@ public class UserMassMailServiceImpl implements UserMassMailService {
                 unSentMailIdsList.add(unSentMailIds);
             }
             unSentMailIdsRepository.saveAll(unSentMailIdsList);
-            log.info("all unSentMAilIds are saved : {}", unSentMailIdsList);
+            log.info("All unSentMailIds are saved: {}", unSentMailIdsList);
         }
 
         resultMap.put("status", HttpStatus.CREATED.value());
@@ -209,7 +243,7 @@ public class UserMassMailServiceImpl implements UserMassMailService {
                 String formattedLine = line;
                 for (int i = 0; i < cellValueList.size(); i++) {
                     String placeholder = "{" + i + "}";
-                    formattedLine = formattedLine.replace(placeholder, cellValueList.get(i).toString());
+                    formattedLine = formattedLine.replace(placeholder, cellValueList.get(i));
                 }
                 formattedLine = formattedLine.replaceAll("@(.*?)@", "<b>$1</b>");
                 formattedLine = formattedLine.replaceAll("#(.*?)#", "<span style=\"background-color: yellow;\">$1</span>");
@@ -222,6 +256,7 @@ public class UserMassMailServiceImpl implements UserMassMailService {
                 notFoundAddresses.add(recipientEmail);
                 throw e;
             }
+
             if (excelDto.getCc() != null && !excelDto.getCc().trim().isEmpty()) {
                 mimeMessageHelper.setCc(parseAddresses(excelDto.getCc()));
             }
@@ -241,15 +276,18 @@ public class UserMassMailServiceImpl implements UserMassMailService {
                     }
                 }
             }
+
             try {
+                Thread.sleep(1000);
                 javaMailSender.send(mail);
-                log.info("sent mail  for this mail ID : {}",recipientEmail);
+                log.info("Sent mail for this mail ID: {}", recipientEmail);
                 sentMailIds.add(recipientEmail);
-            }catch (MailSendException me){
-               me.printStackTrace();
+            } catch (MailSendException me) {
+                me.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
-
     }
 
 
