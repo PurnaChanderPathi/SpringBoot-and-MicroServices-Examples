@@ -60,8 +60,10 @@ public class UserMassMailServiceImpl implements UserMassMailService {
 
     @Autowired
     private EmailConfig emailConfig;
+    
     @Autowired
     private FolderRepository folderRepository;
+    
     @Autowired
     private PasswordEncoder encoder;
 

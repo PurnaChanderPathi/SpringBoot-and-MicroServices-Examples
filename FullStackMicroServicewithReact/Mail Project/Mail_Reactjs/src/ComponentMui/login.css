@@ -1,0 +1,8 @@
+.nameInput{
+    display: flex;
+    flex-direction: row;
+    
+}
+.avatar{
+    text-decoration: underline;
+}

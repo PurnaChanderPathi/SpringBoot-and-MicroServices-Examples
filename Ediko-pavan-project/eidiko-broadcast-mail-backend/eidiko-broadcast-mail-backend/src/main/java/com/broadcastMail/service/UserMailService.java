@@ -5,10 +5,12 @@ import com.broadcastMail.dto.UploadExcelDto;
 import com.broadcastMail.entites.MailCredentials;
 import com.broadcastMail.entites.User;
 import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
 
+@Service
 public interface UserMailService {
     Map<String, Object> createUser(SigninDto signinDto);
 

@@ -1,0 +1,19 @@
+Hello @empName,
+
+Greetings from EIDIKO,
+
+ 
+
+We are pleased to inform you that the Appraisal (January - June'24) process has come to an end and here is your Final 
+@typeOfAppraisal review @appraisalScore.
+
+Kindly go through your final scores and we hope you continue working on making your performance even better. 
+
+ 
+
+If you have any concerns or queries regarding the scores don't hesitate to contact the HR Team or Reporting manager by @dueDate.
+
+ 
+
+Kindly find the attachment of your midterm review sheet containing the bifurcation of scores.
+

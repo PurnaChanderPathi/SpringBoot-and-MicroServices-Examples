@@ -1,0 +1,5 @@
+hi @empName
+	
+	@typeOfAppraisal
+@appraisalScore
+@dueDate

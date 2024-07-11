@@ -1,19 +1,17 @@
-package com.broadcastMail.service;
-
-import com.broadcastMail.dto.PasswordDto;
-import com.broadcastMail.dto.UploadExcelDto;
-import com.broadcastMail.exception.FolderDoesNotExistsException;
-import jakarta.mail.MessagingException;
+package com.example.service;
 
 import java.io.IOException;
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
+import com.example.dto.PasswordDto;
+import com.example.dto.UploadExcelDto;
+import com.example.exception.FolderDoesNotExistsException;
 
-@Service
+import jakarta.mail.MessagingException;
+
 public interface UserMassMailService {
-	
-    Map<String, Object> massMails(UploadExcelDto excelDto) throws IOException;
+
+    Map<String, Object> massMails(UploadExcelDto excelDto) throws IOException, MessagingException;
 
     Map<String, Object> deleteFolder(String folderName) throws IOException, FolderDoesNotExistsException;
 
