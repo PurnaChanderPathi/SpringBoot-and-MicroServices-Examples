@@ -31,10 +31,15 @@ public class Customer {
 		list.add(c2);
 		list.add(c3);
 		
-		List<Customer>  result = list.stream().filter((l)->l.name.contains("P")).collect(Collectors.toList());
-		for(var r:result) {
-			System.out.println(r.name);
-		}
+//		List<Customer>  result = list.stream().filter((l)->l.name.contains("P")).collect(Collectors.toList());
+//		for(var r:result) {
+//			System.out.println(r.name);
+//		}
+		
+		//List<Customer> result1 = list.stream().filter((item)->item.name.contains("P")).collect(Collectors.toList());
+//		
+		List<String> result2 = list.stream().map((e)->e.name).map(String::toLowerCase).collect(Collectors.toList());
+		System.out.println(result2);
 	}
 
 }

@@ -1,0 +1,48 @@
+package com.purna.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.purna.model.CommentReply;
+import com.purna.service.CommentReplyService;
+
+@RestController
+@RequestMapping("/api/v1/commentsReply")
+public class CommentReplyController {
+	
+	@Autowired
+	private CommentReplyService commentReplyService;
+	
+	@PostMapping("/addCommentReply")
+	public ResponseEntity<CommentReply> addCommentReply(@RequestBody CommentReply commentReply){
+		return ResponseEntity.ok(commentReplyService.addComment(commentReply));
+	}
+	
+	@GetMapping("/getAllCommentReplys/{commentId}")
+	public ResponseEntity<List<CommentReply>> getCommentReplyByCommentId(@PathVariable Long commentId){
+		List<CommentReply> getCommetRepls = commentReplyService.getCommentReplyByCommentId(commentId);
+		return ResponseEntity.ok(getCommetRepls);
+	}
+	
+	@DeleteMapping("/deleteCommentReply/{commentReplyId}")
+	public ResponseEntity<Void> deleteCommentReply(@PathVariable Long commentReplyId){
+		commentReplyService.deleteById(commentReplyId);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/editCommentReply/{commentReplyId}")
+	public ResponseEntity<CommentReply> editComment(@PathVariable Long commentReplyId, @RequestBody CommentReply commentReply){
+		return ResponseEntity.ok(commentReplyService.editCommentReply(commentReplyId, commentReply));
+	}
+
+}
