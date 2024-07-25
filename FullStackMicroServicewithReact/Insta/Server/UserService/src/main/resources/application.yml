@@ -15,4 +15,14 @@ spring:
   application:
     name: User-Service
 
-
+  mail:
+    host: smtp.gmail.com
+    username: purnachander.eidiko@gmail.com
+    password: vfbd gtkv nbur gxjk
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true

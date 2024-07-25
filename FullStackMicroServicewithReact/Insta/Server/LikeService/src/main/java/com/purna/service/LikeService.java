@@ -39,4 +39,19 @@ public class LikeService {
 		existingLike.ifPresent(likeRepository::delete);
 	}
 
+	public Map<String,Object> getLikesByUserIdAndPostId(Long userId, Long postId){
+		Optional<Like> like = likeRepository.findByUserIdAndPostId(userId,postId);
+		if(like.isPresent()){
+			map.put("status",HttpStatus.FOUND.value());
+			map.put("message","Fetched successfully");
+			map.put("result",like.get());
+			return map;
+		}else{
+			map.put("status", HttpStatus.NOT_FOUND.value());
+			map.put("message","Not Found with given userId: "+userId+" and postId: "+postId);
+			return map;
+		}
+
+	}
+
 }

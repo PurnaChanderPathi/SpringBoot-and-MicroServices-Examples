@@ -6,29 +6,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import com.purna.model.Post;
 import com.purna.repository.PostRepository;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import reactor.core.publisher.Mono;
 
 @Service
+@Slf4j
 public class PostService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(PostService.class);
+
 	
 	@Autowired
 	private PostRepository postRepository;
 	
 	@Autowired
 	private WebClient webClient;
+	@Autowired
+	private WebClient.Builder webClientBuilder;
 	
 	Map<String,Object> map=new HashMap<>();
 	public Post savePost(Post post) {
@@ -43,19 +44,77 @@ public class PostService {
 			 map.put("message", "Post not found");
 			 return map;
 		 }
-		 String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
+		String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
+
+//		 String responseFinal=webClient.get().uri(url).header("Authorization",token).exchange().flatMap(
+//				 clientResponse -> {
+//					 if(clientResponse.statusCode().is5xxServerError()){
+//						 clientResponse.body((clientHttpResponse,context)->{
+//							 return clientHttpResponse.getBody();
+//						 });
+//						 return clientResponse.bodyToMono(String.class);
+//					 }else
+//						 return clientResponse.bodyToMono(String.class);
+//				 }
+//		 ).block();
+//
+//		 Map<String,Object> webClientMap=new ObjectMapper().readTree(responseFinal,HashMap.class);
+
+
+
 		 
-		Mono<Object> commentResultMono=webClient.get().uri(url).retrieve().bodyToMono(Object.class);
-		
-		//Handling Asynchronous nature of WebClient
-		Object commentResult = commentResultMono.block();
-		
-		logger.info("Comment Result: {}",commentResult);
-		
+		Object commentResult = null;
+		try {
+				commentResult = webClientBuilder.build().get()
+						.uri(url)
+						.retrieve()
+						.bodyToMono(Object.class)
+						.block();
+		}catch (WebClientResponseException e){
+			if(e.getCause() instanceof java.net.ConnectException){
+					log.error("Error fetching comments: Service is offline", e);
+					commentResult = "Comments service is offline";
+			}else{
+				log.error("Error fetching comments for post {}: {}", id, e);
+			}
+
+		}
+		log.info("Comment Result: {}",commentResult);
+
+		Long userId = postResult.get().getUserId();
+
+		//String likesUrl = "http://localhost:9198/api/v1/likes/getLikesByUserIdAndPostId";
+
+		Object likesResult = null;
+		try {
+			likesResult = webClientBuilder.build().get()
+					.uri(uriBuilder -> uriBuilder
+							.scheme("http")
+							.host("localhost")
+							.port(9198)
+							.path("/api/v1/likes/getLikesByUserIdAndPostId")
+							.queryParam("userId",userId)
+							.queryParam("postId",id)
+							.build())
+					.retrieve()
+					.bodyToMono(Object.class)
+					.block();
+		} catch (WebClientResponseException e){
+			if(e.getCause() instanceof java.net.ConnectException){
+				log.error("Error fetching likes: Service is offline", e);
+				likesResult = "Likes service is offline";
+			}else{
+				log.error("Error fetching likes for user {} and post {}: {}", userId, id, e);
+			}
+		}
+
+		log.info("Likes Result: {}",likesResult);
+
 		map.put("Status", HttpStatus.OK.value());
 		map.put("message", "fetched Successfully");
 		map.put("PostResult", postResult.get());
 		map.put("commentResult", commentResult);
+		map.put("likesResult",likesResult);
 		 return map;
 	}
 	
