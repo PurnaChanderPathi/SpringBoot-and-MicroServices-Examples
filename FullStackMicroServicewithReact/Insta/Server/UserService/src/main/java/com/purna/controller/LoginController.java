@@ -1,8 +1,12 @@
 package com.purna.controller;
 
+import com.purna.dto.ChangePasswordDto;
 import com.purna.dto.UserDto;
+import com.purna.model.ForgotPassword;
 import com.purna.service.JwtServiceImpl;
 import com.purna.service.UserDetailsService;
+import com.purna.service.UserService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +30,9 @@ public class LoginController {
     private JwtServiceImpl jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserService userService;
 
     Map<String,Object> map = new HashMap<>();
 
@@ -62,7 +69,16 @@ public class LoginController {
         }
     }
 
-    private void forgotPassword(@PathVariable String username){
 
+    @PostMapping("/forgotPassword/{username}")
+    public ResponseEntity<Map<String,Object>>  forgotPassword(@PathVariable String username) throws MessagingException {
+        Map<String,Object> map=this.userService.forgotPassword(username);
+       return ResponseEntity.ok().body(map);
     }
+    @PostMapping("/changePassword")
+    public ResponseEntity<Map<String,Object>> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
+            Map<String,Object> map = this.userService.changePassword(changePasswordDto);
+            return ResponseEntity.ok().body(map);
+    }
+
 }

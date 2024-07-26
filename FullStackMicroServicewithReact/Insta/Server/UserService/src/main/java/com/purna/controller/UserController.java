@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.purna.model.ForgotPassword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -90,8 +92,5 @@ public class UserController {
 		user.setPassword(passwordEncoder.encode(password));
 		return ResponseEntity.ok(userService.updateuserDetails(userId, user, profilePhoto));		
 }
-	
-
-	
 
 }

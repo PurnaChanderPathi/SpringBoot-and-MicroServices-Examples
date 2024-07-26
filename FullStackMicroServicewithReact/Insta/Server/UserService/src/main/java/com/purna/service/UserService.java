@@ -3,26 +3,37 @@ package com.purna.service;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
-
-import com.purna.dto.UserDto;
+import com.purna.config.MailConfig;
+import com.purna.dto.ChangePasswordDto;
+import com.purna.exception.NewPasswordException;
+import com.purna.exception.UserNameOrOtpDoesnotMatchedException;
+import com.purna.model.ForgotPassword;
+import com.purna.repository.ForgotPasswordRepoistory;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.purna.model.User;
 import com.purna.repository.UserRepository;
 
 @Service
 @Slf4j
 public class UserService {
-	
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private MailConfig mailConfig;
+	@Autowired
+	private ForgotPasswordRepoistory forgotPasswordRepoistory;
 
 	Map<String, Object> map = new HashMap<>();
 	
@@ -74,7 +85,6 @@ public class UserService {
 			throw new Exception("No User Found with userId : "+userId);
 		}
 	}
-	
 	public User updateuserDetails(Long userId, User user,MultipartFile profilePhoto) throws Exception {
 		Optional<User> userDetails = userRepository.findById(userId);
 		if(userDetails.isPresent()) {
@@ -95,14 +105,72 @@ public class UserService {
 		}
 	}
 
-	public Map<String,Object> forgotPassword(String username){
-		Optional<User> findByUsername = Optional.ofNullable(userRepository.findByUsername(username));
-		if(findByUsername.isPresent()){
-			String otp= new DecimalFormat("000000").format(new Random().nextInt(999999));
-			log.info("otp"+otp);
+	public Map<String, Object> forgotPassword(String username) throws MessagingException {
 
+		User user=this.userRepository.findByUsername(username);
+		if(user!=null)
+		{
+			String otp=new DecimalFormat("000000").format(new Random().nextInt(999999));
+			JavaMailSender javaMailSender= mailConfig.getJavaMailSender();
+			MimeMessage mail=javaMailSender.createMimeMessage();
+			MimeMessageHelper messageHelper=new MimeMessageHelper(mail,true);
 
+			messageHelper.setFrom("purnachander.eidiko@gmail.com");
+			messageHelper.setTo(user.getUsername());
+			messageHelper.setSubject("testing");
+			messageHelper.setText(otp);
+			javaMailSender.send(mail);
+			Optional<ForgotPassword> forgotPassword= Optional.ofNullable(forgotPasswordRepoistory.findByUsername(user.getUsername()));
+			if(forgotPassword.isPresent())
+			{
+				ForgotPassword getDetails = forgotPassword.get();
+				getDetails.setOtp(Integer.parseInt(otp));
+				this.forgotPasswordRepoistory.save(getDetails);
+			}
+			else {
+				ForgotPassword forgotPassword1 = new ForgotPassword();
+				forgotPassword1.setUsername(user.getUsername());
+				forgotPassword1.setOtp(Integer.parseInt(otp));
+				this.forgotPasswordRepoistory.save(forgotPassword1);
+			}
+			map.put("status",HttpStatus.OK.value());
+			map.put("message","mail Sent successfully");
 		}
+		else {
+			throw new UsernameNotFoundException("user not found with this "+ username);
+		}
+		return map;
 	}
 
+	public Map<String, Object> changePassword(ChangePasswordDto changePasswordDto) throws UserNameOrOtpDoesnotMatchedException {
+		Optional<ForgotPassword> findUser = Optional.ofNullable(this.forgotPasswordRepoistory.findByUsername(changePasswordDto.getUsername()));
+		if(findUser.isPresent()){
+			ForgotPassword existingUser = findUser.get();
+			if((existingUser.getUsername() .equals(changePasswordDto.getUsername()) ) && (existingUser.getOtp() == changePasswordDto.getOtp())){
+				Optional<User> user = Optional.ofNullable(this.userRepository.findByUsername(changePasswordDto.getUsername()));
+				if(user.isPresent()){
+					User getUser = user.get();
+
+					if(passwordEncoder.matches(changePasswordDto.getNewPassword(),getUser.getPassword())){
+						log.info("Old password: {} New password: {}", getUser.getPassword(), changePasswordDto.getNewPassword());
+						throw new NewPasswordException("New Password is Same as Old Password");
+					}else{
+						getUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+						this.userRepository.save(getUser);
+						this.forgotPasswordRepoistory.delete(findUser.get());
+						map.put("status",HttpStatus.OK.value());
+						map.put("message","updated password successfully..!");
+						map.put("result",getUser);
+					}
+				}else{
+					throw new UsernameNotFoundException("user not found with id : "+changePasswordDto.getUsername());
+				}
+			}else{
+				throw new UserNameOrOtpDoesnotMatchedException("Username or Otp not matched");
+			}
+		}else{
+			throw new UsernameNotFoundException("Any otp didn't send this mailID : "+changePasswordDto.getUsername());
+		}
+		return map;
+	}
 }
