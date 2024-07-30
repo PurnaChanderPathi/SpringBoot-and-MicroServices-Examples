@@ -40,8 +40,8 @@ public class UserController {
 	}
 
 	@PostMapping("/addUser")
-	public ResponseEntity<Map<String,Object>> saveUser(@RequestBody User user,MultipartFile profilePhoto) throws IOException {
-		Map<String,Object> map = userService.saveUserDetails(user,profilePhoto);
+	public ResponseEntity<Map<String,Object>> saveUser(@ModelAttribute User user) throws IOException {
+		Map<String,Object> map = userService.saveUserDetails(user);
 	return ResponseEntity.ok().body(map);
 	}
 
@@ -53,8 +53,8 @@ public class UserController {
 	}
 	
 	@GetMapping("/{username}")
-	public ResponseEntity<User> getUserByUsername(@PathVariable String email){
-		Optional<User> user = userService.findByUsername(email);
+	public ResponseEntity<User> getUserByUsername(@PathVariable String username){
+		Optional<User> user = userService.findByUsername(username);
 		return user.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
 	}
 	

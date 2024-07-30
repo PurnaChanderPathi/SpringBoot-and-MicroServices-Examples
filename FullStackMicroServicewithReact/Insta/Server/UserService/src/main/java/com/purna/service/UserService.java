@@ -44,13 +44,13 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public Map<String,Object> saveUserDetails(User user, MultipartFile profilePhoto) throws IOException {
+	public Map<String,Object> saveUserDetails(User user) throws IOException {
 		User saveUser = new User();
 		saveUser.setUsername(user.getUsername());
 		saveUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		saveUser.setRole(user.getRole());
-		if(profilePhoto != null && !profilePhoto.isEmpty()){
-			user.setProfilePhoto(profilePhoto.getBytes());
+		if(saveUser.getProfilePhoto() != null){
+			user.setProfilePhoto(saveUser.getProfilePhoto());
 		}
 		User savedUser = userRepository.save(saveUser);
 		map.put("status", HttpStatus.OK.value());
