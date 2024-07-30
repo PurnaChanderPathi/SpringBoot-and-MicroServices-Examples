@@ -24,6 +24,11 @@ public class LikeService {
 			like.setPostId(postId);
 			like.setUserId(userId);
 			likeRepository.save(like);
+
+			//Notify the Notification Service
+			String message = "User"+userId+" liked your post";
+
+
 			map.put("status", HttpStatus.CREATED.value());
 			map.put("message", "liked Successfully");
 		}else {

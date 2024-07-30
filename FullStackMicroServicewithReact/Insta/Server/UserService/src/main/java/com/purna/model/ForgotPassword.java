@@ -19,7 +19,7 @@ public class ForgotPassword {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long forgotPasswordId;
 
-    private String username;
+    private String email;
 
     private int otp;
 }

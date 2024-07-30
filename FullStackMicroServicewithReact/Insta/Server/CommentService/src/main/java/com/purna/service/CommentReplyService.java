@@ -23,6 +23,11 @@ public class CommentReplyService {
 		return replyRepository.findByCommentId(commentId);
 	}
 	
+	public List<CommentReply> getCommentReplyByCommentIdAndPostId(Long commentId, Long postId){
+		return replyRepository.findByCommentIdAndPostId(commentId,postId);
+	}
+	
+	
 	public void deleteById(Long commentReplyId) {
 		replyRepository.deleteById(commentReplyId);
 	}

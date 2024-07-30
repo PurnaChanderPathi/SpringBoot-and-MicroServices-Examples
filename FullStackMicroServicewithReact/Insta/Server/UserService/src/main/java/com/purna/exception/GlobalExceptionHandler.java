@@ -14,21 +14,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNameOrOtpDoesnotMatchedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ProblemDetail> handleUserNameOrOtpDoesnotMatchedException(UserNameOrOtpDoesnotMatchedException ex){
+    public ProblemDetail handleUserNameOrOtpDoesnotMatchedException(UserNameOrOtpDoesnotMatchedException ex){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setProperty("errorMessage", ex.getMessage());
         problemDetail.setStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setType(URI.create("/error"));
-        return ResponseEntity.ok().body(problemDetail);
+        return problemDetail;
     }
 
     @ExceptionHandler(NewPasswordException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ProblemDetail> handleNewPasswordException(NewPasswordException ex){
+    public ProblemDetail handleNewPasswordException(NewPasswordException ex){
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setProperty("errorMessage", ex.getMessage());
         problemDetail.setStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setType(URI.create("/error"));
-        return ResponseEntity.ok().body(problemDetail);
+        return problemDetail;
     }
 }

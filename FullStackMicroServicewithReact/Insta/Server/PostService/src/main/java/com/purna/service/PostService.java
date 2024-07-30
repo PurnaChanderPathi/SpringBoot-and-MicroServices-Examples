@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,8 +80,7 @@ public class PostService {
 		log.info("Comment Result: {}",commentResult);
 
 		Long userId = postResult.get().getUserId();
-
-		//String likesUrl = "http://localhost:9198/api/v1/likes/getLikesByUserIdAndPostId";
+		
 
 		Object likesResult = null;
 		try {
@@ -109,7 +106,7 @@ public class PostService {
 		}
 
 		log.info("Likes Result: {}",likesResult);
-
+		
 		map.put("Status", HttpStatus.OK.value());
 		map.put("message", "fetched Successfully");
 		map.put("PostResult", postResult.get());

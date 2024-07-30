@@ -70,9 +70,9 @@ public class LoginController {
     }
 
 
-    @PostMapping("/forgotPassword/{username}")
-    public ResponseEntity<Map<String,Object>>  forgotPassword(@PathVariable String username) throws MessagingException {
-        Map<String,Object> map=this.userService.forgotPassword(username);
+    @PostMapping("/forgotPassword/{email}")
+    public ResponseEntity<Map<String,Object>>  forgotPassword(@PathVariable String email) throws MessagingException {
+        Map<String,Object> map=this.userService.forgotPassword(email);
        return ResponseEntity.ok().body(map);
     }
     @PostMapping("/changePassword")

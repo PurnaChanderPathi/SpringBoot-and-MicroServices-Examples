@@ -23,8 +23,8 @@ public class FollowService {
 	    public Map<String,Object> follerUser(String followerUsername,String followeeUsername){
 	        Map<String,Object> response = new HashMap<>();
 
-	        Optional<UserDto> followerOpt = getUserByUsername(followerUsername);
-	        Optional<UserDto> followeeOpt = getUserByUsername(followeeUsername);
+	        Optional<UserDto> followerOpt = getUserByEmail(followerUsername);
+	        Optional<UserDto> followeeOpt = getUserByEmail(followeeUsername);
 	        System.out.println("followerOpt"+followerOpt);
 	        System.out.println("followeeOpt"+followeeOpt);
 
@@ -56,8 +56,8 @@ public class FollowService {
 
 	    public Map<String,Object> unfollowUser(String followerUsername,String followeeUsername){
 	        Map<String,Object> response = new HashMap<>();
-	        Optional<UserDto> followerOpt = getUserByUsername(followerUsername);
-	        Optional<UserDto> followeeOpt = getUserByUsername(followeeUsername);
+	        Optional<UserDto> followerOpt = getUserByEmail(followerUsername);
+	        Optional<UserDto> followeeOpt = getUserByEmail(followeeUsername);
 
 	        if(followerOpt.isPresent() && followeeOpt.isPresent()){
 	            Long followerId = followerOpt.get().getUserId();
@@ -80,10 +80,10 @@ public class FollowService {
 	        return response;
 	    }
 
-	    private Optional<UserDto> getUserByUsername(String username) {
+	    private Optional<UserDto> getUserByEmail(String email) {
 	    return Optional.ofNullable(webClient
 	            .get()
-	            .uri("http://localhost:9195/api/v1/users/"+username)
+	            .uri("http://localhost:9195/api/v1/users/findByEmailId/"+email)
 	            .retrieve()
 	            .bodyToMono(UserDto.class)
 	            .block());

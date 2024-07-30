@@ -19,4 +19,5 @@ public class CommentReply {
 	private long commentReplyId;	
 	private String comment;
 	private Long commentId;
+	private Long postId;
 }

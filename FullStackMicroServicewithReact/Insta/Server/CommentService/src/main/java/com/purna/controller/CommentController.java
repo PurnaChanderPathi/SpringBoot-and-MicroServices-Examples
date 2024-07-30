@@ -1,6 +1,7 @@
 package com.purna.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.purna.model.Comment;
@@ -33,6 +35,13 @@ public class CommentController {
 	public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId){
 		List<Comment> getComments = commentService.getCommentsByPostId(postId);
 		return ResponseEntity.ok(getComments);
+	}
+	
+	@GetMapping("/getCommentByPostIdAndCommentId")
+	public ResponseEntity<Map<String, Object>> getCommentByPostIdAndCommentId(@RequestParam Long postId,
+			@RequestParam Long commentId){
+		Map<String, Object> map = commentService.getCommentsByPostIdAndCommentId(postId,commentId);
+		return ResponseEntity.ok().body(map);
 	}
 	
 	@DeleteMapping("/{commentId}")

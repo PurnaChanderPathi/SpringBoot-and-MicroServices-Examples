@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.purna.model.CommentReply;
@@ -32,6 +33,12 @@ public class CommentReplyController {
 	public ResponseEntity<List<CommentReply>> getCommentReplyByCommentId(@PathVariable Long commentId){
 		List<CommentReply> getCommetRepls = commentReplyService.getCommentReplyByCommentId(commentId);
 		return ResponseEntity.ok(getCommetRepls);
+	}
+	
+	@GetMapping("/getCommentByCommentIdAndPostId")
+	public ResponseEntity<List<CommentReply>> getCommentReplyByCommentIdAndPostId(@RequestParam Long commentId, @RequestParam Long postId){
+		List<CommentReply> getCommentReplys = commentReplyService.getCommentReplyByCommentIdAndPostId(commentId, postId);
+		return ResponseEntity.ok().body(getCommentReplys);
 	}
 	
 	@DeleteMapping("/deleteCommentReply/{commentReplyId}")

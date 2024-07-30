@@ -26,25 +26,20 @@ public class UserController {
 	
 	@PostMapping("/register")
 	public ResponseEntity<User> registerUser(
-			@RequestParam("username") String username,
+			@RequestParam("email") String email,
 			@RequestParam("password") String password,
 			@RequestParam("role") String role,
+			@RequestParam("username") String username,
 			@RequestParam(value = "profilePhoto", required = false) MultipartFile profilePhoto
 			) throws IOException{
 		User user = new User();
+		user.setEmail(email);
 		user.setUsername(username);
 		user.setPassword(passwordEncoder.encode(password));
 		user.setRole(role);
 		
 		return ResponseEntity.ok(userService.saveUser(user,profilePhoto));
 	}
-
-	@PostMapping("/addUser")
-	public ResponseEntity<Map<String,Object>> saveUser(@ModelAttribute User user) throws IOException {
-		Map<String,Object> map = userService.saveUserDetails(user);
-	return ResponseEntity.ok().body(map);
-	}
-
 
 
 	@GetMapping("/all")
@@ -58,10 +53,11 @@ public class UserController {
 		return user.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
 	}
 	
-	@GetMapping("/getByEmail/{email}")
-	public ResponseEntity<User> getUserByEmail(@PathVariable String email){
-	     User user = userService.findByEmail(email);
-		return ResponseEntity.ok().body(user);
+	@GetMapping("/findByEmailId/{email}")
+	public ResponseEntity<User> findByEmail(@PathVariable String email){
+		Optional<User> findByEmail = Optional.ofNullable(userService.findByEmail(email));
+		return findByEmail.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
+		
 	}
 	
 	@DeleteMapping("/id")
@@ -83,13 +79,15 @@ public class UserController {
 	@PutMapping("/updateUser")
 	public ResponseEntity<User> updateUser(
 			@RequestParam(required = false) Long userId,
-			@RequestParam(required = false) String username,
+			@RequestParam(required = false) String email,
 			@RequestParam(required = false) String password,
+			@RequestParam(required = false) String username,
 			@RequestParam(required = false) MultipartFile profilePhoto
 			) throws Exception{
 		User user = new User();
 		user.setUsername(username);
-		user.setPassword(passwordEncoder.encode(password));
+		user.setPassword(password);
+		user.setEmail(email);
 		return ResponseEntity.ok(userService.updateuserDetails(userId, user, profilePhoto));		
 }
 

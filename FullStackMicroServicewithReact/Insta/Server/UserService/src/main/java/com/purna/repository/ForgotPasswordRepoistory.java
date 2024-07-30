@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ForgotPasswordRepoistory extends JpaRepository<ForgotPassword,Long> {
 
-    ForgotPassword findByUsername(String username);
+	ForgotPassword findByEmail(String email);
 }

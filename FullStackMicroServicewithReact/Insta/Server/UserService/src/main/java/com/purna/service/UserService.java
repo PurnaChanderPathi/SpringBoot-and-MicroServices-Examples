@@ -44,27 +44,16 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public Map<String,Object> saveUserDetails(User user) throws IOException {
-		User saveUser = new User();
-		saveUser.setUsername(user.getUsername());
-		saveUser.setPassword(passwordEncoder.encode(user.getPassword()));
-		saveUser.setRole(user.getRole());
-		if(saveUser.getProfilePhoto() != null){
-			user.setProfilePhoto(saveUser.getProfilePhoto());
-		}
-		User savedUser = userRepository.save(saveUser);
-		map.put("status", HttpStatus.OK.value());
-		map.put("message","Saved Successfully");
-		map.put("UserDetails",savedUser);
-		return map;
-	}
 	
 	public Optional<User>  findByUsername(String username) {
 		return Optional.ofNullable(userRepository.findByUsername(username));
 	}
 	
-	public User findByEmail(String email){
-		return userRepository.findByUsername(email);
+	
+	
+	public User findByEmail(String email) {
+		return userRepository.findByEmail(email);
+		
 	}
 	
 	public List<User> findAllUsers(){
@@ -93,7 +82,10 @@ public class UserService {
 				getUser.setUsername(user.getUsername());
 			}
 			if(user.getPassword() != null && !user.getPassword().isEmpty()) {
-				getUser.setPassword(user.getPassword());	
+				getUser.setPassword(passwordEncoder.encode(user.getPassword()));	
+			}
+			if(user.getEmail() != null && !user.getEmail().isEmpty()) {
+				getUser.setEmail(user.getEmail());
 			}
 
 			if(profilePhoto != null && !profilePhoto.isEmpty()) {
@@ -105,9 +97,9 @@ public class UserService {
 		}
 	}
 
-	public Map<String, Object> forgotPassword(String username) throws MessagingException {
+	public Map<String, Object> forgotPassword(String email) throws MessagingException {
 
-		User user=this.userRepository.findByUsername(username);
+		User user=this.userRepository.findByEmail(email);
 		if(user!=null)
 		{
 			String otp=new DecimalFormat("000000").format(new Random().nextInt(999999));
@@ -116,11 +108,11 @@ public class UserService {
 			MimeMessageHelper messageHelper=new MimeMessageHelper(mail,true);
 
 			messageHelper.setFrom("purnachander.eidiko@gmail.com");
-			messageHelper.setTo(user.getUsername());
+			messageHelper.setTo(user.getEmail());
 			messageHelper.setSubject("testing");
 			messageHelper.setText(otp);
 			javaMailSender.send(mail);
-			Optional<ForgotPassword> forgotPassword= Optional.ofNullable(forgotPasswordRepoistory.findByUsername(user.getUsername()));
+			Optional<ForgotPassword> forgotPassword= Optional.ofNullable(forgotPasswordRepoistory.findByEmail(user.getEmail()));
 			if(forgotPassword.isPresent())
 			{
 				ForgotPassword getDetails = forgotPassword.get();
@@ -129,7 +121,7 @@ public class UserService {
 			}
 			else {
 				ForgotPassword forgotPassword1 = new ForgotPassword();
-				forgotPassword1.setUsername(user.getUsername());
+				forgotPassword1.setEmail(email);
 				forgotPassword1.setOtp(Integer.parseInt(otp));
 				this.forgotPasswordRepoistory.save(forgotPassword1);
 			}
@@ -137,17 +129,17 @@ public class UserService {
 			map.put("message","mail Sent successfully");
 		}
 		else {
-			throw new UsernameNotFoundException("user not found with this "+ username);
+			throw new UsernameNotFoundException("user not found with this "+email);
 		}
 		return map;
 	}
 
 	public Map<String, Object> changePassword(ChangePasswordDto changePasswordDto) throws UserNameOrOtpDoesnotMatchedException {
-		Optional<ForgotPassword> findUser = Optional.ofNullable(this.forgotPasswordRepoistory.findByUsername(changePasswordDto.getUsername()));
+		Optional<ForgotPassword> findUser = Optional.ofNullable(this.forgotPasswordRepoistory.findByEmail(changePasswordDto.getEmail()));
 		if(findUser.isPresent()){
 			ForgotPassword existingUser = findUser.get();
-			if((existingUser.getUsername() .equals(changePasswordDto.getUsername()) ) && (existingUser.getOtp() == changePasswordDto.getOtp())){
-				Optional<User> user = Optional.ofNullable(this.userRepository.findByUsername(changePasswordDto.getUsername()));
+			if((existingUser.getEmail().equals(changePasswordDto.getEmail()) ) && (existingUser.getOtp() == changePasswordDto.getOtp())){
+				Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(changePasswordDto.getEmail()));
 				if(user.isPresent()){
 					User getUser = user.get();
 
@@ -163,13 +155,13 @@ public class UserService {
 						map.put("result",getUser);
 					}
 				}else{
-					throw new UsernameNotFoundException("user not found with id : "+changePasswordDto.getUsername());
+					throw new UsernameNotFoundException("user not found with id : "+changePasswordDto.getEmail());
 				}
 			}else{
 				throw new UserNameOrOtpDoesnotMatchedException("Username or Otp not matched");
 			}
 		}else{
-			throw new UsernameNotFoundException("Any otp didn't send this mailID : "+changePasswordDto.getUsername());
+			throw new UsernameNotFoundException("Any otp didn't send this mailID : "+changePasswordDto.getEmail());
 		}
 		return map;
 	}
