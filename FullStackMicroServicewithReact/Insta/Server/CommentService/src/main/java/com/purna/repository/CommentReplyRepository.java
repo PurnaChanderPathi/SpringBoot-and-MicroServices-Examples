@@ -12,4 +12,6 @@ public interface CommentReplyRepository extends JpaRepository<CommentReply, Long
 
 	List<CommentReply> findByCommentIdAndPostId(Long commentId, Long postId);
 
+	List<CommentReply> findByPostId(Long postId);
+
 }

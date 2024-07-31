@@ -15,17 +15,13 @@ import com.purna.model.Post;
 import com.purna.repository.PostRepository;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-
 @Service
 @Slf4j
 public class PostService {
-
 	
 	@Autowired
 	private PostRepository postRepository;
-	
-	@Autowired
-	private WebClient webClient;
+
 	@Autowired
 	private WebClient.Builder webClientBuilder;
 	
@@ -73,15 +69,33 @@ public class PostService {
 					log.error("Error fetching comments: Service is offline", e);
 					commentResult = "Comments service is offline";
 			}else{
-				log.error("Error fetching comments for post {}: {}", id, e);
+				log.error("Error fetching comments for post {}: {}", id, e);  
 			}
 
 		}
 		log.info("Comment Result: {}",commentResult);
 
-		Long userId = postResult.get().getUserId();
-		
 
+		Object CommentReplyResult = null;
+		try {
+			String CommentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentsReplyByPostId?postId="+id;
+			CommentReplyResult = webClientBuilder.build().get()
+					.uri(CommentReplyUrl)
+					.retrieve()
+					.bodyToMono(Object.class)
+					.block();	
+		} catch (WebClientResponseException e) {
+			if(e.getCause() instanceof java.net.ConnectException) {
+				log.error("Error fetching commentReplys: Service is offline",e);
+				CommentReplyResult = "CommentReplys service is offline";
+			}else {
+				log.error("Error fetching comments for post {}: {}",id,e);
+			}
+		}
+		log.info("CommentReply Result; {}",CommentReplyResult);
+
+
+		Long userId = postResult.get().getUserId();
 		Object likesResult = null;
 		try {
 			likesResult = webClientBuilder.build().get()
@@ -111,6 +125,7 @@ public class PostService {
 		map.put("message", "fetched Successfully");
 		map.put("PostResult", postResult.get());
 		map.put("commentResult", commentResult);
+		map.put("CommentReplyResult", CommentReplyResult);
 		map.put("likesResult",likesResult);
 		 return map;
 	}
@@ -147,7 +162,4 @@ public class PostService {
 			throw new RuntimeException("Post with given Id :"+postId+" not found");
 		}
 	}
-	
-
-
 }

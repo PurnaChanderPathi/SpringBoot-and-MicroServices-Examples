@@ -29,11 +29,12 @@ public class CommentService {
 	public Comment addComment(Comment comment) {
 		return commentRepository.save(comment);
 	}
-
 	
+
 	public List<Comment> getCommentsByPostId(Long postId){
 		return commentRepository.findByPostId(postId);
 	}
+	
 	
 	public void deleteComment(Long commentId) {
 		commentRepository.deleteById(commentId);

@@ -1,6 +1,8 @@
 package com.purna.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,19 @@ public class CommentReplyController {
 	@Autowired
 	private CommentReplyService commentReplyService;
 	
+	Map<String, Object> response = new HashMap<>();
+	
 	@PostMapping("/addCommentReply")
 	public ResponseEntity<CommentReply> addCommentReply(@RequestBody CommentReply commentReply){
 		return ResponseEntity.ok(commentReplyService.addComment(commentReply));
 	}
+	
+	@GetMapping("/getCommentsReplyByPostId")
+	public ResponseEntity<Map<String, Object>> getCommentReplysByPostId(@RequestParam Long postId){
+		Map<String, Object> response = commentReplyService.getCommentReplyByPostId(postId);
+		return ResponseEntity.ok().body(response);
+	}
+	
 	
 	@GetMapping("/getAllCommentReplys/{commentId}")
 	public ResponseEntity<List<CommentReply>> getCommentReplyByCommentId(@PathVariable Long commentId){

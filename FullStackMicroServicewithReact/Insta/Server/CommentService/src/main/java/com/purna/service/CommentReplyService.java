@@ -1,11 +1,12 @@
 package com.purna.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.purna.model.CommentReply;
 import com.purna.repository.CommentReplyRepository;
 
@@ -14,6 +15,8 @@ public class CommentReplyService {
 	
 	@Autowired
 	private CommentReplyRepository replyRepository;
+	
+	Map<String, Object> response = new HashMap<>();
 	
 	public CommentReply addComment(CommentReply commentReply) {
 		return replyRepository.save(commentReply);
@@ -25,6 +28,19 @@ public class CommentReplyService {
 	
 	public List<CommentReply> getCommentReplyByCommentIdAndPostId(Long commentId, Long postId){
 		return replyRepository.findByCommentIdAndPostId(commentId,postId);
+	}
+		
+	public Map<String, Object> getCommentReplyByPostId(Long postId){
+		List<CommentReply> CommentsResults = replyRepository.findByPostId(postId);
+		if(CommentsResults.isEmpty()) {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", "no comments found with postId :"+postId);
+		}else {
+			response.put("status", HttpStatus.OK.value());
+			response.put("message", "CommentReplys Fetched Successfully...!");
+			response.put("CommentsResults", CommentsResults);
+		}
+		return response;
 	}
 	
 	
