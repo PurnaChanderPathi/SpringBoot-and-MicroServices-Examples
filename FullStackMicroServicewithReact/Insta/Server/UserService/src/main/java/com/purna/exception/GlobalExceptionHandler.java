@@ -1,5 +1,6 @@
 package com.purna.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.net.URI;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNameOrOtpDoesnotMatchedException.class)
@@ -30,5 +32,12 @@ public class GlobalExceptionHandler {
         problemDetail.setStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setType(URI.create("/error"));
         return problemDetail;
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        // Log the exception (optional)
+        log.error("User not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }

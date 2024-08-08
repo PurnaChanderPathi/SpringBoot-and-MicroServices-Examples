@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,12 +37,34 @@ public class CommentService {
 		return commentRepository.findByPostId(postId);
 	}
 	
-	
-	public void deleteComment(Long commentId) {
-		commentRepository.deleteById(commentId);
+	public Map<String, Object> deleteComment(Long commentId) {
+		Comment findById = commentRepository.findById(commentId).get();
+		if(findById!=null){
+			commentRepository.deleteById(commentId);
+		}
+		String commentReplyUrl = "http://localhost:9197/api/v1/commentsReply/deleteByCommentId/"+commentId;
+		Object commentReplyResult = null;
+		try {
+			commentReplyResult = webClientBuilder.build().delete()
+					.uri(commentReplyUrl)
+					.retrieve()
+					.bodyToMono(Object.class)
+					.block();
+		}catch (WebClientResponseException e){
+			if(e.getCause() instanceof java.net.ConnectException){
+				log.error("Error Deleting commentReply: Service is offline", e);
+				commentReplyResult = "CommentReply service is offline";
+			}else{
+				log.error("Error Deleting commentReply with commentId {}",commentId, e);
+			}
+		}
+		map.put("status",HttpStatus.OK.value());
+		map.put("message","Comment with given Id: "+commentId+" is deleted");
+		map.put("commentReplyResult",commentReplyResult);
+		return map;
 	}
-	
-	public Comment updateComment(Long commentId,Comment comment) {
+
+	public Comment updateComment(Long commentId, Comment comment) {
 		Optional<Comment> findById = commentRepository.findById(commentId);
 		if(findById.isPresent()) {
 			Comment existingComment = findById.get();
@@ -88,4 +112,19 @@ public class CommentService {
 			return map;
 	}
 
+	@Transactional
+	public Map<String, Object> deleteCommentByPostId(Long postId) {
+		List<Comment> findByPostId = commentRepository.findByPostId(postId);
+		if(findByPostId.isEmpty()){
+			map.put("status",HttpStatus.NOT_FOUND.value());
+			map.put("message","Comment details not found with given postId: "+postId);
+		}else{
+			for (Comment deleteComment : findByPostId){
+				commentRepository.deleteByPostId(deleteComment.getPostId());
+				map.put("status",HttpStatus.OK.value());
+				map.put("message","Comment details deleted with given postId: "+postId);
+			}
+		}
+		return map;
+	}
 }

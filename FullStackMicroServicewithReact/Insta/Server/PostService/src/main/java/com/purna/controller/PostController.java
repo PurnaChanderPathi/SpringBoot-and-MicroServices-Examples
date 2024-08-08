@@ -24,22 +24,41 @@ public class PostController {
 	@Autowired
 	private PostService postService;
 	
+//	@PostMapping("/createPost")
+//	public ResponseEntity<Post> createPost(
+//			@RequestParam("title") String title,
+//			@RequestParam("content") String content,
+//			@RequestParam("userId") Long userId,
+//			@RequestParam(value = "image", required = false) MultipartFile image
+//			) throws IOException{
+//		Post post = new Post();
+//		post.setUserId(userId);
+//		post.setTitle(title);
+//		post.setContent(content);
+//
+//		if(image != null && !image.isEmpty()) {
+//			post.setImage(image.getBytes());
+//		}
+//		return ResponseEntity.ok(postService.savePost(post));
+//	}
+
 	@PostMapping("/createPost")
-	public ResponseEntity<Post> createPost(
+	public ResponseEntity<Map<String,Object>> createPost(
 			@RequestParam("title") String title,
 			@RequestParam("content") String content,
 			@RequestParam("userId") Long userId,
 			@RequestParam(value = "image", required = false) MultipartFile image
-			) throws IOException{
+	) throws IOException {
 		Post post = new Post();
 		post.setUserId(userId);
 		post.setTitle(title);
 		post.setContent(content);
-		
+
 		if(image != null && !image.isEmpty()) {
 			post.setImage(image.getBytes());
 		}
-		return ResponseEntity.ok(postService.savePost(post));
+		Map<String,Object> savePost = postService.savePost(post);
+		return ResponseEntity.ok().body(savePost);
 	}
 	
 	@GetMapping("/getAllPosts")
@@ -52,16 +71,24 @@ public class PostController {
 		Map<String, Object> map =  postService.findById(id);
 		return ResponseEntity.ok().body(map);
 	}
+
+	@GetMapping("/getByTitle/{title}")
+	public ResponseEntity<Map<String,Object>> getPostByTitle(@PathVariable String title){
+		Map<String,Object> response = postService.findByTitle(title);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/getByTitle")
+	public ResponseEntity<Map<String,Object>> getPostByTitles(@RequestParam String query){
+		Map<String,Object> response = postService.findByTitle(query);
+		return ResponseEntity.ok().body(response);
+	}
+
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePost(@PathVariable Long id){
-		Map<String, Object> findByIdToDelete = postService.findById(id);
-		if(!findByIdToDelete.isEmpty()) {
-			postService.deletePost(id);
-		}else {
-			throw new RuntimeException("Post not found with given id :"+id);
-		}
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<Map<String,Object>> deletePost(@PathVariable Long id){
+		Map<String, Object> result = postService.deletePost(id);
+		return ResponseEntity.ok().body(result);
 	}
 	
 	@PutMapping("/editPost")

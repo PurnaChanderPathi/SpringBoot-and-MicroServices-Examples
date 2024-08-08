@@ -52,10 +52,27 @@ public class CommentReplyController {
 		return ResponseEntity.ok().body(getCommentReplys);
 	}
 	
-	@DeleteMapping("/deleteCommentReply/{commentReplyId}")
-	public ResponseEntity<Void> deleteCommentReply(@PathVariable Long commentReplyId){
-		commentReplyService.deleteById(commentReplyId);
-		return ResponseEntity.noContent().build();
+//	@DeleteMapping("/deleteCommentReply/{commentReplyId}")
+//	public ResponseEntity<Void> deleteCommentReply(@PathVariable Long commentReplyId){
+//		commentReplyService.deleteById(commentReplyId);
+//		return ResponseEntity.noContent().build();
+//	}
+	@DeleteMapping("/{commentReplyId}")
+	public ResponseEntity<Map<String,Object>> deleteCommentReply(@PathVariable Long commentReplyId){
+		Map<String,Object> response = commentReplyService.deleteById(commentReplyId);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@DeleteMapping("/deleteByCommentId/{commentId}")
+	public ResponseEntity<Map<String,Object>> deleteByCommentId(@PathVariable Long commentId){
+		Map<String,Object> response = commentReplyService.deleteByCommentId(commentId);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@DeleteMapping("/deleteByPostId/{postId}")
+	public ResponseEntity<Map<String,Object>> deleteByPostId(@PathVariable Long postId){
+		Map<String,Object> response = commentReplyService.deleteByPostId(postId);
+		return ResponseEntity.ok().body(response);
 	}
 	
 	@PutMapping("/editCommentReply/{commentReplyId}")

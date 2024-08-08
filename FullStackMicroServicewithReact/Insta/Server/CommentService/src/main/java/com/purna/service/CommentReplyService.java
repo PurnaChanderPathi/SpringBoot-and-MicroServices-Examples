@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class CommentReplyService {
 	public List<CommentReply> getCommentReplyByCommentId(Long commentId){
 		return replyRepository.findByCommentId(commentId);
 	}
+
 	
 	public List<CommentReply> getCommentReplyByCommentIdAndPostId(Long commentId, Long postId){
 		return replyRepository.findByCommentIdAndPostId(commentId,postId);
@@ -44,9 +47,56 @@ public class CommentReplyService {
 	}
 	
 	
-	public void deleteById(Long commentReplyId) {
-		replyRepository.deleteById(commentReplyId);
+	//public void deleteById(Long commentReplyId) {
+	//	replyRepository.deleteById(commentReplyId);
+	//}
+
+	public Map<String,Object> deleteById(Long commentReplyId){
+		CommentReply findById = replyRepository.findById(commentReplyId).get();
+		if(findById!=null){
+			replyRepository.deleteById(commentReplyId);
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","CommentReply with given id: "+commentReplyId+" is Deleted...!");
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","CommentReply with given id:"+commentReplyId+ "is Not Found");
+		}
+		return response;
 	}
+
+	@Transactional
+	public Map<String,Object> deleteByCommentId(Long commentId){
+		List<CommentReply> findById = (List<CommentReply>) replyRepository.findByCommentId(commentId);
+		if(findById!=null){
+			for (CommentReply delComment : findById){
+				replyRepository.deleteByCommentId(delComment.getCommentId());
+			}
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","CommentReply with given CommentId: "+commentId+" is Deleted...!");
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","CommentReply with given CommentId:"+commentId+ "is Not Found");
+		}
+		return response;
+	}
+
+	@Transactional
+	public Map<String,Object> deleteByPostId(Long postId){
+		List<CommentReply> findById =  replyRepository.findByPostId(postId);
+		if(findById!=null){
+			for (CommentReply delComment : findById){
+				replyRepository.deleteByPostId(delComment.getPostId());
+			}
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","CommentReply with given postId: "+postId+" is Deleted...!");
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","CommentReply with given postId:"+postId+ "is Not Found");
+		}
+		return response;
+	}
+
+
 	
 	public CommentReply editCommentReply(Long commentReplyId, CommentReply commentReply) {
 		Optional<CommentReply> findByCommentReplyId = replyRepository.findById(commentReplyId);

@@ -7,6 +7,7 @@ import com.purna.config.MailConfig;
 import com.purna.dto.ChangePasswordDto;
 import com.purna.exception.NewPasswordException;
 import com.purna.exception.UserNameOrOtpDoesnotMatchedException;
+import com.purna.exception.UserNotFoundException;
 import com.purna.model.ForgotPassword;
 import com.purna.repository.ForgotPasswordRepoistory;
 import jakarta.mail.MessagingException;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.purna.model.User;
 import com.purna.repository.UserRepository;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
 @Slf4j
@@ -35,18 +38,54 @@ public class UserService {
 	@Autowired
 	private ForgotPasswordRepoistory forgotPasswordRepoistory;
 
+	@Autowired
+	private WebClient.Builder webClientBuilder;
+
 	Map<String, Object> map = new HashMap<>();
 	
-	public User saveUser(User user,MultipartFile profilePhoto) throws IOException {
+//	public User saveUser(User user,MultipartFile profilePhoto) throws IOException {
+//		if(profilePhoto != null && !profilePhoto.isEmpty()) {
+//			user.setProfilePhoto(profilePhoto.getBytes());
+//		}
+//		return userRepository.save(user);
+//	}
+
+	public Map<String,Object> saveUser(User user, MultipartFile profilePhoto) throws IOException {
 		if(profilePhoto != null && !profilePhoto.isEmpty()) {
 			user.setProfilePhoto(profilePhoto.getBytes());
 		}
-		return userRepository.save(user);
+		User saveUser = userRepository.save(user);
+
+		String username = saveUser.getUsername();
+		Long userId = saveUser.getUserId();
+		String notificationUrl = "http://localhost:2020/api/v1/notifications/userRegistration?username="+username+"&userId="+userId;
+		Object notificationResult = null;
+		try {
+			notificationResult = webClientBuilder.build().post()
+					.uri(notificationUrl)
+					.retrieve()
+					.bodyToMono(Object.class)
+					.block();
+		}catch (WebClientResponseException e){
+			if (e.getCause() instanceof java.net.ConnectException) {
+				log.error("Error Notifying Notification", e);
+				notificationResult = "Notification service is offline";
+			} else {
+				log.error("Error Notifying Notification userId {} with username; {}", userId,username, e);
+			}
+		}
+
+		map.put("status",HttpStatus.OK.value());
+		map.put("message","User Details Saved successfully...!");
+		map.put("User Details",saveUser);
+		map.put("notificationResult",notificationResult);
+
+		return map;
 	}
 
 	
-	public Optional<User>  findByUsername(String username) {
-		return Optional.ofNullable(userRepository.findByUsername(username));
+	public Optional<Optional<User>> findByUsername(String username) {
+		return Optional.ofNullable(Optional.ofNullable(userRepository.findByUsername(username)));
 	}
 	
 	
@@ -55,6 +94,27 @@ public class UserService {
 		return userRepository.findByEmail(email);
 		
 	}
+
+	public User findByUserId(Long userId) {
+		return userRepository.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException("User with given Id: " + userId + " not found"));
+	}
+
+
+
+//	public Map<String,Object> findById(Long userId){
+//		Map<String,Object> response = new HashMap<>();
+//		Optional<User> getUserDetails = userRepository.findById(userId);
+//		if(getUserDetails.isPresent()){
+//			response.put("status",HttpStatus.FOUND.value());
+//			response.put("message","User Details Fetched Successfully...!");
+//			response.put("UserDetails",getUserDetails);
+//		}else{
+//			response.put("status",HttpStatus.NOT_FOUND.value());
+//			response.put("message","User Details with given UserId: "+userId+" Not Found");
+//		}
+//		return response;
+//	}
 	
 	public List<User> findAllUsers(){
 		return userRepository.findAll();
@@ -165,4 +225,6 @@ public class UserService {
 		}
 		return map;
 	}
+
+
 }

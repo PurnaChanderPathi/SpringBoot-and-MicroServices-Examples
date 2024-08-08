@@ -37,4 +37,10 @@ public class LikeController {
 //		return ResponseEntity.ok("Post ubliked Successfully");
 //	}
 
+	@DeleteMapping("/{postId}")
+	public ResponseEntity<Map<String,Object>> deleteByPostId(@PathVariable Long postId){
+		Map<String,Object> result = likeService.deleteByPostId(postId);
+		return ResponseEntity.ok().body(result);
+	}
+
 }

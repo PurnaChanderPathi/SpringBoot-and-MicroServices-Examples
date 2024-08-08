@@ -44,15 +44,27 @@ public class CommentController {
 		return ResponseEntity.ok().body(map);
 	}
 	
-	@DeleteMapping("/{commentId}")
-	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
-		commentService.deleteComment(commentId);
-		return ResponseEntity.noContent().build();
-	}
+//	@DeleteMapping("/{commentId}")
+//	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
+//		commentService.deleteComment(commentId);
+//		return ResponseEntity.noContent().build();
+//	}
 	
 	@PutMapping("/editComment/{commentId}")
 	public ResponseEntity<Comment> editComment(@PathVariable Long commentId, @RequestBody Comment comment){
 		return ResponseEntity.ok(commentService.updateComment(commentId, comment));
+	}
+
+	@DeleteMapping("/{commentId}")
+	public ResponseEntity<Map<String,Object>> deleteComment(@PathVariable Long commentId){
+		Map<String,Object> response = commentService.deleteComment(commentId);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@DeleteMapping("/deleteByPostId/{postId}")
+	public ResponseEntity<Map<String,Object>> deleteByPostId(@PathVariable Long postId){
+		Map<String,Object> response = commentService.deleteCommentByPostId(postId);
+		return ResponseEntity.ok().body(response);
 	}
 
 }

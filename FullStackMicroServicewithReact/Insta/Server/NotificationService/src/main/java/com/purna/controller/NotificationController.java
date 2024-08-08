@@ -45,7 +45,7 @@ public class NotificationController {
 			@RequestParam String postTitle){
 		notificationService.notifyNewPost(username, userId, postTitle);
 		map.put("status", HttpStatus.OK.value());
-		map.put("messaage", "New Post Notification Sent...!");
+		map.put("message", "New Post Notification Sent...!");
 		return ResponseEntity.ok().body(map);
 	}
 	

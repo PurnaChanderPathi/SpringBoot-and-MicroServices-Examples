@@ -1,8 +1,11 @@
 package com.purna.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,22 @@ public class LikeService {
 			return map;
 		}
 
+	}
+
+	@Transactional
+	public Map<String,Object> deleteByPostId(Long postId){
+		List<Like>  getLikeByPostId = likeRepository.findByPostId(postId);
+		if(getLikeByPostId.isEmpty()){
+			map.put("status",HttpStatus.NOT_FOUND.value());
+			map.put("message","error fetching Likes with given postid :"+postId+" is not found");
+		}else{
+			for(Like getLike : getLikeByPostId){
+				likeRepository.deleteByPostId(getLike.getPostId());
+			}
+			map.put("status",HttpStatus.OK.value());
+			map.put("message","Likes with given PostId: "+postId+" is Deleted..!");
+		}
+		return map;
 	}
 
 }
