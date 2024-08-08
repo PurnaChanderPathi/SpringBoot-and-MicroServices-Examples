@@ -23,24 +23,6 @@ public class PostController {
 	
 	@Autowired
 	private PostService postService;
-	
-//	@PostMapping("/createPost")
-//	public ResponseEntity<Post> createPost(
-//			@RequestParam("title") String title,
-//			@RequestParam("content") String content,
-//			@RequestParam("userId") Long userId,
-//			@RequestParam(value = "image", required = false) MultipartFile image
-//			) throws IOException{
-//		Post post = new Post();
-//		post.setUserId(userId);
-//		post.setTitle(title);
-//		post.setContent(content);
-//
-//		if(image != null && !image.isEmpty()) {
-//			post.setImage(image.getBytes());
-//		}
-//		return ResponseEntity.ok(postService.savePost(post));
-//	}
 
 	@PostMapping("/createPost")
 	public ResponseEntity<Map<String,Object>> createPost(

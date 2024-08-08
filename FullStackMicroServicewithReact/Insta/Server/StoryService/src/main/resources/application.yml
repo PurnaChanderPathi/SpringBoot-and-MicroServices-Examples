@@ -1,0 +1,15 @@
+server:
+  port: 1997
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: Purna@123
+    url: jdbc:mysql://localhost:3306/projecti
+    username: Purnachander
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  application:
+    name: Story-Service

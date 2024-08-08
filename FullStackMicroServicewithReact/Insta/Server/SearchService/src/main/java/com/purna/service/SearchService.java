@@ -1,6 +1,5 @@
 package com.purna.service;
 
-import com.purna.config.WebClientConfig;
 import com.purna.dto.PostDTO;
 import com.purna.dto.SearchResults;
 import com.purna.dto.UserDTO;
@@ -9,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class SearchService {
+
     @Autowired
     private WebClient.Builder webClientBuilder;
+
+    Map<String,Object> response = new HashMap<>();
 
     private final WebClient userServiceClient;
     private final WebClient postServiceClient;
@@ -34,16 +37,12 @@ public class SearchService {
                 .collectList();
     }
 
-    public Mono<List<PostDTO>> searchPosts(String query) {
+    public Mono<List<PostDTO>> searchPosts(String query){
         return postServiceClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/api/v1/posts/getByTitle")
-                        .queryParam("query", query)
-                        .build())
+                .uri("/api/v1/posts/getByTitle?query={query}",query)
                 .retrieve()
                 .bodyToFlux(PostDTO.class)
-                .collectList()
-                .doOnNext(posts -> log.info("Received posts: {}", posts))
-                .doOnError(error -> log.error("Error occurred while fetching posts", error));
+                .collectList();
     }
 
     public Mono<SearchResults> search(String query){

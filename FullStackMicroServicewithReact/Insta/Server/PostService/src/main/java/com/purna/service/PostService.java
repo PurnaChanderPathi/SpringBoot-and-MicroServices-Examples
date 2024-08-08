@@ -30,9 +30,6 @@ public class PostService {
 	private WebClient.Builder webClientBuilder;
 	
 	Map<String,Object> map=new HashMap<>();
-//	public Post savePost(Post post) {
-//		return postRepository.save(post);
-//	}
 
 	public Map<String, Object> savePost(Post post) {
 		Map<String, Object> responseMap = new HashMap<>();

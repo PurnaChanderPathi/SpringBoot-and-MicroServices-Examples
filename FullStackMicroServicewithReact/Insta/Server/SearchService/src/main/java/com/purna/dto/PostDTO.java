@@ -12,6 +12,6 @@ public class PostDTO {
     private Long postId;
     private String title;
     private String content;
-    private String imageUrl; // URL or base64 string
+    private String imageUrl;
     private Long userId;
 }

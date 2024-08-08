@@ -1,18 +1,13 @@
 package com.purna.controller;
 
-import com.purna.dto.PostDTO;
 import com.purna.dto.SearchResults;
 import com.purna.dto.UserDTO;
 import com.purna.service.SearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,4 +52,28 @@ public class SearchController {
                 })
                 .defaultIfEmpty(ResponseEntity.noContent().build());
     }
+
+    @GetMapping("/getPost")
+    public Mono<ResponseEntity<Map<String, Object>>> getPost(@RequestParam String query) {
+        return searchService.search(query)
+                .map(searchResults -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", HttpStatus.OK.value());
+                    response.put("message", "Fetching data is success");
+                    response.put("result", searchResults);
+                    return ResponseEntity.ok().body(response);
+                })
+                .onErrorResume(error -> {
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("status", HttpStatus.NOT_FOUND.value());
+                    errorResponse.put("message", "Fetching with given query is not found");
+                    errorResponse.put("error", error.getMessage());
+                    return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse));
+                });
+    }
+
+
+
+
+
 }
