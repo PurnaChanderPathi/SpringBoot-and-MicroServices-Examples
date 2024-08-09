@@ -324,15 +324,15 @@ public class PostService {
 		}
 	}
 
-	public Map<String,Object> findByTitle(String title){
-		List<Post> PostResults = postRepository.findByTitle(title);
-		if(PostResults==null){
-			map.put("status",HttpStatus.NOT_FOUND.value());
-			map.put("message","Post Details with given Title: "+title+" not Found");
-		}else{
+	public Map<String,Object> findPostByTitle(String query){
+		Optional<List<Post>> findByTitle = postRepository.findByTitle(query);
+		if(findByTitle.isPresent()){
 			map.put("status",HttpStatus.OK.value());
-			map.put("message","Post Details found with given Title: "+title);
-			map.put("PostResults",PostResults);
+			map.put("message","Post details found with given title: "+query);
+			map.put("query",findByTitle);
+		}else{
+			map.put("status",HttpStatus.NOT_FOUND.value());
+			map.put("message","Post details not found with given title: "+query);
 		}
 		return map;
 	}

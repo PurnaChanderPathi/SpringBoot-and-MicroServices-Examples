@@ -1,5 +1,7 @@
 package com.purna.dto;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,9 @@ public class PostDTO {
     private Long postId;
     private String title;
     private String content;
-    private String imageUrl;
+    @Lob
+    @Column(columnDefinition = "longblob")
+    private byte[] image;
+
     private Long userId;
 }

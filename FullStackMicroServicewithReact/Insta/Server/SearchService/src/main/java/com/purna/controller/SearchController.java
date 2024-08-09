@@ -1,5 +1,6 @@
 package com.purna.controller;
 
+import com.purna.dto.PostDTO;
 import com.purna.dto.SearchResults;
 import com.purna.dto.UserDTO;
 import com.purna.service.SearchService;
@@ -24,11 +25,6 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    @GetMapping
-    public Mono<SearchResults> searchUser(@RequestParam String query){
-        return searchService.search(query);
-    }
-
     @GetMapping("/find")
     public Mono<ResponseEntity<Map<String, Object>>> searchUsers(@RequestParam String query) {
         Mono<List<UserDTO>> usersMono = searchService.searchUsers(query);
@@ -41,39 +37,68 @@ public class SearchController {
                 .defaultIfEmpty(ResponseEntity.noContent().build());
     }
 
-    @GetMapping("/getByTitle")
-    public Mono<ResponseEntity<Map<String, Object>>> getPostsByTitle(@RequestParam String query) {
+    @GetMapping("/findPosts")
+    public Mono<ResponseEntity<Map<String, Object>>> searchPost(@RequestParam String query) {
         return searchService.searchPosts(query)
-                .doOnNext(posts -> log.info("Controller received posts: {}", posts))
                 .map(posts -> {
                     Map<String, Object> response = new HashMap<>();
                     response.put("posts", posts);
                     return ResponseEntity.ok(response);
                 })
+                .onErrorResume(e -> {
+                    // Handle server offline error
+                    if (e.getMessage().contains("Post server is offline")) {
+                        Map<String, Object> errorResponse = new HashMap<>();
+                        errorResponse.put("message", "Post server is offline");
+                        return Mono.just(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse));
+                    }
+                    // Handle unexpected errors or other cases
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", "Post details with the given title not found");
+                    return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse));
+                })
                 .defaultIfEmpty(ResponseEntity.noContent().build());
     }
 
-    @GetMapping("/getPost")
-    public Mono<ResponseEntity<Map<String, Object>>> getPost(@RequestParam String query) {
-        return searchService.search(query)
-                .map(searchResults -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("status", HttpStatus.OK.value());
-                    response.put("message", "Fetching data is success");
-                    response.put("result", searchResults);
-                    return ResponseEntity.ok().body(response);
+
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Map<String, Object>> getPostById(@PathVariable Long id){
+        Object result = searchService.searchById(id);
+        if(result!=null){
+            log.info("result: {}",result);
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Post details found with postId: "+id);
+            response.put("result",result);
+        }else{
+            response.put("status",HttpStatus.NOT_FOUND.value());
+            response.put("message","Post details not found with postId: "+id);
+        }
+    return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/searchByTitle")
+    public Mono<ResponseEntity<?>> searchByTitle(@RequestParam String query) {
+        return searchService.searchByTitle(query)
+                .map(postResults -> {
+                    if (postResults == null || postResults.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body("No posts found for the query.");
+                    } else {
+                        return ResponseEntity.ok(postResults);
+                    }
                 })
-                .onErrorResume(error -> {
-                    Map<String, Object> errorResponse = new HashMap<>();
-                    errorResponse.put("status", HttpStatus.NOT_FOUND.value());
-                    errorResponse.put("message", "Fetching with given query is not found");
-                    errorResponse.put("error", error.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse));
+                .onErrorResume(e -> {
+                    log.error("Error fetching posts", e);
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Error Fetching Post"));
                 });
     }
 
+    @GetMapping("/PostsOrUsers")
+    public Mono<SearchResults> search(@RequestParam String query) {
+        Mono<List<UserDTO>> users = searchService.searchUsers(query);
+        Mono<List<Object>> posts = searchService.searchPosts(query);
 
-
-
-
+        return Mono.zip(users, posts, SearchResults::new);
+    }
 }

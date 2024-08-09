@@ -12,5 +12,6 @@ import java.util.List;
 public class SearchResults {
 
     private List<UserDTO> users;
-    private List<PostDTO> posts;
+    private List<Object> posts;
+
 }

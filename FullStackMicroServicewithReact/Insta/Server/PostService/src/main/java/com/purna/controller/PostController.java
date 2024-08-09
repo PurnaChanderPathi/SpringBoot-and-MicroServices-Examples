@@ -54,18 +54,6 @@ public class PostController {
 		return ResponseEntity.ok().body(map);
 	}
 
-	@GetMapping("/getByTitle/{title}")
-	public ResponseEntity<Map<String,Object>> getPostByTitle(@PathVariable String title){
-		Map<String,Object> response = postService.findByTitle(title);
-		return ResponseEntity.ok().body(response);
-	}
-
-	@GetMapping("/getByTitle")
-	public ResponseEntity<Map<String,Object>> getPostByTitles(@RequestParam String query){
-		Map<String,Object> response = postService.findByTitle(query);
-		return ResponseEntity.ok().body(response);
-	}
-
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Map<String,Object>> deletePost(@PathVariable Long id){
@@ -85,6 +73,12 @@ public class PostController {
 		post.setUserId(userId);
 		post.setContent(content);
 		return ResponseEntity.ok(postService.editPost(postId, post,image));
+	}
+
+	@GetMapping("/getByTitle")
+	public ResponseEntity<Map<String,Object>> findPostByTitle(@RequestParam String query){
+		Map<String,Object> response = postService.findPostByTitle(query);
+		return ResponseEntity.ok().body(response);
 	}
 
 }

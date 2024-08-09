@@ -1,12 +1,12 @@
 package com.purna.service;
 
-import com.purna.dto.PostDTO;
-import com.purna.dto.SearchResults;
 import com.purna.dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.List;
@@ -37,18 +37,71 @@ public class SearchService {
                 .collectList();
     }
 
-    public Mono<List<PostDTO>> searchPosts(String query){
+    public Mono<List<Object>> searchPosts(String query) {
         return postServiceClient.get()
-                .uri("/api/v1/posts/getByTitle?query={query}",query)
+                .uri("/api/v1/posts/getByTitle?query={query}", query)
                 .retrieve()
-                .bodyToFlux(PostDTO.class)
-                .collectList();
+                .bodyToFlux(Object.class)
+                .collectList()
+                .onErrorResume(WebClientRequestException.class, e -> {
+                    if (e.getCause() instanceof java.net.ConnectException) {
+                        // Handle server offline scenario
+                        return Mono.error(new RuntimeException("Post server is offline"));
+                    } else {
+                        // Handle not found scenario
+                        return Mono.empty();
+                    }
+                });
     }
 
-    public Mono<SearchResults> search(String query){
-        Mono<List<UserDTO>> users = searchUsers(query);
-        Mono<List<PostDTO>> posts = searchPosts(query);
+    public Mono<List<Object>> searchByTitle(String query) {
+        //String postUrl = "http://localhost:9196/api/v1/posts/getByTitle/" + query;
 
-        return Mono.zip(users,posts,(userList,postList)-> new SearchResults(userList,postList));
+        return webClientBuilder.build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host("localhost")
+                        .port(9196)
+                        .path("/api/v1/posts/getByTitle")
+                        .queryParam("query",query)
+                        .build())
+                .retrieve()
+                .bodyToFlux(Object.class)
+                .collectList()
+                .onErrorResume(WebClientRequestException.class, e -> {
+                    if (e.getCause() instanceof java.net.ConnectException) {
+                        log.error("Error Fetching Post", e);
+                        return Mono.error(new RuntimeException("Post service is offline"));
+                    } else {
+                        log.error("Error Fetching Post with postTitle {}: {}", query, e);
+                        return Mono.error(new RuntimeException("Error Fetching Post"));
+                    }
+                });
     }
+
+
+    public Object searchById(Long id){
+            String postUrl = "http://localhost:9196/api/v1/posts/"+id;
+            Object postResult = null;
+            try {
+                postResult = webClientBuilder.build().get()
+                        .uri(postUrl)
+                        .retrieve()
+                        .bodyToMono(Object.class)
+                        .block();
+            }catch (WebClientRequestException e){
+                if(e.getCause() instanceof java.net.ConnectException){
+                    log.error("Error Fetching Post", e);
+                    response.put("message", "Post service is offline");
+                    response.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+                }else{
+                    log.error("Error Fetching Post with postId {}: {}", id, e);
+                    response.put("message", "Error Fetching  Post");
+                    response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                }
+            }
+            return postResult;
+    }
+
 }

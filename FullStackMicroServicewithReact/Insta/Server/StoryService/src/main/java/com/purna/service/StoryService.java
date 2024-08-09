@@ -3,7 +3,6 @@ package com.purna.service;
 import com.purna.model.Story;
 import com.purna.repository.StoryRepository;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,5 +35,4 @@ public class StoryService {
     public List<Story> getUserStories(Long userId){
         return storyRepository.findAllByUserIdAndExpiresAtAfter(userId,LocalDateTime.now());
     }
-
 }
