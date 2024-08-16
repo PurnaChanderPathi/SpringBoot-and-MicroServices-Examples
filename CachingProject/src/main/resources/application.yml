@@ -1,0 +1,19 @@
+server:
+  port: 9000
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: Purna@123
+    url: jdbc:mysql://localhost:3306/cachingproject
+    username: PurnaChander
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  cache:
+    caffeine:
+      spec: maximumSize=100,expireAfterAccess=10m
+
+
+
