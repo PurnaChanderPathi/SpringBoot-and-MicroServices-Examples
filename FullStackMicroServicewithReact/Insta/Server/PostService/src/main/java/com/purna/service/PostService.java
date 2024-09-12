@@ -113,8 +113,10 @@ public class PostService {
 			 map.put("Status", HttpStatus.NOT_FOUND.value());
 			 map.put("message", "Post not found");
 			 return map;
-		 }
-		String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
+		 }else{
+
+
+			 String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
 
 //		 String responseFinal=webClient.get().uri(url).header("Authorization",token).exchange().flatMap(
 //				 clientResponse -> {
@@ -204,6 +206,7 @@ public class PostService {
 		map.put("CommentReplyResult", CommentReplyResult);
 		map.put("likesResult",likesResult);
 		 return map;
+		 }
 	}
 	
 	public List<Post> findAll(){
