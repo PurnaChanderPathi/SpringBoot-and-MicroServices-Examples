@@ -99,7 +99,6 @@ public class PostService {
 		// Prepare response
 		responseMap.put("status", HttpStatus.OK.value());
 		responseMap.put("message", "Your Post is posted...!");
-		responseMap.put("UserDto",userDto);
 		responseMap.put("notificationResult", notificationResult);
 
 		return responseMap;
@@ -329,13 +328,13 @@ public class PostService {
 
 	public Map<String,Object> findPostByTitle(String query){
 		Optional<List<Post>> findByTitle = postRepository.findByTitle(query);
-		if(findByTitle.isPresent()){
+		if(findByTitle==null){
+			map.put("status",HttpStatus.NOT_FOUND.value());
+			map.put("message","Post details not found with given title: "+query);
+		}else{
 			map.put("status",HttpStatus.OK.value());
 			map.put("message","Post details found with given title: "+query);
 			map.put("query",findByTitle);
-		}else{
-			map.put("status",HttpStatus.NOT_FOUND.value());
-			map.put("message","Post details not found with given title: "+query);
 		}
 		return map;
 	}

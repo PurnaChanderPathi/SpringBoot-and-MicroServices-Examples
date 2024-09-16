@@ -1,0 +1,34 @@
+server:
+  port: 9194  # Gateway port
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+          routes:
+            - id: user-service-auth-route
+              uri: lb://USER-SERVICE  # Service ID registered in Eureka
+              predicates:
+                - Path=/api/v1/auth/**  # Match any request under `/api/v1/auth/`
+              filters:
+                - RewritePath=/api/v1/auth/(?<segment>.*), /api/v1/auth/${segment}  # Route directly to /api/v1/auth/ on User-Service
+
+            - id: user-service-users-route
+              uri: lb://USER-SERVICE  # Service ID registered in Eureka
+              predicates:
+                - Path=/api/v1/users/**  # Match any request under `/api/v1/users/`
+              filters:
+                - RewritePath=/api/v1/users/(?<segment>.*), /api/v1/users/${segment}  # Route directly to /api/v1/users/ on User-Service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # Eureka server location
+
+
+# Optional logging and debugging settings
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+

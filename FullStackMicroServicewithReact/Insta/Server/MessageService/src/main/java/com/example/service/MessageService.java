@@ -36,7 +36,7 @@ public class MessageService {
 
     public List<Message> getMessagesBetweenUsers(String senderId, String receiverId){
         List<String> ids = Arrays.asList(senderId,receiverId);
-        return messageRepository.findBySenderIdAndReceiverIdOrSenderIdAndReceiverId("1","2","2","1");
+        return messageRepository.findBySenderIdAndReceiverIdOrSenderIdAndReceiverId(senderId,receiverId,receiverId,senderId);
     }
 
 }

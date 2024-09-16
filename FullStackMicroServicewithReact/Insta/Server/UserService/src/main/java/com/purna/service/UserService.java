@@ -211,7 +211,6 @@ public class UserService {
 						this.forgotPasswordRepoistory.delete(findUser.get());
 						map.put("status",HttpStatus.OK.value());
 						map.put("message","updated password successfully..!");
-						map.put("result",getUser);
 					}
 				}else{
 					throw new UsernameNotFoundException("user not found with id : "+changePasswordDto.getEmail());
