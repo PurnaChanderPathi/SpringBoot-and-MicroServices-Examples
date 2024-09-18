@@ -51,9 +51,15 @@ public class CommentController {
 //		return ResponseEntity.noContent().build();
 //	}
 	
+//	@PutMapping("/editComment/{commentId}")
+//	public ResponseEntity<Comment> editComment(@PathVariable Long commentId, @RequestBody Comment comment){
+//		return ResponseEntity.ok(commentService.updateComment(commentId, comment));
+//	}
+
 	@PutMapping("/editComment/{commentId}")
-	public ResponseEntity<Comment> editComment(@PathVariable Long commentId, @RequestBody Comment comment){
-		return ResponseEntity.ok(commentService.updateComment(commentId, comment));
+	public ResponseEntity<Map<String,Object>> editComment(@PathVariable Long commentId, @RequestBody Comment comment){
+		Map<String,Object> result = commentService.updateComment(commentId,comment);
+		return ResponseEntity.ok().body(result);
 	}
 
 	@DeleteMapping("/{commentId}")

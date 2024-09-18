@@ -2,16 +2,11 @@ server:
   port: 9194  # Gateway port
 
 spring:
-  applcation:
+  application:
     name: api-gateway
   cloud:
     gateway:
       routes:
-        - id: IDENTITY-SERVICE
-          uri: lb://IDENTITY-SERVICE
-          predicates:
-            - Path=/auth/**
-
         - id: User-Service
           uri: lb://User-Service
           predicates:
@@ -43,6 +38,40 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: Like-Service
+          uri: lb://Like-Service
+          predicates:
+            - Path=/api/v1/likes/**
+          filters:
+            - AuthenticationFilter
+
+        - id: Follow-Service
+          uri: lb://Follow-Service
+          predicates:
+            - Path=/api/follow/**
+          filters:
+            - AuthenticationFilter
+
+        - id: Story-Service
+          uri: lb://Story-Service
+          predicates:
+            - Path=/api/stories/**
+          filters:
+            - AuthenticationFilter
+
+        - id: Search-Service
+          uri: lb://Search-Service
+          predicates:
+            - Path=/api/search/**
+          filters:
+            - AuthenticationFilter
+
+        - id: Message-Service
+          uri: lb://Message-Service
+          predicates:
+            - Path=/api/messages/**
+          filters:
+            - AuthenticationFilter
 
 eureka:
   instance:
@@ -52,6 +81,11 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
 
 
 

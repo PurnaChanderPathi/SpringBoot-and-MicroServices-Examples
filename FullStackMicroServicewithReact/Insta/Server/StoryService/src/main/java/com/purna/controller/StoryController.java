@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/stories")
+@RequestMapping("/api/stories")
 @Slf4j
 public class StoryController {
 
@@ -56,10 +56,23 @@ public class StoryController {
         }
     }
 
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Map<String,Object>> getStory(@PathVariable Long id){
+//        Map<String,Object> result = storyService.getStory(id);
+//        return ResponseEntity.ok().body(result);
+//    }
+
+
+//    @GetMapping("/user/{userId}")
+//    public ResponseEntity<List<Story>> getUserStories(@PathVariable Long userId){
+//        List<Story> stories = storyService.getUserStories(userId);
+//        return ResponseEntity.ok(stories);
+//    }
+
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Story>> getUserStories(@PathVariable Long userId){
-        List<Story> stories = storyService.getUserStories(userId);
-        return ResponseEntity.ok(stories);
+    public ResponseEntity<Map<String,Object>> getUserStories(@PathVariable Long userId){
+        Map<String,Object> result = storyService.getUserStories(userId);
+        return ResponseEntity.ok().body(result);
     }
 
     }

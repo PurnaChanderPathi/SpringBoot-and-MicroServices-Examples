@@ -7,9 +7,17 @@ spring:
     url: jdbc:mysql://localhost:3306/projecti
     username: PurnaChander
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
 
   application:
     name: Message-Service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+

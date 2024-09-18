@@ -48,6 +48,7 @@ public class LikeService {
 	}
 
 	public Map<String,Object> getLikesByUserIdAndPostId(Long userId, Long postId){
+		Map<String,Object> map = new HashMap<>();
 		Optional<Like> like = likeRepository.findByUserIdAndPostId(userId,postId);
 		if(like.isPresent()){
 			map.put("status",HttpStatus.FOUND.value());
@@ -56,7 +57,7 @@ public class LikeService {
 			return map;
 		}else{
 			map.put("status", HttpStatus.NOT_FOUND.value());
-			map.put("message","Not Found with given userId: "+userId+" and postId: "+postId);
+			map.put("message","Likes not found with given userId: "+userId+" and postId: "+postId);
 			return map;
 		}
 
@@ -67,7 +68,7 @@ public class LikeService {
 		List<Like>  getLikeByPostId = likeRepository.findByPostId(postId);
 		if(getLikeByPostId.isEmpty()){
 			map.put("status",HttpStatus.NOT_FOUND.value());
-			map.put("message","error fetching Likes with given postid :"+postId+" is not found");
+			map.put("message","Likes not found with given postId :"+postId);
 		}else{
 			for(Like getLike : getLikeByPostId){
 				likeRepository.deleteByPostId(getLike.getPostId());

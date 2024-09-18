@@ -23,43 +23,60 @@ public class CommentReplyService {
 	public CommentReply addComment(CommentReply commentReply) {
 		return replyRepository.save(commentReply);
 	}
-	
-	public List<CommentReply> getCommentReplyByCommentId(Long commentId){
-		return replyRepository.findByCommentId(commentId);
-	}
 
-	
-	public List<CommentReply> getCommentReplyByCommentIdAndPostId(Long commentId, Long postId){
-		return replyRepository.findByCommentIdAndPostId(commentId,postId);
-	}
-		
-	public Map<String, Object> getCommentReplyByPostId(Long postId){
-		List<CommentReply> CommentsResults = replyRepository.findByPostId(postId);
-		if(CommentsResults.isEmpty()) {
-			response.put("status", HttpStatus.NOT_FOUND.value());
-			response.put("message", "no comments found with postId :"+postId);
-		}else {
-			response.put("status", HttpStatus.OK.value());
-			response.put("message", "CommentReplys Fetched Successfully...!");
-			response.put("CommentsResults", CommentsResults);
+	public Map<String,Object> getCommentReplyByCommentId(Long commentId){
+		Map<String,Object> response = new HashMap<>();
+		List<CommentReply> commentReplys = replyRepository.findByCommentId(commentId);
+		if(!commentReplys.isEmpty()){
+			response.put("status",HttpStatus.FOUND.value());
+			response.put("message","CommentReply with CommentId :"+commentId+" found");
+			response.put("result",commentReplys);
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","CommentReply with CommentId :"+commentId+" not found");
 		}
 		return response;
 	}
-	
-	
-	//public void deleteById(Long commentReplyId) {
-	//	replyRepository.deleteById(commentReplyId);
-	//}
+
+	public Map<String,Object> getCommentReplyByCommentIdAndPostId(Long commentId, Long postId){
+		Map<String,Object> response = new HashMap<>();
+		List<CommentReply> getCommentReply = replyRepository.findByCommentIdAndPostId(commentId,postId);
+		if(getCommentReply.isEmpty()){
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","CommentReply with given commentId :"+commentId+" and postId :"+postId+" is not found");
+		}else{
+			response.put("status",HttpStatus.FOUND.value());
+			response.put("message","CommentReply with given commentId :"+commentId+" and postId :"+postId+" is found");
+			response.put("result",getCommentReply);
+		}
+		return response;
+	}
+
+	public Map<String, Object> getCommentReplyByPostId(Long postId) {
+		Map<String, Object> response = new HashMap<>();
+		List<CommentReply> commentsResults = replyRepository.findByPostId(postId);
+
+		if (commentsResults.isEmpty()) {
+			response.put("status", HttpStatus.NOT_FOUND.value());
+			response.put("message", "No comments found with postId: " + postId);
+		} else {
+			response.put("status", HttpStatus.OK.value());
+			response.put("message", "Comment replies fetched successfully!");
+			response.put("commentsResults", commentsResults);
+		}
+
+		return response;
+	}
 
 	public Map<String,Object> deleteById(Long commentReplyId){
-		CommentReply findById = replyRepository.findById(commentReplyId).get();
-		if(findById!=null){
+		Optional<CommentReply> findById = replyRepository.findByCommentReplyId(commentReplyId);
+		if(findById.isPresent()){
 			replyRepository.deleteById(commentReplyId);
 			response.put("status",HttpStatus.OK.value());
-			response.put("message","CommentReply with given id: "+commentReplyId+" is Deleted...!");
+			response.put("message","CommentReply with given id : "+commentReplyId+" is Deleted...!");
 		}else{
 			response.put("status",HttpStatus.NOT_FOUND.value());
-			response.put("message","CommentReply with given id:"+commentReplyId+ "is Not Found");
+			response.put("message","CommentReply with given id : "+commentReplyId+ "is Not Found");
 		}
 		return response;
 	}
@@ -67,7 +84,7 @@ public class CommentReplyService {
 	@Transactional
 	public Map<String,Object> deleteByCommentId(Long commentId){
 		List<CommentReply> findById = (List<CommentReply>) replyRepository.findByCommentId(commentId);
-		if(findById!=null){
+		if(!findById.isEmpty() && findById!=null){
 			for (CommentReply delComment : findById){
 				replyRepository.deleteByCommentId(delComment.getCommentId());
 			}
@@ -75,7 +92,7 @@ public class CommentReplyService {
 			response.put("message","CommentReply with given CommentId: "+commentId+" is Deleted...!");
 		}else{
 			response.put("status",HttpStatus.NOT_FOUND.value());
-			response.put("message","CommentReply with given CommentId:"+commentId+ "is Not Found");
+			response.put("message","CommentReply with given CommentId :"+commentId+ " is Not Found");
 		}
 		return response;
 	}
@@ -83,7 +100,7 @@ public class CommentReplyService {
 	@Transactional
 	public Map<String,Object> deleteByPostId(Long postId){
 		List<CommentReply> findById =  replyRepository.findByPostId(postId);
-		if(findById!=null){
+		if(!findById.isEmpty()){
 			for (CommentReply delComment : findById){
 				replyRepository.deleteByPostId(delComment.getPostId());
 			}
@@ -91,24 +108,42 @@ public class CommentReplyService {
 			response.put("message","CommentReply with given postId: "+postId+" is Deleted...!");
 		}else{
 			response.put("status",HttpStatus.NOT_FOUND.value());
-			response.put("message","CommentReply with given postId:"+postId+ "is Not Found");
+			response.put("message","CommentReply with given postId: "+postId+ " is Not Found");
 		}
 		return response;
 	}
 
 
 	
-	public CommentReply editCommentReply(Long commentReplyId, CommentReply commentReply) {
-		Optional<CommentReply> findByCommentReplyId = replyRepository.findById(commentReplyId);
-		if(findByCommentReplyId.isPresent()) {
+//	public CommentReply editCommentReply(Long commentReplyId, CommentReply commentReply) {
+//		Optional<CommentReply> findByCommentReplyId = replyRepository.findById(commentReplyId);
+//		if(findByCommentReplyId.isPresent()) {
+//			CommentReply existingCommentReply = findByCommentReplyId.get();
+//			if(commentReply.getComment()!= null && !commentReply.getComment().isEmpty()) {
+//				existingCommentReply.setComment(commentReply.getComment());
+//			}
+//			return replyRepository.save(existingCommentReply);
+//		}else {
+//			throw new RuntimeException("CommentReply Not Found");
+//		}
+//	}
+
+	public Map<String,Object> editCommentReply(Long commentReplyId, CommentReply commentReply){
+		Map<String,Object> response = new HashMap<>();
+		Optional<CommentReply> findByCommentReplyId = replyRepository.findByCommentReplyId(commentReplyId);
+		if(findByCommentReplyId.isPresent() && !findByCommentReplyId.isEmpty()){
 			CommentReply existingCommentReply = findByCommentReplyId.get();
 			if(commentReply.getComment()!= null && !commentReply.getComment().isEmpty()) {
-				existingCommentReply.setComment(commentReply.getComment());
+			existingCommentReply.setComment(commentReply.getComment());
 			}
-			return replyRepository.save(existingCommentReply);
-		}else {
-			throw new RuntimeException("CommentReply Not Found");
+			 CommentReply result = replyRepository.save(existingCommentReply);
+			response.put("status",HttpStatus.FOUND.value());
+			response.put("message","CommentReply updated successfully..!");
+			response.put("result",result);
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","CommentReply not found with given commentReplyId : "+commentReplyId);
 		}
+		return response;
 	}
-
 }

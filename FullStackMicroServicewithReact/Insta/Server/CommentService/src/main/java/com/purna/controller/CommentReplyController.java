@@ -38,25 +38,20 @@ public class CommentReplyController {
 		Map<String, Object> response = commentReplyService.getCommentReplyByPostId(postId);
 		return ResponseEntity.ok().body(response);
 	}
-	
-	
-	@GetMapping("/getAllCommentReplys/{commentId}")
-	public ResponseEntity<List<CommentReply>> getCommentReplyByCommentId(@PathVariable Long commentId){
-		List<CommentReply> getCommetRepls = commentReplyService.getCommentReplyByCommentId(commentId);
-		return ResponseEntity.ok(getCommetRepls);
+
+
+	@GetMapping("/getAllCommentReply/{commentId}")
+	public ResponseEntity<Map<String,Object>> getCommentReplyByCommentId(@PathVariable Long commentId){
+		Map<String,Object> response = commentReplyService.getCommentReplyByCommentId(commentId);
+		return ResponseEntity.ok().body(response);
 	}
-	
-	@GetMapping("/getCommentByCommentIdAndPostId")
-	public ResponseEntity<List<CommentReply>> getCommentReplyByCommentIdAndPostId(@RequestParam Long commentId, @RequestParam Long postId){
-		List<CommentReply> getCommentReplys = commentReplyService.getCommentReplyByCommentIdAndPostId(commentId, postId);
-		return ResponseEntity.ok().body(getCommentReplys);
+
+	@GetMapping("/getCommentReplyByCommentIdAndPostId")
+	public ResponseEntity<Map<String,Object>> getCommentReplyByCommentIdAndPostId(@RequestParam Long commentId, @RequestParam Long postId){
+		Map<String,Object> response = commentReplyService.getCommentReplyByCommentIdAndPostId(commentId, postId);
+		return ResponseEntity.ok().body(response);
 	}
-	
-//	@DeleteMapping("/deleteCommentReply/{commentReplyId}")
-//	public ResponseEntity<Void> deleteCommentReply(@PathVariable Long commentReplyId){
-//		commentReplyService.deleteById(commentReplyId);
-//		return ResponseEntity.noContent().build();
-//	}
+
 	@DeleteMapping("/{commentReplyId}")
 	public ResponseEntity<Map<String,Object>> deleteCommentReply(@PathVariable Long commentReplyId){
 		Map<String,Object> response = commentReplyService.deleteById(commentReplyId);
@@ -75,9 +70,15 @@ public class CommentReplyController {
 		return ResponseEntity.ok().body(response);
 	}
 	
+//	@PutMapping("/editCommentReply/{commentReplyId}")
+//	public ResponseEntity<CommentReply> editComment(@PathVariable Long commentReplyId, @RequestBody CommentReply commentReply){
+//		return ResponseEntity.ok(commentReplyService.editCommentReply(commentReplyId, commentReply));
+//	}
+
 	@PutMapping("/editCommentReply/{commentReplyId}")
-	public ResponseEntity<CommentReply> editComment(@PathVariable Long commentReplyId, @RequestBody CommentReply commentReply){
-		return ResponseEntity.ok(commentReplyService.editCommentReply(commentReplyId, commentReply));
+	public ResponseEntity<Map<String,Object>> editComment(@PathVariable Long commentReplyId, @RequestBody CommentReply commentReply){
+		Map<String,Object> result = commentReplyService.editCommentReply(commentReplyId,commentReply);
+		return ResponseEntity.ok().body(result);
 	}
 
 }

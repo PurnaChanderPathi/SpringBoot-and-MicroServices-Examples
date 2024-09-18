@@ -1,12 +1,11 @@
 package com.purna.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.purna.model.CommentReply;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface CommentReplyRepository extends JpaRepository<CommentReply, Long> {
 
@@ -19,4 +18,6 @@ public interface CommentReplyRepository extends JpaRepository<CommentReply, Long
 	void deleteByCommentId(Long commentId);
 
 	void deleteByPostId(Long commentId);
+
+   Optional<CommentReply> findByCommentReplyId(Long commentReplyId);
 }

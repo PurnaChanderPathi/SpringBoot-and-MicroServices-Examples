@@ -17,7 +17,7 @@ import com.example.entity.Message;
 import com.example.service.MessageService;
 
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/messages")
 public class MessageController {
 	
 	@Autowired
