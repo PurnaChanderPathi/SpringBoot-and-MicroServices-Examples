@@ -326,16 +326,22 @@ public class PostService {
 		}
 	}
 
-	public Map<String,Object> findPostByTitle(String query){
-		Optional<List<Post>> findByTitle = postRepository.findByTitle(query);
-		if(findByTitle==null){
-			map.put("status",HttpStatus.NOT_FOUND.value());
-			map.put("message","Post details not found with given title: "+query);
-		}else{
-			map.put("status",HttpStatus.OK.value());
-			map.put("message","Post details found with given title: "+query);
-			map.put("query",findByTitle);
+	public Map<String, Object> findPostByTitle(String query) {
+		Map<String, Object> map = new HashMap<>(); // Initialize the map
+		Optional<List<Post>> optionalPosts = postRepository.findByTitle(query); // Fetch the posts
+
+		if (optionalPosts.isPresent() && !optionalPosts.get().isEmpty()) {
+			map.put("status", HttpStatus.OK.value());
+			map.put("message", "Post details found with given title: " + query);
+			map.put("query", optionalPosts.get()); // Include the posts in the map
+		} else {
+			map.put("status", HttpStatus.NOT_FOUND.value());
+			map.put("message", "Post details not found with given title: " + query);
 		}
+
 		return map;
 	}
+
+
+
 }

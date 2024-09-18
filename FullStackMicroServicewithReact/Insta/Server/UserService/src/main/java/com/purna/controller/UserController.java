@@ -118,6 +118,14 @@ public class UserController {
 		return ResponseEntity.ok(userService.updateProfilePhoto(userId, profilePhoto));
 		
 	}
+
+	@PutMapping("/updateprofilePhoto")
+	public ResponseEntity<Map<String,Object>> updateprofilePhoto(
+			@RequestParam("userId") Long userId,
+			@RequestParam(value = "profilePhoto", required = false) MultipartFile profilePhoto
+	) throws IOException {
+		return ResponseEntity.ok(userService.updateprofilePhoto(userId,profilePhoto));
+	}
 	
 	@PutMapping("/updateUser")
 	public ResponseEntity<User> updateUser(

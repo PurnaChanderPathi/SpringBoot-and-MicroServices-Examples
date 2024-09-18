@@ -133,6 +133,20 @@ public class UserService {
 			throw new Exception("No User Found with userId : "+userId);
 		}
 	}
+
+	public Map<String,Object> updateprofilePhoto(Long userId, MultipartFile profilePhoto) throws IOException {
+		Map<String,Object> response = new HashMap<>();
+		Optional<User> userDetails = userRepository.findById(userId);
+		if(userDetails.isPresent()){
+			User getUser = userDetails.get();
+			getUser.setProfilePhoto(profilePhoto.getBytes());
+			userRepository.save(getUser);
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","profilePhoto Updated successfully...!");
+		}
+		return response;
+	}
+
 	public User updateuserDetails(Long userId, User user,MultipartFile profilePhoto) throws Exception {
 		Optional<User> userDetails = userRepository.findById(userId);
 		if(userDetails.isPresent()) {

@@ -30,11 +30,12 @@ public class CommentController {
 		Comment addComment = commentService.addComment(comment);
 		return ResponseEntity.ok(addComment);
 	}
-	
+
+
 	@GetMapping("/getAllComments/{postId}")
-	public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId){
-		List<Comment> getComments = commentService.getCommentsByPostId(postId);
-		return ResponseEntity.ok(getComments);
+	public ResponseEntity<Map<String,Object>> getCommentsByPostId(@PathVariable Long postId){
+		Map<String,Object> map = commentService.getCommentsByPostId(postId);
+		return ResponseEntity.ok().body(map);
 	}
 	
 	@GetMapping("/getCommentByPostIdAndCommentId")

@@ -29,18 +29,13 @@ public class SecurityConfig {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	@Autowired
-	private JwtAuthenticationFilter filter;
-
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 		.authorizeHttpRequests(requests->requests.requestMatchers("api/v1/users/**").permitAll()
 				.requestMatchers("api/v1/auth/**").permitAll()
 				.anyRequest().authenticated())
-		.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-		.authenticationProvider(authenticationProvider()).addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+		.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		return http.build();
 	}
 

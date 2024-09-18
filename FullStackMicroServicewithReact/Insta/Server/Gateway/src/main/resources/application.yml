@@ -2,33 +2,57 @@ server:
   port: 9194  # Gateway port
 
 spring:
-  application:
+  applcation:
     name: api-gateway
   cloud:
     gateway:
-          routes:
-            - id: user-service-auth-route
-              uri: lb://USER-SERVICE  # Service ID registered in Eureka
-              predicates:
-                - Path=/api/v1/auth/**  # Match any request under `/api/v1/auth/`
-              filters:
-                - RewritePath=/api/v1/auth/(?<segment>.*), /api/v1/auth/${segment}  # Route directly to /api/v1/auth/ on User-Service
+      routes:
+        - id: IDENTITY-SERVICE
+          uri: lb://IDENTITY-SERVICE
+          predicates:
+            - Path=/auth/**
 
-            - id: user-service-users-route
-              uri: lb://USER-SERVICE  # Service ID registered in Eureka
-              predicates:
-                - Path=/api/v1/users/**  # Match any request under `/api/v1/users/`
-              filters:
-                - RewritePath=/api/v1/users/(?<segment>.*), /api/v1/users/${segment}  # Route directly to /api/v1/users/ on User-Service
+        - id: User-Service
+          uri: lb://User-Service
+          predicates:
+            - Path=/api/v1/users/**
+
+        - id: User-Service
+          uri: lb://User-Service
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: Post-Service
+          uri: lb://Post-Service
+          predicates:
+            - Path=/api/v1/posts/**
+          filters:
+            - AuthenticationFilter
+
+        - id: Comment-Service
+          uri: lb://Comment-Service
+          predicates:
+            - Path=/api/v1/comments/**
+          filters:
+            - AuthenticationFilter
+
+        - id: Comment-Service
+          uri: lb://Comment-Service
+          predicates:
+            - Path=/api/v1/commentsReply/**
+          filters:
+            - AuthenticationFilter
+
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
+    fetch-registry: true
+    register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/  # Eureka server location
+      defaultZone: http://localhost:8761/eureka
 
 
-# Optional logging and debugging settings
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
+
 
