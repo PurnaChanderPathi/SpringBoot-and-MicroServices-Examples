@@ -35,12 +35,12 @@ public class CommentService {
 	}
 
 	public Map<String, Object> getCommentsByPostId(Long postId) {
-	Map<String, Object> map = new HashMap<>(); // Initialize the map
+	Map<String, Object> map = new HashMap<>();
 
-	List<Comment> getComments = commentRepository.findByPostId(postId); // Fetch comments
+	List<Comment> getComments = commentRepository.findByPostId(postId);
 
 	if (getComments != null && !getComments.isEmpty()) {
-		map.put("status", HttpStatus.OK.value()); // Changed to OK (200) for found comments
+		map.put("status", HttpStatus.OK.value());
 		map.put("message", "Comments found with postId: " + postId);
 		map.put("results", getComments);
 	} else {
@@ -97,19 +97,6 @@ public class CommentService {
 		return map;
 	}
 
-//	public Comment updateComment(Long commentId, Comment comment) {
-//		Optional<Comment> findById = commentRepository.findById(commentId);
-//		if(findById!=null && !findById.isEmpty()) {
-//			Comment existingComment = findById.get();
-//			if(comment.getComment() != null && !comment.getComment().isEmpty()) {
-//				existingComment.setComment(comment.getComment());
-//			}
-//			return commentRepository.save(existingComment);
-//		}else {
-//			throw new RuntimeException("Comment not found");
-//		}
-//	}
-
 	public Map<String, Object> updateComment(Long commentId, Comment comment){
 		Map<String,Object> response = new HashMap<>();
 		Optional<Comment> findById = commentRepository.findById(commentId);
@@ -130,17 +117,14 @@ public class CommentService {
 
 
 	public Map<String, Object> getCommentsByPostIdAndCommentId(Long postId, Long commentId) {
-		Map<String, Object> map = new HashMap<>(); // Initialize the map
-
-		// Fetch the comment using postId and commentId
+		Map<String, Object> map = new HashMap<>();
 		Optional<Comment> getComment = commentRepository.findByPostIdAndCommentId(postId, commentId);
 
 		if (getComment.isEmpty()) {
-			// If no comment is found, return a NOT_FOUND response
 			map.put("status", HttpStatus.NOT_FOUND.value());
 			map.put("message", "Comment not found with postId: " + postId + " and commentId: " + commentId);
 		} else {
-			String commentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentByCommentIdAndPostId?commentId="+commentId+"&postId="+postId;
+			String commentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentReplyByCommentIdAndPostId?commentId="+commentId+"&postId="+postId;
 
 			Object commentReplyResult = null;
 			try {
@@ -160,7 +144,7 @@ public class CommentService {
 			}
 			map.put("status", HttpStatus.OK.value());
 			map.put("message", "Comment fetched successfully!");
-			map.put("comment", getComment.get()); // Use get() to retrieve the Comment object
+			map.put("comment", getComment.get());
 			map.put("commentReplyResult", commentReplyResult);
 		}
 		return map;
@@ -169,6 +153,7 @@ public class CommentService {
 
 	@Transactional
 	public Map<String, Object> deleteCommentByPostId(Long postId) {
+		Map<String,Object> map = new HashMap<>();
 		List<Comment> findByPostId = commentRepository.findByPostId(postId);
 		if(findByPostId.isEmpty()){
 			map.put("status",HttpStatus.NOT_FOUND.value());

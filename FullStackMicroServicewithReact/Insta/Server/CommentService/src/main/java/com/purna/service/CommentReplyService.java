@@ -113,21 +113,6 @@ public class CommentReplyService {
 		return response;
 	}
 
-
-	
-//	public CommentReply editCommentReply(Long commentReplyId, CommentReply commentReply) {
-//		Optional<CommentReply> findByCommentReplyId = replyRepository.findById(commentReplyId);
-//		if(findByCommentReplyId.isPresent()) {
-//			CommentReply existingCommentReply = findByCommentReplyId.get();
-//			if(commentReply.getComment()!= null && !commentReply.getComment().isEmpty()) {
-//				existingCommentReply.setComment(commentReply.getComment());
-//			}
-//			return replyRepository.save(existingCommentReply);
-//		}else {
-//			throw new RuntimeException("CommentReply Not Found");
-//		}
-//	}
-
 	public Map<String,Object> editCommentReply(Long commentReplyId, CommentReply commentReply){
 		Map<String,Object> response = new HashMap<>();
 		Optional<CommentReply> findByCommentReplyId = replyRepository.findByCommentReplyId(commentReplyId);

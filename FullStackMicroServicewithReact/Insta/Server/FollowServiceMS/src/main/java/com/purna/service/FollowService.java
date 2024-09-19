@@ -4,15 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.purna.dto.UserResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.purna.dto.UserDto;
 import com.purna.model.Follow;
 import com.purna.repository.FollowRepository;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
+@Slf4j
 public class FollowService {
 	 @Autowired
 	    private FollowRepository followRepository;
@@ -80,13 +85,17 @@ public class FollowService {
 	        return response;
 	    }
 
-	    private Optional<UserDto> getUserByEmail(String email) {
-	    return Optional.ofNullable(webClient
-	            .get()
-	            .uri("http://localhost:9195/api/v1/users/findByEmailId/"+email)
-	            .retrieve()
-	            .bodyToMono(UserDto.class)
-	            .block());
-	    }
+
+	public Optional<UserDto> getUserByEmail(String email) {
+		UserResponse userResponse = webClient
+				.get()
+				.uri("http://localhost:9195/api/v1/users/findByEmailId/" + email)
+				.retrieve()
+				.bodyToMono(UserResponse.class)
+				.block();
+
+		return Optional.ofNullable(userResponse != null ? userResponse.getUser() : null);
+	}
+
 
 }
