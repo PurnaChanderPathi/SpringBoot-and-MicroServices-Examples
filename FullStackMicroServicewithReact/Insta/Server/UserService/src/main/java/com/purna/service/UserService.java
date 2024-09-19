@@ -42,13 +42,6 @@ public class UserService {
 	private WebClient.Builder webClientBuilder;
 
 	Map<String, Object> map = new HashMap<>();
-	
-//	public User saveUser(User user,MultipartFile profilePhoto) throws IOException {
-//		if(profilePhoto != null && !profilePhoto.isEmpty()) {
-//			user.setProfilePhoto(profilePhoto.getBytes());
-//		}
-//		return userRepository.save(user);
-//	}
 
 	public Map<String,Object> saveUser(User user, MultipartFile profilePhoto) throws IOException {
 		if(profilePhoto != null && !profilePhoto.isEmpty()) {
@@ -83,58 +76,68 @@ public class UserService {
 		return map;
 	}
 
-	
-	public Optional<Optional<User>> findByUsername(String username) {
-		return Optional.ofNullable(Optional.ofNullable(userRepository.findByUsername(username)));
+	public Map<String,Object> findByUsername(String username){
+		Map<String,Object> response = new HashMap<>();
+		Optional<User> findByUsername = userRepository.findByUsername(username);
+		if(findByUsername.isPresent()){
+			response.put("status",HttpStatus.FOUND.value());
+			response.put("message","User found with username :"+username);
+			response.put("result",findByUsername);
+		}else {
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","User not found with username :"+username);
+		}
+		return response;
 	}
 
-	
-	public User findByEmail(String email) {
-		return userRepository.findByEmail(email);
-		
+	public Map<String,Object> findByEmailId(String emailId){
+		Map<String,Object> response = new HashMap<>();
+		User findByEmailId = userRepository.findByEmail(emailId);
+		if(findByEmailId!=null){
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","User found with given emailId :"+emailId);
+			response.put("User",findByEmailId);
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","User not found with given emailId :"+emailId);
+		}
+		return response;
 	}
 
-	public User findByUserId(Long userId) {
-		return userRepository.findById(userId)
-				.orElseThrow(() -> new UserNotFoundException("User with given Id: " + userId + " not found"));
+	public Map<String,Object> findByUserId(Long userId){
+		Map<String,Object> response = new HashMap<>();
+		Optional<User> findByUserId = userRepository.findByUserId(userId);
+		if(findByUserId.isPresent()){
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","User found with userId :"+userId);
+			response.put("User",findByUserId);
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","User not found with userId :"+userId);
+		}
+		return response;
 	}
-
-
-
-//	public Map<String,Object> findById(Long userId){
-//		Map<String,Object> response = new HashMap<>();
-//		Optional<User> getUserDetails = userRepository.findById(userId);
-//		if(getUserDetails.isPresent()){
-//			response.put("status",HttpStatus.FOUND.value());
-//			response.put("message","User Details Fetched Successfully...!");
-//			response.put("UserDetails",getUserDetails);
-//		}else{
-//			response.put("status",HttpStatus.NOT_FOUND.value());
-//			response.put("message","User Details with given UserId: "+userId+" Not Found");
-//		}
-//		return response;
-//	}
 	
 	public List<User> findAllUsers(){
 		return userRepository.findAll();
 	}
-	
-	public void deleteUser(Long id) {
-		 userRepository.deleteById(id);
-	}
-	
-	public User updateProfilePhoto(Long userId, MultipartFile profilePhoto) throws Exception {
-		Optional<User> userDetails = userRepository.findById(userId);
-		if(userDetails.isPresent()) {
-			User getUser = userDetails.get();
-			getUser.setProfilePhoto(profilePhoto.getBytes());
-			return userRepository.save(getUser);
-		}else {
-			throw new Exception("No User Found with userId : "+userId);
+
+	public Map<String,Object> deleteUser(Long userId){
+		Map<String,Object> response = new HashMap<>();
+		Optional<User> user = userRepository.findByUserId(userId);
+		if(user.isPresent()){
+			userRepository.deleteByUserId(userId);
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","User deleted with userId :"+userId);
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","User not found with userId :"+userId);
 		}
+		return response;
 	}
 
-	public Map<String,Object> updateprofilePhoto(Long userId, MultipartFile profilePhoto) throws IOException {
+
+	public Map<String,Object> updateProfilePhoto(Long userId, MultipartFile profilePhoto) throws IOException {
 		Map<String,Object> response = new HashMap<>();
 		Optional<User> userDetails = userRepository.findById(userId);
 		if(userDetails.isPresent()){
@@ -143,11 +146,15 @@ public class UserService {
 			userRepository.save(getUser);
 			response.put("status",HttpStatus.OK.value());
 			response.put("message","profilePhoto Updated successfully...!");
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message", "User not found with userid :"+userId+" to update profilePhoto");
 		}
 		return response;
 	}
 
-	public User updateuserDetails(Long userId, User user,MultipartFile profilePhoto) throws Exception {
+	public Map<String,Object> updateUserDetails(Long userId, User user,MultipartFile profilePhoto) throws IOException {
+		Map<String,Object> response = new HashMap<>();
 		Optional<User> userDetails = userRepository.findById(userId);
 		if(userDetails.isPresent()) {
 			User getUser = userDetails.get();
@@ -155,7 +162,7 @@ public class UserService {
 				getUser.setUsername(user.getUsername());
 			}
 			if(user.getPassword() != null && !user.getPassword().isEmpty()) {
-				getUser.setPassword(passwordEncoder.encode(user.getPassword()));	
+				getUser.setPassword(passwordEncoder.encode(user.getPassword()));
 			}
 			if(user.getEmail() != null && !user.getEmail().isEmpty()) {
 				getUser.setEmail(user.getEmail());
@@ -164,10 +171,14 @@ public class UserService {
 			if(profilePhoto != null && !profilePhoto.isEmpty()) {
 				getUser.setProfilePhoto(profilePhoto.getBytes());
 			}
-			return userRepository.save(getUser);
-		}else {
-			throw new RuntimeException("No User Found with userId : "+userId);
+			 userRepository.save(getUser);
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","User Details Updated Successfully...!");
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","User not found with UserId :"+userId+" to update User Details");
 		}
+		return response;
 	}
 
 	public Map<String, Object> forgotPassword(String email) throws MessagingException {
@@ -202,7 +213,9 @@ public class UserService {
 			map.put("message","mail Sent successfully");
 		}
 		else {
-			throw new UsernameNotFoundException("user not found with this "+email);
+			map.put("status",HttpStatus.NOT_FOUND.value());
+			map.put("message","User not found with given mailId :"+email);
+			//throw new UsernameNotFoundException("user not found with this "+email);
 		}
 		return map;
 	}
@@ -233,7 +246,9 @@ public class UserService {
 				throw new UserNameOrOtpDoesnotMatchedException("Username or Otp not matched");
 			}
 		}else{
-			throw new UsernameNotFoundException("Any otp didn't send this mailID : "+changePasswordDto.getEmail());
+			map.put("status",HttpStatus.NOT_FOUND.value());
+			map.put("message","User not found with given mailId :"+changePasswordDto.getEmail());
+			//throw new UsernameNotFoundException("Any otp didn't send this mailID : "+changePasswordDto.getEmail());
 		}
 		return map;
 	}

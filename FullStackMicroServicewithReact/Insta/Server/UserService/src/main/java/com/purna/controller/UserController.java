@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.purna.exception.UserNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,23 +26,7 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
-	
-//	@PostMapping("/register")
-//	public ResponseEntity<User> registerUser(
-//			@RequestParam("email") String email,
-//			@RequestParam("password") String password,
-//			@RequestParam("role") String role,
-//			@RequestParam("username") String username,
-//			@RequestParam(value = "profilePhoto", required = false) MultipartFile profilePhoto
-//			) throws IOException{
-//		User user = new User();
-//		user.setEmail(email);
-//		user.setUsername(username);
-//		user.setPassword(passwordEncoder.encode(password));
-//		user.setRole(role);
-//
-//		return ResponseEntity.ok(userService.saveUser(user,profilePhoto));
-//	}
+
 	@PostMapping("/register")
 	public ResponseEntity<Map<String,Object>> registerUser(
 			@RequestParam("email") String email,
@@ -66,80 +51,61 @@ public class UserController {
 	public ResponseEntity<List<User>> getAllusers (){
 		return ResponseEntity.ok(userService.findAllUsers());
 	}
-	
+
+
 	@GetMapping("/{username}")
-	public ResponseEntity<Optional<User>> getUserByUsername(@PathVariable String username){
-		Optional<Optional<User>> user = userService.findByUsername(username);
-		return user.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
+	public ResponseEntity<Map<String,Object>> getUserByusername(@PathVariable String username){
+		Map<String,Object> result = userService.findByUsername(username);
+		return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("/findByUsername")
-	public ResponseEntity<Optional<User>> getUserByUsernames(@RequestParam String query){
-		if(query == null || query.trim().isEmpty()){
-			return ResponseEntity.badRequest().body(null);
-		}
-		Optional<Optional<User>> user = userService.findByUsername(query);
-		return user.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
+	public ResponseEntity<Map<String,Object>> getUserByUsername(@RequestParam String query){
+			Map<String,Object> result = userService.findByUsername(query);
+			return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("/findByUserId/{userId}")
-	public ResponseEntity<User> findByUserId(@PathVariable Long userId) {
-		try {
-			User user = userService.findByUserId(userId);
-			return ResponseEntity.ok(user);
-		} catch (UserNotFoundException e) {
-			// Log the exception (optional)
-			log.error("Error finding user with ID {}: {}", userId, e.getMessage());
-			return ResponseEntity.notFound().build();
-		}
+	public ResponseEntity<Map<String,Object>> findByUserId(@PathVariable Long userId){
+		Map<String,Object> result = userService.findByUserId(userId);
+		return ResponseEntity.ok().body(result);
 	}
 
-
-
-	@GetMapping("/findByEmailId/{email}")
-	public ResponseEntity<User> findByEmail(@PathVariable String email){
-		Optional<User> findByEmail = Optional.ofNullable(userService.findByEmail(email));
-		return findByEmail.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
-		
+	@GetMapping("/findByEmailId/{emailId}")
+	public ResponseEntity<Map<String,Object>> findByEmailId(@PathVariable String emailId){
+		Map<String,Object> result = userService.findByEmailId(emailId);
+		return ResponseEntity.ok().body(result);
 	}
-	
-	@DeleteMapping("/id")
-	public ResponseEntity<Void> deleteUser(@PathVariable Long id){
-		userService.deleteUser(id);
-		return ResponseEntity.noContent().build();	
+
+	@Transactional
+	@DeleteMapping("/deleteUser/{userId}")
+	public ResponseEntity<Map<String,Object>> deleteUser(@PathVariable Long userId){
+		Map<String,Object> result = userService.deleteUser(userId);
+		return ResponseEntity.ok().body(result);
 	}
-	
+
 	@PutMapping("/updateProfilePhoto")
-	public ResponseEntity<User> updateProfilePhoto(
-			@RequestParam("userId") Long userId,
-			@RequestParam(value = "profilePhoto", required = false) MultipartFile profilePhoto
-			) throws Exception{
-		
-		return ResponseEntity.ok(userService.updateProfilePhoto(userId, profilePhoto));
-		
-	}
-
-	@PutMapping("/updateprofilePhoto")
 	public ResponseEntity<Map<String,Object>> updateprofilePhoto(
 			@RequestParam("userId") Long userId,
 			@RequestParam(value = "profilePhoto", required = false) MultipartFile profilePhoto
 	) throws IOException {
-		return ResponseEntity.ok(userService.updateprofilePhoto(userId,profilePhoto));
+		return ResponseEntity.ok(userService.updateProfilePhoto(userId,profilePhoto));
 	}
-	
+
 	@PutMapping("/updateUser")
-	public ResponseEntity<User> updateUser(
+	public ResponseEntity<Map<String,Object>> updateUser(
 			@RequestParam(required = false) Long userId,
 			@RequestParam(required = false) String email,
 			@RequestParam(required = false) String password,
 			@RequestParam(required = false) String username,
 			@RequestParam(required = false) MultipartFile profilePhoto
-			) throws Exception{
+	) throws IOException {
 		User user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
 		user.setEmail(email);
-		return ResponseEntity.ok(userService.updateuserDetails(userId, user, profilePhoto));		
-}
+		Map<String,Object> result = userService.updateUserDetails(userId,user,profilePhoto);
+		return ResponseEntity.ok().body(result);
+	}
 
 }

@@ -106,106 +106,86 @@ public class PostService {
 
 
 	public Map<String,Object> findById(Long id){
-		 Optional<Post> postResult=postRepository.findById(id);
+		Map<String,Object> map = new HashMap<>();
+		Optional<Post> postResult=postRepository.findById(id);
 		 
-		 if(postResult.isEmpty()) {
-			 map.put("Status", HttpStatus.NOT_FOUND.value());
-			 map.put("message", "Post not found");
-			 return map;
-		 }else{
-
-
+		 if(postResult.isPresent()) {
 			 String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
+			 Object commentResult = null;
+			 try {
+				 commentResult = webClientBuilder.build().get()
+						 .uri(url)
+						 .retrieve()
+						 .bodyToMono(Object.class)
+						 .block();
+			 }catch (WebClientResponseException e){
+				 if(e.getCause() instanceof java.net.ConnectException){
+					 log.error("Error fetching comments: Service is offline", e);
+					 commentResult = "Comments service is offline";
+				 }else{
+					 log.error("Error fetching comments for post {}: {}", id, e);
+				 }
 
-//		 String responseFinal=webClient.get().uri(url).header("Authorization",token).exchange().flatMap(
-//				 clientResponse -> {
-//					 if(clientResponse.statusCode().is5xxServerError()){
-//						 clientResponse.body((clientHttpResponse,context)->{
-//							 return clientHttpResponse.getBody();
-//						 });
-//						 return clientResponse.bodyToMono(String.class);
-//					 }else
-//						 return clientResponse.bodyToMono(String.class);
-//				 }
-//		 ).block();
-//
-//		 Map<String,Object> webClientMap=new ObjectMapper().readTree(responseFinal,HashMap.class);
-
-
-
-		 
-		Object commentResult = null;
-		try {
-				commentResult = webClientBuilder.build().get()
-						.uri(url)
-						.retrieve()
-						.bodyToMono(Object.class)
-						.block();
-		}catch (WebClientResponseException e){
-			if(e.getCause() instanceof java.net.ConnectException){
-					log.error("Error fetching comments: Service is offline", e);
-					commentResult = "Comments service is offline";
-			}else{
-				log.error("Error fetching comments for post {}: {}", id, e);  
-			}
-
-		}
-		log.info("Comment Result: {}",commentResult);
+			 }
+			 log.info("Comment Result: {}",commentResult);
 
 
-		Object CommentReplyResult = null;
-		try {
-			String CommentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentsReplyByPostId?postId="+id;
-			CommentReplyResult = webClientBuilder.build().get()
-					.uri(CommentReplyUrl)
-					.retrieve()
-					.bodyToMono(Object.class)
-					.block();	
-		} catch (WebClientResponseException e) {
-			if(e.getCause() instanceof java.net.ConnectException) {
-				log.error("Error fetching commentReplys: Service is offline",e);
-				CommentReplyResult = "CommentReplys service is offline";
-			}else {
-				log.error("Error fetching comments for post {}: {}",id,e);
-			}
-		}
-		log.info("CommentReply Result; {}",CommentReplyResult);
+			 Object CommentReplyResult = null;
+			 try {
+				 String CommentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentsReplyByPostId?postId="+id;
+				 CommentReplyResult = webClientBuilder.build().get()
+						 .uri(CommentReplyUrl)
+						 .retrieve()
+						 .bodyToMono(Object.class)
+						 .block();
+			 } catch (WebClientResponseException e) {
+				 if(e.getCause() instanceof java.net.ConnectException) {
+					 log.error("Error fetching commentReply: Service is offline",e);
+					 CommentReplyResult = "CommentReply service is offline";
+				 }else {
+					 log.error("Error fetching comments for post {}: {}",id,e);
+				 }
+			 }
+			 log.info("CommentReply Result; {}",CommentReplyResult);
 
 
-		Long userId = postResult.get().getUserId();
-		Object likesResult = null;
-		try {
-			likesResult = webClientBuilder.build().get()
-					.uri(uriBuilder -> uriBuilder
-							.scheme("http")
-							.host("localhost")
-							.port(9198)
-							.path("/api/v1/likes/getLikesByUserIdAndPostId")
-							.queryParam("userId",userId)
-							.queryParam("postId",id)
-							.build())
-					.retrieve()
-					.bodyToMono(Object.class)
-					.block();
-		} catch (WebClientResponseException e){
-			if(e.getCause() instanceof java.net.ConnectException){
-				log.error("Error fetching likes: Service is offline", e);
-				likesResult = "Likes service is offline";
-			}else{
-				log.error("Error fetching likes for user {} and post {}: {}", userId, id, e);
-			}
-		}
+			 Long userId = postResult.get().getUserId();
+			 Object likesResult = null;
+			 try {
+				 likesResult = webClientBuilder.build().get()
+						 .uri(uriBuilder -> uriBuilder
+								 .scheme("http")
+								 .host("localhost")
+								 .port(9198)
+								 .path("/api/v1/likes/getLikesByUserIdAndPostId")
+								 .queryParam("userId",userId)
+								 .queryParam("postId",id)
+								 .build())
+						 .retrieve()
+						 .bodyToMono(Object.class)
+						 .block();
+			 } catch (WebClientResponseException e){
+				 if(e.getCause() instanceof java.net.ConnectException){
+					 log.error("Error fetching likes: Service is offline", e);
+					 likesResult = "Likes service is offline";
+				 }else{
+					 log.error("Error fetching likes for user {} and post {}: {}", userId, id, e);
+				 }
+			 }
 
-		log.info("Likes Result: {}",likesResult);
-		
-		map.put("Status", HttpStatus.OK.value());
-		map.put("message", "fetched Successfully");
-		map.put("PostResult", postResult.get());
-		map.put("commentResult", commentResult);
-		map.put("CommentReplyResult", CommentReplyResult);
-		map.put("likesResult",likesResult);
-		 return map;
+			 log.info("Likes Result: {}",likesResult);
+
+			 map.put("Status", HttpStatus.OK.value());
+			 map.put("message", "fetched Successfully");
+			 map.put("PostResult", postResult.get());
+			 map.put("commentResult", commentResult);
+			 map.put("CommentReplyResult", CommentReplyResult);
+			 map.put("likesResult",likesResult);
+		 }else{
+			 map.put("Status", HttpStatus.NOT_FOUND.value());
+			 map.put("message", "Post with given id :"+id+" not found");
 		 }
+		 return map;
 	}
 	
 	public List<Post> findAll(){
@@ -301,8 +281,8 @@ public class PostService {
 		return map;
 	}
 
-
-	public Post editPost(Long postId,  Post post, MultipartFile image) throws IOException {
+	public Map<String,Object> editPost(Long postId,  Post post, MultipartFile image) throws IOException {
+		Map<String,Object> response = new HashMap<>();
 		Optional<Post> findPost = postRepository.findById(postId);
 		if(findPost.isPresent()) {
 			Post postget = findPost.get();
@@ -318,12 +298,16 @@ public class PostService {
 			}
 
 			if(image != null && !image.isEmpty()) {
-				postget.setImage(image.getBytes());			
-			}			
-			return postRepository.save(postget);
-		}else {
-			throw new RuntimeException("Post with given Id :"+postId+" not found");
+				postget.setImage(image.getBytes());
+			}
+			 postRepository.save(postget);
+			response.put("status",HttpStatus.OK.value());
+			response.put("message","Post Updated Successfully..!");
+		}else{
+			response.put("status",HttpStatus.NOT_FOUND.value());
+			response.put("message","Post not found with postId :"+postId);
 		}
+		return response;
 	}
 
 	public Map<String, Object> findPostByTitle(String query) {

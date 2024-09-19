@@ -60,19 +60,20 @@ public class PostController {
 		Map<String, Object> result = postService.deletePost(id);
 		return ResponseEntity.ok().body(result);
 	}
-	
+
 	@PutMapping("/editPost")
-	public ResponseEntity<Post> editPost(
+	public ResponseEntity<Map<String,Object>> editPost(
 			@RequestParam Long postId,
 			@RequestParam(required = false) String title,
 			@RequestParam(required = false) Long userId,
 			@RequestParam(required = false) String content,
-			@RequestParam(required = false) MultipartFile image) throws IOException{ 
+			@RequestParam(required = false) MultipartFile image) throws IOException {
 		Post post = new Post();
 		post.setTitle(title);
 		post.setUserId(userId);
 		post.setContent(content);
-		return ResponseEntity.ok(postService.editPost(postId, post,image));
+		Map<String,Object> result = postService.editPost(postId,post,image);
+		return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("/getByTitle")

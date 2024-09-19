@@ -66,12 +66,13 @@ spring:
           filters:
             - AuthenticationFilter
 
-        - id: Message-Service
-          uri: lb://Message-Service
+        - id: MessageService
+          uri: lb://MessageService
           predicates:
             - Path=/api/messages/**
           filters:
             - AuthenticationFilter
+
 
 eureka:
   instance:

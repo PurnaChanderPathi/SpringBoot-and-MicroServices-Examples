@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,18 +31,19 @@ public class MessageController {
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
-    @GetMapping("/between")
-    public ResponseEntity<List<Message>> getMessagesBetweenUsers(
+    @GetMapping("/MessagesBetweenUsers")
+    public ResponseEntity<Map<String,Object>> getMessagesBetweenUsers(
             @RequestParam String senderId,
-            @RequestParam String receiverId) {
-        List<Message> messages = messageService.getMessagesBetweenUsers(senderId, receiverId);
-        return new ResponseEntity<>(messages, HttpStatus.OK);
+            @RequestParam String receiverId
+    ){
+        Map<String,Object> result = messageService.getMessagesBetweenUsers(senderId,receiverId);
+        return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<List<Message>> getMessagesForUser(@RequestParam String receiverId) {
-        List<Message> messages = messageService.getMessagesForUser(receiverId);
-        return new ResponseEntity<>(messages, HttpStatus.OK);
+    @GetMapping("/getUserMessages")
+    public ResponseEntity<Map<String,Object>> getUserMessages(@RequestParam String receiverId){
+        Map<String,Object> result = messageService.getUserMessages(receiverId);
+        return ResponseEntity.ok().body(result);
     }
 
 }

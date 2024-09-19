@@ -140,8 +140,7 @@ public class CommentService {
 			map.put("status", HttpStatus.NOT_FOUND.value());
 			map.put("message", "Comment not found with postId: " + postId + " and commentId: " + commentId);
 		} else {
-			// If the comment is found, fetch additional details from another service
-			String commentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentByCommentIdAndPostId?commentId=" + commentId + "&postId=" + postId;
+			String commentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentByCommentIdAndPostId?commentId="+commentId+"&postId="+postId;
 
 			Object commentReplyResult = null;
 			try {
@@ -159,14 +158,11 @@ public class CommentService {
 					commentReplyResult = "Error fetching commentReply: " + e.getMessage();
 				}
 			}
-
-			// Populate the map with the results
 			map.put("status", HttpStatus.OK.value());
 			map.put("message", "Comment fetched successfully!");
 			map.put("comment", getComment.get()); // Use get() to retrieve the Comment object
 			map.put("commentReplyResult", commentReplyResult);
 		}
-
 		return map;
 	}
 
