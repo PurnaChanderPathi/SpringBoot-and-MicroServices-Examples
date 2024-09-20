@@ -29,7 +29,7 @@ public class FollowController{
 
 		@GetMapping("/getUserByMail")
 		public Optional<UserDto> getUserByMailId(@RequestParam String emailId){
-			return followService.getUserByEmail(emailId);
+			return followService.getUserByEmailId(emailId);
 
 		}
 }

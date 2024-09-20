@@ -77,6 +77,11 @@ public class UserController {
 		return ResponseEntity.ok().body(result);
 	}
 
+	@GetMapping("/findByMailId/{emailId}")
+	public ResponseEntity<User> findByMailId(@PathVariable String emailId){
+		return ResponseEntity.ok().body(userService.findByMailId(emailId));
+	}
+
 	@Transactional
 	@DeleteMapping("/deleteUser/{userId}")
 	public ResponseEntity<Map<String,Object>> deleteUser(@PathVariable Long userId){

@@ -90,6 +90,15 @@ public class UserService {
 		return response;
 	}
 
+	public User findByMailId(String emailId){
+		Optional<User> findBtMailId = Optional.ofNullable(userRepository.findByEmail(emailId));
+		if(findBtMailId.isPresent()){
+			return findBtMailId.get();
+		}else {
+			throw  new RuntimeException("user not found with emailId");
+		}
+	}
+
 	public Map<String,Object> findByEmailId(String emailId){
 		Map<String,Object> response = new HashMap<>();
 		User findByEmailId = userRepository.findByEmail(emailId);
