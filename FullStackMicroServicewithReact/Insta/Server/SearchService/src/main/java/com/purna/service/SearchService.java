@@ -1,6 +1,7 @@
 package com.purna.service;
 
 import com.purna.dto.UserDTO;
+import com.purna.dto.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,21 @@ public class SearchService {
         this.postServiceClient = webClientBuilder.baseUrl("http://localhost:9196").build();
     }
 
-    public Mono<List<UserDTO>> searchUsers(String query){
+//    public Mono<List<UserDTO>> searchUsers(String query){
+//        return userServiceClient.get()
+//                .uri("/api/v1/users/findByUsername?query={query}",query)
+//                .retrieve()
+//                .bodyToFlux(UserDTO.class)
+//                .collectList();
+//    }
+
+    public Mono<UserResponse> searchUsers(String query) {
         return userServiceClient.get()
-                .uri("/api/v1/users/findByUsername?query={query}",query)
+                .uri("/api/v1/users/findByUsername?query={query}", query)
                 .retrieve()
-                .bodyToFlux(UserDTO.class)
-                .collectList();
+                .bodyToMono(UserResponse.class);
     }
+
 
     public Mono<List<Object>> searchPosts(String query) {
         return postServiceClient.get()

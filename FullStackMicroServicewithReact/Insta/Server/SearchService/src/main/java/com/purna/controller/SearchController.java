@@ -1,6 +1,5 @@
 package com.purna.controller;
 
-import com.purna.dto.PostDTO;
 import com.purna.dto.SearchResults;
 import com.purna.dto.UserDTO;
 import com.purna.service.SearchService;
@@ -26,15 +25,18 @@ public class SearchController {
     }
 
     @GetMapping("/find")
-    public Mono<ResponseEntity<Map<String, Object>>> searchUsers(@RequestParam String query) {
-        Mono<List<UserDTO>> usersMono = searchService.searchUsers(query);
-        return usersMono
-                .map(users -> {
-                    Map<String, Object> responseBody = new HashMap<>();
-                    responseBody.put("users", users);
-                    return ResponseEntity.ok(responseBody);
+    public Mono<ResponseEntity<?>> searchUsers(@RequestParam String query) {
+        return searchService.searchUsers(query)
+                .map(userResponse -> {
+                    UserDTO user = userResponse.getResult();
+                    if (user != null) {
+                        return ResponseEntity.ok(user);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(null);
+                    }
                 })
-                .defaultIfEmpty(ResponseEntity.noContent().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/findPosts")
@@ -94,11 +96,45 @@ public class SearchController {
                 });
     }
 
-    @GetMapping("/PostsOrUsers")
-    public Mono<SearchResults> search(@RequestParam String query) {
-        Mono<List<UserDTO>> users = searchService.searchUsers(query);
-        Mono<List<Object>> posts = searchService.searchPosts(query);
 
-        return Mono.zip(users, posts, SearchResults::new);
+    @GetMapping("/PostsOrUsers")
+    public Mono<ResponseEntity<Map<String, Object>>> search(@RequestParam String query) {
+        Mono<ResponseEntity<?>> usersResponse = searchService.searchUsers(query)
+                .map(userResponse -> {
+                    UserDTO user = userResponse.getResult();
+                    if (user != null) {
+                        return ResponseEntity.ok(user);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                    }
+                })
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+
+        Mono<ResponseEntity<Map<String, Object>>> postsResponse = searchService.searchPosts(query)
+                .map(posts -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("posts", posts);
+                    return ResponseEntity.ok(response);
+                })
+                .onErrorResume(e -> {
+                    if (e.getMessage().contains("Post server is offline")) {
+                        Map<String, Object> errorResponse = new HashMap<>();
+                        errorResponse.put("message", "Post server is offline");
+                        return Mono.just(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse));
+                    }
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", "Post details with the given title not found");
+                    return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse));
+                })
+                .defaultIfEmpty(ResponseEntity.noContent().build());
+
+        return Mono.zip(usersResponse, postsResponse)
+                .map(tuple -> {
+                    Map<String, Object> combinedResults = new HashMap<>();
+                    combinedResults.put("users", tuple.getT1());
+                    combinedResults.put("posts", tuple.getT2());
+                    return ResponseEntity.ok(combinedResults);
+                })
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
