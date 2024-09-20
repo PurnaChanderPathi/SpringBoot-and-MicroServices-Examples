@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.purna.model.User;
 import com.purna.repository.UserRepository;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
@@ -60,12 +61,12 @@ public class UserService {
 					.bodyToMono(Object.class)
 					.block();
 		}catch (WebClientResponseException e){
-			if (e.getCause() instanceof java.net.ConnectException) {
-				log.error("Error Notifying Notification", e);
-				notificationResult = "Notification service is offline";
-			} else {
-				log.error("Error Notifying Notification userId {} with username; {}", userId,username, e);
-			}
+			log.error("Error in Posting Notification while User Creation");
+		}catch (WebClientException e) {
+			log.error("Error Posting Notification: Service is offline", e);
+			notificationResult = "Notification service is offline";
+		} catch (Exception e) {
+			log.error("Unexpected error while posting Notification for user creation {}:", e);
 		}
 
 		map.put("status",HttpStatus.OK.value());

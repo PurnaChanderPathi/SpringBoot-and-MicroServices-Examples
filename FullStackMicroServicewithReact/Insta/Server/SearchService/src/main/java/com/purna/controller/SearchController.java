@@ -84,7 +84,7 @@ public class SearchController {
                 .map(postResults -> {
                     if (postResults == null || postResults.isEmpty()) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .body("No posts found for the query.");
+                                .body("No posts found for the query");
                     } else {
                         return ResponseEntity.ok(postResults);
                     }

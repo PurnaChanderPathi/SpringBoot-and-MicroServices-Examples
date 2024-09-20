@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.purna.model.Post;
 import com.purna.repository.PostRepository;
+import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriUtils;
 
@@ -110,44 +111,42 @@ public class PostService {
 		Optional<Post> postResult=postRepository.findById(id);
 		 
 		 if(postResult.isPresent()) {
-			 String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
 			 Object commentResult = null;
-			 try {
-				 commentResult = webClientBuilder.build().get()
-						 .uri(url)
-						 .retrieve()
-						 .bodyToMono(Object.class)
-						 .block();
-			 }catch (WebClientResponseException e){
-				 if(e.getCause() instanceof java.net.ConnectException){
+				 String url = "http://localhost:9197/api/v1/comments/getAllComments/" + id;
+				 try {
+					 commentResult = webClientBuilder.build().get()
+							 .uri(url)
+							 .retrieve()
+							 .bodyToMono(Object.class)
+							 .block();
+				 } catch (WebClientResponseException e) {
+					 log.error("Error fetching comments for post {}: {}", id, e.getMessage());
+				 } catch (WebClientException e) {
 					 log.error("Error fetching comments: Service is offline", e);
 					 commentResult = "Comments service is offline";
-				 }else{
-					 log.error("Error fetching comments for post {}: {}", id, e);
+				 } catch (Exception e) {
+					 log.error("Unexpected error fetching comments for post {}: {}", id, e);
 				 }
 
-			 }
-			 log.info("Comment Result: {}",commentResult);
-
+				 log.info("Comment Result: {}", commentResult);
 
 			 Object CommentReplyResult = null;
+			 String CommentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentsReplyByPostId?postId="+id;
 			 try {
-				 String CommentReplyUrl = "http://localhost:9197/api/v1/commentsReply/getCommentsReplyByPostId?postId="+id;
 				 CommentReplyResult = webClientBuilder.build().get()
 						 .uri(CommentReplyUrl)
 						 .retrieve()
 						 .bodyToMono(Object.class)
 						 .block();
 			 } catch (WebClientResponseException e) {
-				 if(e.getCause() instanceof java.net.ConnectException) {
-					 log.error("Error fetching commentReply: Service is offline",e);
-					 CommentReplyResult = "CommentReply service is offline";
-				 }else {
-					 log.error("Error fetching comments for post {}: {}",id,e);
-				 }
+					log.error("Error fetching commentReply for post {}: {}", id, e.getMessage());
+			 } catch (WebClientException e){
+				 log.error("Error fetching commentReply: Service is offline", e);
+				 CommentReplyResult = "CommentReply service is offline";
+			 }catch (Exception e){
+				 log.error("Unexpected error fetching comments for post {}: {}:", id, e);
 			 }
 			 log.info("CommentReply Result; {}",CommentReplyResult);
-
 
 			 Long userId = postResult.get().getUserId();
 			 Object likesResult = null;
@@ -165,12 +164,12 @@ public class PostService {
 						 .bodyToMono(Object.class)
 						 .block();
 			 } catch (WebClientResponseException e){
-				 if(e.getCause() instanceof java.net.ConnectException){
-					 log.error("Error fetching likes: Service is offline", e);
-					 likesResult = "Likes service is offline";
-				 }else{
-					 log.error("Error fetching likes for user {} and post {}: {}", userId, id, e);
-				 }
+				 log.error("Error fetching Likes for post {}: {}", id, e.getMessage());
+			 }catch (WebClientException e){
+				 log.error("Error fetching Likes: Service is offline", e);
+				 likesResult = "Likes service is offline";
+			 }catch (Exception e){
+				 log.error("Unexpected error fetching Likes for post {}: {}:", id, e);
 			 }
 
 			 log.info("Likes Result: {}",likesResult);
@@ -204,67 +203,69 @@ public class PostService {
 		if (getPostDetails != null) {
 			postRepository.deleteById(id);
 
-			// Handle Comment Deletion
 			String commentUrl = "http://localhost:9197/api/v1/comments/deleteByPostId/" + id;
-			Map<String, Object> commentResult = new HashMap<>();
+			Map<String, Object> response = new HashMap<>();
+			Object commentResult = null;
 			try {
 				commentResult = webClientBuilder.build().delete()
 						.uri(commentUrl)
 						.retrieve()
-						.bodyToMono(Map.class)  // Deserialize JSON response to Map
+						.bodyToMono(Object.class)  // Deserialize JSON response to Map
 						.block();  // Blocking to get the response immediately
 			} catch (WebClientResponseException e) {
-				if (e.getCause() instanceof java.net.ConnectException) {
 					log.error("Error Deleting Comment", e);
-					commentResult.put("message", "Comment service is offline");
-					commentResult.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
-				} else {
-					log.error("Error Deleting Comment with postId {}: {}", id, e);
-					commentResult.put("message", "Error Deleting Comment");
-					commentResult.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-				}
+			}catch (WebClientException e){
+				commentResult = "Comment service is offline";
+				response.put("message", "Comment service is offline");
+				response.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+			}catch (Exception e){
+				response.put("message", "Error Deleting Comment");
+				response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+				log.error("Unexpected error Deleting comment for post {}: {}", id, e);
 			}
 
 			// Handle CommentReply Deletion
 			String commentReplyUrl = "http://localhost:9197/api/v1/commentsReply/deleteByPostId/" + id;
-			Map<String, Object> commentReplyResult = new HashMap<>();
+			Object commentReplyResult = null;
 			try {
 				commentReplyResult = webClientBuilder.build().delete()
 						.uri(commentReplyUrl)
 						.retrieve()
-						.bodyToMono(Map.class)  // Deserialize JSON response to Map
+						.bodyToMono(Object.class)  // Deserialize JSON response to Map
 						.block();  // Blocking to get the response immediately
 			} catch (WebClientResponseException e) {
-				if (e.getCause() instanceof java.net.ConnectException) {
 					log.error("Error Deleting CommentReply", e);
-					commentReplyResult.put("message", "CommentReply service is offline");
-					commentReplyResult.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
-				} else {
-					log.error("Error Deleting CommentReply with PostId {}: {}", id, e);
-					commentReplyResult.put("message", "Error Deleting CommentReply");
-					commentReplyResult.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-				}
+				}catch (WebClientException e){
+				commentReplyResult = "CommentReply Service is offline";
+				response.put("message", "CommentReply service is offline");
+				response.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+			} catch (Exception e) {
+				log.error("Unexpected error Deleting commentReply for post {}: {}", id, e);
 			}
 
 			// Handle Like Deletion
 			String likeUrl = "http://localhost:9198/api/v1/likes/" + id;
-			Map<String, Object> likeResult = new HashMap<>();
+
+			Object likeResult = null;
 			try {
 				likeResult = webClientBuilder.build().delete()
 						.uri(likeUrl)
 						.retrieve()
-						.bodyToMono(Map.class)  // Deserialize JSON response to Map
+						.bodyToMono(Object.class)  // Deserialize JSON response to Map
 						.block();  // Blocking to get the response immediately
 			} catch (WebClientResponseException e) {
 				if (e.getCause() instanceof java.net.ConnectException) {
 					log.error("Error Deleting Likes", e);
-					likeResult.put("message", "Likes service is offline");
-					likeResult.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+
 				} else {
 					log.error("Error Deleting Likes with given PostId {}: {}", id, e);
-					likeResult.put("message", "Error Deleting Likes");
-					likeResult.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+					response.put("message", "Error Deleting Likes");
+					response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
 				}
+			}catch (WebClientException e){
+				likeResult = "Likes Service is offline";
+				response.put("message", "Likes service is offline");
+				response.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
 			}
 
 			map.put("status", HttpStatus.OK.value());
