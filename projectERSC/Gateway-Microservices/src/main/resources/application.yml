@@ -10,15 +10,18 @@ spring:
         - id: controller-microservice
           uri: lb://controller-microservice
           predicates:
-            - Path=/api/**
+            - Path=/auth/**
 
 eureka:
   instance:
     prefer-ip-address: true
-    hostname: localhost
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka
- # eureka.instance.hostname=localhost
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG

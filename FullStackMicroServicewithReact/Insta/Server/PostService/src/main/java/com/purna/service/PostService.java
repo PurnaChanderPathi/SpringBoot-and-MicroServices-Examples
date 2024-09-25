@@ -96,15 +96,12 @@ public class PostService {
 				log.error("Error Notifying Notification postId {}", savedPost.getPostId(), e);
 			}
 		}
-
-		// Prepare response
 		responseMap.put("status", HttpStatus.OK.value());
 		responseMap.put("message", "Your Post is posted...!");
 		responseMap.put("notificationResult", notificationResult);
 
 		return responseMap;
 	}
-
 
 	public Map<String,Object> findById(Long id){
 		Map<String,Object> map = new HashMap<>();
@@ -127,7 +124,6 @@ public class PostService {
 				 } catch (Exception e) {
 					 log.error("Unexpected error fetching comments for post {}: {}", id, e);
 				 }
-
 				 log.info("Comment Result: {}", commentResult);
 
 			 Object CommentReplyResult = null;
@@ -192,9 +188,6 @@ public class PostService {
 
 	}
 	
-	//public void deletePost(Long id) {
-	//	 postRepository.deleteById(id);
-	//}
 
 	public Map<String, Object> deletePost(Long id) {
 		Map<String, Object> map = new HashMap<>();
@@ -210,8 +203,8 @@ public class PostService {
 				commentResult = webClientBuilder.build().delete()
 						.uri(commentUrl)
 						.retrieve()
-						.bodyToMono(Object.class)  // Deserialize JSON response to Map
-						.block();  // Blocking to get the response immediately
+						.bodyToMono(Object.class)
+						.block();
 			} catch (WebClientResponseException e) {
 					log.error("Error Deleting Comment", e);
 			}catch (WebClientException e){
@@ -251,8 +244,8 @@ public class PostService {
 				likeResult = webClientBuilder.build().delete()
 						.uri(likeUrl)
 						.retrieve()
-						.bodyToMono(Object.class)  // Deserialize JSON response to Map
-						.block();  // Blocking to get the response immediately
+						.bodyToMono(Object.class)
+						.block();
 			} catch (WebClientResponseException e) {
 				if (e.getCause() instanceof java.net.ConnectException) {
 					log.error("Error Deleting Likes", e);

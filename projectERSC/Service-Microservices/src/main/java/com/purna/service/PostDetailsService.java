@@ -10,12 +10,14 @@ import org.springframework.web.client.RestTemplate;
 public class PostDetailsService {
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    private static final String REPOSITORY_MICROSERVICE_URL = "http://localhost:8082/repository/post";
+    private PostDetailsRepository postDetailsRepository;
 
     public PostDetails savePost(PostDetails postDetails){
-        PostDetails savePost = restTemplate.postForObject(REPOSITORY_MICROSERVICE_URL, postDetails, PostDetails.class);
-        return savePost;
+        PostDetails savePost = new PostDetails();
+        savePost.setTitle(postDetails.getTitle());
+        savePost.setContent(postDetails.getContent());
+        return postDetailsRepository.save(savePost);
     }
+
+
 }
