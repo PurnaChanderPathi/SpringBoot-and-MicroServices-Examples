@@ -11,6 +11,7 @@
 	<groupId>com.social</groupId>
 	<artifactId>UserService</artifactId>
 	<version>1.0</version>
+	<packaging>war</packaging>
 	<name>UserService</name>
 	<description>User Details</description>
 	<url/>

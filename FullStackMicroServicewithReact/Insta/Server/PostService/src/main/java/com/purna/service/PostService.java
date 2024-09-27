@@ -1,13 +1,15 @@
 package com.purna.service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import dto.UserDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dto.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,6 @@ import com.purna.model.Post;
 import com.purna.repository.PostRepository;
 import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.util.UriUtils;
 
 @Service
 @Slf4j
@@ -29,6 +30,9 @@ public class PostService {
 
 	@Autowired
 	private WebClient.Builder webClientBuilder;
+
+
+	ObjectMapper objectMapper = new ObjectMapper();
 	
 	Map<String,Object> map=new HashMap<>();
 
@@ -37,70 +41,152 @@ public class PostService {
 
 		// Save the post
 		Post savedPost = postRepository.save(post);
+		Long userId = savedPost.getUserId();
+		log.info("userId: {}", userId);
 
 		// Construct URL to fetch user details
-		String userUrl = "http://localhost:9195/api/v1/users/findByUserId/" + savedPost.getUserId();
+		String userUrl = "http://localhost:9195/api/v1/users/findByUserId/" + userId;
+		log.info("userUrl: {}", userUrl);
 
-		// Fetch user details
-		UserDto userDto = null;
-		try {
-			userDto = webClientBuilder.build().get()
-					.uri(userUrl)
-					.retrieve()
-					.bodyToMono(UserDto.class)
-					.block();
-		} catch (WebClientResponseException e) {
-			if (e.getCause() instanceof java.net.ConnectException) {
-				log.error("Error Fetching UserDetails", e);
-				userDto = null;
-			} else {
-				log.error("Error Fetching UserDetails with UserId {}", savedPost.getUserId(), e);
-			}
-		}
+		// Fetch user details with WebClient (no token)
+		Map<String, Object> userMap = fetchResponseWithWebClient(userUrl);
 
 		// Handle case where user details could not be fetched
-		if (userDto == null) {
+		if (userMap == null || userMap.isEmpty()) {
 			log.error("User service is offline or an error occurred");
 			responseMap.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
 			responseMap.put("message", "User service is offline or an error occurred");
 			return responseMap;
 		}
 
-		// Construct URL for sending notification
-//		String notificationUrl = "http://localhost:2020/api/v1/notifications/newPost?username=" +
-//				UriUtils.encode(userDto.getUsername(), StandardCharsets.UTF_8) +
-//				"&userId=" + savedPost.getUserId() +
-//				"&postTitle=" + UriUtils.encode(savedPost.getTitle(), StandardCharsets.UTF_8);
-		String username = userDto.getUsername();
-		Long userId = savedPost.getUserId();
-		String title = savedPost.getTitle();
-		log.info("username: {} userId: {} title: {}",username,userId,title);
-		String notificationUrl = "http://localhost:2020/api/v1/notifications/newPost?username=" +
-				username +
-				"&userId=" + userId +
-				"&postTitle=" + title;
+		// Convert the fetched response into a User object
+		User userDto = null;
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			userDto = objectMapper.convertValue(userMap.get("User"), User.class);
+		} catch (IllegalArgumentException e) {
+			log.error("Error converting user response to User DTO", e);
+			responseMap.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+			responseMap.put("message", "Error processing user information");
+			return responseMap;
+		}
+
+		// Handle null or empty fields in userDto or savedPost
+		String username = Optional.ofNullable(userDto.getUsername()).orElse("unknown");
+		String title = Optional.ofNullable(savedPost.getTitle()).orElse("Untitled");
+
+		log.info("username: {} userId: {} title: {}", username, userId, title);
+
+		// Construct the notification URL
+		String notificationUrl = String.format(
+				"http://localhost:2020/api/v1/notifications/newPost?username=%s&userId=%d&postTitle=%s",
+				username, userId, title
+		);
 
 		// Send notification
-		Object notificationResult = null;
+		Object notificationResult = sendNotification(notificationUrl, savedPost.getPostId());
+		responseMap.put("status", HttpStatus.OK.value());
+		responseMap.put("message", "Your Post is posted...!");
+		responseMap.put("notificationResult", notificationResult);
+
+		return responseMap;
+	}
+
+	// WebClient call without token
+	public Map<String, Object> fetchResponseWithWebClient(String url) {
+		WebClient client = WebClient.builder()
+				.baseUrl(url)
+				.build();
+
+		String responseFinal = client.get()
+				.uri(url)
+				.exchange()
+				.flatMap(clientResponse -> {
+					if (clientResponse.statusCode().is5xxServerError()) {
+						// Handling 5xx server errors
+						return clientResponse.bodyToMono(String.class);
+					} else {
+						// Normal response handling
+						return clientResponse.bodyToMono(String.class);
+					}
+				})
+				.block(); // Blocking to get the response synchronously
+
+		Map<String, Object> responseMap = new HashMap<>();
 		try {
-			notificationResult = webClientBuilder.build().post()
+			// Parsing the JSON response into a HashMap
+			ObjectMapper objectMapper = new ObjectMapper();
+			responseMap = objectMapper.readValue(responseFinal, HashMap.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			// Handle parsing exception
+		}
+
+		return responseMap;
+	}
+
+
+	// WebClient call with authorization token
+	public Map<String, Object> fetchResponseWithWebClient(String url, String token) {
+		WebClient client = WebClient.builder()
+				.baseUrl(url)
+				.build();
+
+		String responseFinal = client.get()
+				.uri(url)
+				.header("Authorization", token)
+				.exchange()
+				.flatMap(clientResponse -> {
+					if (clientResponse.statusCode().is5xxServerError()) {
+						// Handling 5xx server errors
+						return clientResponse.bodyToMono(String.class);
+					} else {
+						// Normal response handling
+						return clientResponse.bodyToMono(String.class);
+					}
+				})
+				.block(); // Blocking to get the response synchronously
+
+		Map<String, Object> responseMap = new HashMap<>();
+		try {
+			// Parsing the JSON response into a HashMap
+			ObjectMapper objectMapper = new ObjectMapper();
+			responseMap = objectMapper.readValue(responseFinal, HashMap.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			// Handle parsing exception
+		}
+
+		return responseMap;
+	}
+
+
+	private void handleUserFetchError(Exception e, Long userId, Map<String, Object> responseMap) {
+		if (e instanceof WebClientResponseException) {
+			log.error("Error Fetching UserDetails with UserId {}", userId, e);
+		} else if (e.getCause() instanceof java.net.ConnectException) {
+			log.error("Error Fetching UserDetails: Service offline", e);
+		}
+		responseMap.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+		responseMap.put("message", "User service is offline or an error occurred");
+	}
+
+	private Object sendNotification(String notificationUrl, Long postId) {
+		try {
+			return webClientBuilder.build().post()
 					.uri(notificationUrl)
 					.retrieve()
 					.bodyToMono(Object.class)
 					.block();
 		} catch (WebClientResponseException e) {
 			if (e.getCause() instanceof java.net.ConnectException) {
-				log.error("Error Notifying Notification", e);
-				notificationResult = "Notification service is offline";
+				log.error("Error Notifying Notification: Service offline", e);
+				return "Notification service is offline";
 			} else {
-				log.error("Error Notifying Notification postId {}", savedPost.getPostId(), e);
+				log.error("Error Notifying Notification for postId {}", postId, e);
+				return "Failed to notify";
 			}
 		}
-		responseMap.put("status", HttpStatus.OK.value());
-		responseMap.put("message", "Your Post is posted...!");
-		responseMap.put("notificationResult", notificationResult);
-
-		return responseMap;
 	}
 
 	public Map<String,Object> findById(Long id){
