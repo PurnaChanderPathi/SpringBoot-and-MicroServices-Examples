@@ -9,12 +9,7 @@ import org.springframework.web.SpringServletContainerInitializer;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class UserServiceApplication extends SpringBootServletInitializer {
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(UserServiceApplication.class);
-	}
+public class UserServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UserServiceApplication.class, args);
