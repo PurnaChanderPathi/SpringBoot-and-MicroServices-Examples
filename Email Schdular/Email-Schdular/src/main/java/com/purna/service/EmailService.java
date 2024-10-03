@@ -79,16 +79,20 @@ public EmailEntity testEmail(EmailEntity emailEntity){
 
                     log.info("Fetched email - Subject: {}, Body: {}", subject, body);
 
+
                     if (subject == null || body == null) {
                         log.warn("Skipping email with null subject or body.");
                         continue; // Skip this message if subject or body is null
                     }
 
+                    // Null check for attachmentData to avoid NullPointerException
                     if (!emailRepository.existsBySubject(subject)) {
-                        EmailEntity emailEntity = new EmailEntity(subject, body, attachmentData.getAttachment(), attachmentData.getAttachmentType());
+                        EmailEntity emailEntity = new EmailEntity(subject, body,
+                                attachmentData != null ? attachmentData.getAttachment() : null,
+                                attachmentData != null ? attachmentData.getAttachmentType() : null
+                        );
+
                         emailRepository.save(emailEntity);
-                        // Example usage
-                       // retrieveAndSaveAttachment(1L, "output.pdf");
 
                         log.info("Email saved successfully - Subject: {}", subject);
                     } else {
@@ -175,6 +179,9 @@ public EmailEntity testEmail(EmailEntity emailEntity){
                     break; // Save only the first attachment for now
                 }
             }
+        }
+        if (attachmentData == null) {
+            log.info("No attachments found for this email.");
         }
 
         return attachmentData;
