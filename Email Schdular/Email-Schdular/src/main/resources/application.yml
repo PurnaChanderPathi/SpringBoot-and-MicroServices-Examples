@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/projecti
+    username: PurnaChander
+    password: Purna@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: imap.gmail.com
+    port: 993
+    username: purnachander.eidiko@gmail.com
+    password: vfbd gtkv nbur gxjk # Use App Password or OAuth2
+
+logging:
+  level:
+    root: INFO
+    org.springframework.jdbc.core: DEBUG
