@@ -42,7 +42,6 @@ public class CollageDetailsService {
     }
 
     public CollageDetails saveCollageDetails(StudentDepartmentDto dto){
-
         Student student = new Student();
         student.setStudentId((long)0);
         student.setStudentName(dto.getStudent().getStudentName());
@@ -73,5 +72,4 @@ public class CollageDetailsService {
 
         return collageDetailsRepo.save(collageDetails);
     }
-
 }
