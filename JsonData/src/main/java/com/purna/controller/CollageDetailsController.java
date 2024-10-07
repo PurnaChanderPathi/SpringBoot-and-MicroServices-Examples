@@ -1,5 +1,6 @@
 package com.purna.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.purna.config.SecurityConfig;
 import com.purna.dto.StudentDepartmentDto;
 import com.purna.entity.CollageDetails;
@@ -26,14 +27,14 @@ public class CollageDetailsController {
     @Autowired
     private Function<byte[], String> byteToJson;
 
-    @PostMapping("/saveCollageDetails")
-    private ResponseEntity<Map<String,Object>> saveCollageDetails(@RequestBody CollageDetails collageDetails){
-        Map<String,Object> response = new HashMap<>();
-        CollageDetails saveCollageDetails = collageDetailsService.saveCollageDetails(collageDetails);
-        response.put("status", HttpStatus.OK.value());
-        response.put("message","CollageDetails saved successfully..!");
-        return ResponseEntity.ok().body(response);
-    }
+//    @PostMapping("/saveCollageDetails")
+//    private ResponseEntity<Map<String,Object>> saveCollageDetails(@RequestBody CollageDetails collageDetails){
+//        Map<String,Object> response = new HashMap<>();
+//        CollageDetails saveCollageDetails = collageDetailsService.saveCollageDetails(collageDetails);
+//        response.put("status", HttpStatus.OK.value());
+//        response.put("message","CollageDetails saved successfully..!");
+//        return ResponseEntity.ok().body(response);
+//    }
 
     @PostMapping("/save")
     public ResponseEntity<CollageDetails> saveCollageDetails(@RequestBody StudentDepartmentDto dto){
@@ -46,15 +47,15 @@ public class CollageDetailsController {
 
         String json = "{\n" +
                 "  \"student\": {\n" +
-                "    \"studentName\": \"PurnaChander\",\n" +
-                "    \"gender\": \"Male\",\n" +
-                "    \"dateOfBirth\": \"2024-10-03\",\n" +
-                "    \"fatherName\": \"Raghupathi\",\n" +
-                "    \"motherName\": \"Krishnaveni\"\n" +
+                "    \"studentName\": \"Swathi\",\n" +
+                "    \"gender\": \"Female\",\n" +
+                "    \"dateOfBirth\": \"1999-10-03\",\n" +
+                "    \"fatherName\": \"Krishna\",\n" +
+                "    \"motherName\": \"Sandhya\"\n" +
                 "  },\n" +
                 "  \"department\": {\n" +
-                "    \"departmentName\": \"MPCPS\",\n" +
-                "    \"departmentCode\": \"MPCPS3343\"\n" +
+                "    \"departmentName\": \"DIET\",\n" +
+                "    \"departmentCode\": \"DIET3343\"\n" +
                 "  }\n" +
                 "}";
 
@@ -62,6 +63,7 @@ public class CollageDetailsController {
 
         if(byteArray != null){
             System.out.println("Byte array: " + java.util.Arrays.toString(byteArray));
+            CollageDetails savedDetails = collageDetailsService.saveFromByteArray(byteArray);
         }else {
             System.out.println("Error converting JSON to byte array...!");
         }
@@ -74,5 +76,7 @@ public class CollageDetailsController {
             System.out.println("Error converting byte to JSON...!");
         }
     }
+
+
 
 }
