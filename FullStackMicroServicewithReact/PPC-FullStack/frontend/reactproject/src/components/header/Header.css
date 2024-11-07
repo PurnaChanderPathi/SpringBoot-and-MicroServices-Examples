@@ -1,0 +1,28 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+/* .MainDiv{
+    display: flex;
+   justify-content: center;
+   height: 50px;
+   align-items: center;
+
+}
+.Heading {
+    font-size: 22px;
+    position: fixed;
+}
+.logoutButton {
+padding-left: 1400px;
+display: flex;
+align-items: center;
+} */
+
+#button {
+    padding-left: 350px;
+    display: flex;
+    justify-items: center;
+}
+
+
