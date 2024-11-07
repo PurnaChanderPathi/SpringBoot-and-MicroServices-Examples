@@ -1,7 +1,7 @@
 package com.project.repository;
 
 import com.project.entity.QueryDetails;
-import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
+@Slf4j
 public class JdbcQueryRepository implements QueryRepository {
 
     @Autowired
@@ -35,26 +36,26 @@ public class JdbcQueryRepository implements QueryRepository {
         if (queryDetails.getCreatedDate() == null) {
             queryDetails.setCreatedDate(new Date());
         }
-        String currentDate = new SimpleDateFormat("ddMMyyyy").format(queryDetails.getCreatedDate());
-
-        String lastReviewIdQuery = "SELECT reviewId FROM querydetails WHERE reviewId LIKE 'PPC-" + currentDate + "-%' ORDER BY reviewId DESC LIMIT 1";
-
-        String lastReviewId = null;
-
-        try {
-            lastReviewId = jdbcTemplate.queryForObject(lastReviewIdQuery, String.class);
-        } catch (EmptyResultDataAccessException e) {
-            lastReviewId = null;
-        }
-
-        String newReviewId = "PPC-" + currentDate + "-001";
-
-        if (lastReviewId != null) {
-            String lastNumericPart = lastReviewId.substring(lastReviewId.lastIndexOf('-') + 1);
-            int newNumericPart = Integer.parseInt(lastNumericPart) + 1;
-            newReviewId = "PPC-" + currentDate + "-" + String.format("%03d", newNumericPart);
-        }
-        queryDetails.setReviewId(newReviewId);
+//        String currentDate = new SimpleDateFormat("ddMMyyyy").format(queryDetails.getCreatedDate());
+//
+//        String lastReviewIdQuery = "SELECT reviewId FROM querydetails WHERE reviewId LIKE 'PPC-" + currentDate + "-%' ORDER BY reviewId DESC LIMIT 1";
+//
+//        String lastReviewId = null;
+//
+//        try {
+//            lastReviewId = jdbcTemplate.queryForObject(lastReviewIdQuery, String.class);
+//        } catch (EmptyResultDataAccessException e) {
+//            lastReviewId = null;
+//        }
+//
+//        String newReviewId = "PPC-" + currentDate + "-001";
+//
+//        if (lastReviewId != null) {
+//            String lastNumericPart = lastReviewId.substring(lastReviewId.lastIndexOf('-') + 1);
+//            int newNumericPart = Integer.parseInt(lastNumericPart) + 1;
+//            newReviewId = "PPC-" + currentDate + "-" + String.format("%03d", newNumericPart);
+//        }
+//        queryDetails.setReviewId(newReviewId);
 
         String query = "INSERT INTO querydetails (reviewId,childReviewId, issueId, trackIssueId, division, groupName, taskStatus, assignedToUser, role,currentStatus,createdDate,createdBy) " +
                 "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -76,6 +77,32 @@ public class JdbcQueryRepository implements QueryRepository {
 
         jdbcTemplate.update(query, args);
         return "QueryDetails inserted successfully";
+    }
+
+    public String generateReviewId() {
+        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date()); // Use YYYYMMDD format for the date
+        String lastReviewIdQuery = "SELECT reviewId FROM querydetails WHERE reviewId LIKE 'PPC-%' ORDER BY reviewId DESC LIMIT 1";
+        log.info("lastReviewIdQuery : {}",lastReviewIdQuery);
+
+        String lastReviewId = null;
+
+        try {
+            lastReviewId = jdbcTemplate.queryForObject(lastReviewIdQuery, String.class);
+        } catch (EmptyResultDataAccessException e) {
+            lastReviewId = null; // No previous review found
+        }
+
+        // Start with a default value if no previous reviewId is found
+        String newReviewId = "PPC-" + currentDate + "-001";
+
+        if (lastReviewId != null) {
+            // Extract the numeric part after the date (e.g., 001, 002, etc.)
+            String lastNumericPart = lastReviewId.substring(lastReviewId.lastIndexOf('-') + 1);
+            int newNumericPart = Integer.parseInt(lastNumericPart) + 1;  // Increment the numeric part
+            newReviewId = "PPC-" + currentDate + "-" + String.format("%03d", newNumericPart);  // Format the new number as 3 digits
+        }
+
+        return newReviewId;
     }
 
 

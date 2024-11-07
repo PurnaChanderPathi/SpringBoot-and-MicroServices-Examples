@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface QueryRepository {
     String save(QueryDetails queryDetails);
+    String generateReviewId();
     QueryDetails saveQuery(QueryDetails queryDetails);
     int update(QueryDetails queryDetails);
     QueryDetails updateQuery(QueryDetails queryDetails);

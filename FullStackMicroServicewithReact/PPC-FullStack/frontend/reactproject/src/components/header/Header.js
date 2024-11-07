@@ -20,7 +20,7 @@ function Header() {
         <Grid size={4}>
         </Grid>
         <Grid  size={4} fontSize={'25px'}>
-        Pay Per Click
+        Pathi Purna Chander
         </Grid>
         <Grid id='button' size={4}>
             <PowerSettingsNewIcon/>

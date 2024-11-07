@@ -41,4 +41,8 @@ public class QueryService {
         return queryRepository.findAll();
     }
 
+    public String generateReviewId(){
+        return queryRepository.generateReviewId();
+    }
+
 }

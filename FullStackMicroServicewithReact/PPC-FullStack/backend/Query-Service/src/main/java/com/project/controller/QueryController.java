@@ -20,6 +20,11 @@ public class QueryController {
         return queryService.saveQueryDetails(queryDetails);
     }
 
+    @GetMapping("/generateReviewId")
+    public String generateReviewId(){
+        return queryService.generateReviewId();
+    }
+
     @PostMapping("/saveQuery")
     public QueryDetails createQueryDetails(@RequestBody QueryDetails queryDetails){
         return queryService.saveQuery(queryDetails);

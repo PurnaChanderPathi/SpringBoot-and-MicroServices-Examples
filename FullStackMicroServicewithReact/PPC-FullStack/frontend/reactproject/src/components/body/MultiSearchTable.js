@@ -125,14 +125,13 @@ export default function MultiSearchTable({ searchMultiParams }) {
           <TableHead sx={{ backgroundColor: 'rgb(37, 74, 158)', color: 'white' }}>
             <TableRow>
               <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Child Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Issue ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Track Issue ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Division</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Group Name</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Task Status</TableCell>
+              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CreatedBy</TableCell>
+              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>createdDate</TableCell>
+              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>role</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Assigned To User</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Role</TableCell>
+              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CurrentStatus</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -141,14 +140,13 @@ export default function MultiSearchTable({ searchMultiParams }) {
                 <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
                   {row.reviewId}
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.childReviewId}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.issueId}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.trackIssueId}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.division}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.groupName}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.taskStatus}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedToUser}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdBy}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdDate}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.role}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedToUser}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.currentStatus}</TableCell>
               </TableRow>
             ))}
           </TableBody>
