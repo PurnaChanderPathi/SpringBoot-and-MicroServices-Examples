@@ -35,6 +35,7 @@
     background-color:  rgb(37, 74, 158);
     color: white;
     font-size: 15px;
+    border: none;
 }
 
 .SearchMainDiv {
@@ -95,6 +96,7 @@
     background-color: rgb(37, 74, 158);
     color: white;
     border-radius: 5px;
+    border: none;
 }
 
 .DataExport {

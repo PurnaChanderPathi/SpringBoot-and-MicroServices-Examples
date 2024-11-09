@@ -5,6 +5,7 @@ import CachedIcon from '@mui/icons-material/Cached';
 import BasicTabs from './Tabs';
 import PPCDetails from './PPCDetails';
 import ReAssign from './ReAssign';
+import Header from '../header/Header';
 
 const HomePage = () => {
   const [open, setOpen] = React.useState(false);
@@ -16,7 +17,9 @@ const HomePage = () => {
   const handleCloseAssign = () => setAssignOpen(false);
 
   return (
-    <div className="MainDiv">
+
+            <div className="MainDiv">
+
       <div className="AdminScreen">
         <button className="AdminButton">Admin Screen</button>
       </div>
@@ -55,6 +58,7 @@ const HomePage = () => {
         </Box>
       </Modal>
     </div>
+    
   );
 };
 

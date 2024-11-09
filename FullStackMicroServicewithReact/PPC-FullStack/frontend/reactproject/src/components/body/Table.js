@@ -12,19 +12,20 @@ import {
   Button,
   Typography,
 } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { useNavigate } from 'react-router-dom';
 
 export default function BasicTable({ searchParams }) {
   const [rows, setRows] = React.useState([]);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
+  const navigate = useNavigate();
 
-  // Fetch data based on searchParams (reviewId, childReviewId)
   React.useEffect(() => {
     const fetchData = async () => {
-      let url = 'http://localhost:9193/api/query/getAll'; // Default API URL
+      let url = 'http://localhost:9193/api/query/getAll'; 
 
-      // Modify the API URL based on the provided searchParams (reviewId and childReviewId)
       const { reviewId, childReviewId } = searchParams;
        url = 'http://localhost:9193/query-details'; 
       const queryParams = [];
@@ -45,21 +46,20 @@ export default function BasicTable({ searchParams }) {
         }
         const data = await response.json();
         setRows(data);
-        setTotalPages(Math.ceil(data.length / rowsPerPage)); // Calculate total pages for pagination
+        setTotalPages(Math.ceil(data.length / rowsPerPage));
       } catch (error) {
         console.error('Fetch error:', error);
       }
     };
 
-    // Call the fetchData function whenever searchParams change
     fetchData();
-  }, [searchParams, rowsPerPage]); // Dependency array: re-run when searchParams or rowsPerPage change
+  }, [searchParams, rowsPerPage]);
 
   const handleRowsPerPageChange = (event) => {
     const value = Math.max(1, parseInt(event.target.value, 10));
     setRowsPerPage(value);
     setTotalPages(Math.ceil(rows.length / value));
-    setCurrentPage(1); // Reset to the first page when rows per page changes
+    setCurrentPage(1);
   };
 
   const handleNextPage = () => {
@@ -76,6 +76,10 @@ export default function BasicTable({ searchParams }) {
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const displayedRows = rows.slice(startIndex, startIndex + rowsPerPage);
+
+  const handleStartCaseClick = (reviewId) => {
+    navigate(`/CaseInformation/${reviewId}`);
+  }
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -105,6 +109,7 @@ export default function BasicTable({ searchParams }) {
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
           <TableHead sx={{ backgroundColor: 'rgb(37, 74, 158)', color: 'white' }}>
             <TableRow>
+            <TableCell sx={{ color: 'white', border: '1px solid black' }}>Start Case</TableCell>
               <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Child Review ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Issue ID</TableCell>
@@ -119,6 +124,9 @@ export default function BasicTable({ searchParams }) {
           <TableBody>
             {displayedRows.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
+            <TableCell sx={{ color: 'white', border: '1px solid black' }}
+            onClick={() => handleStartCaseClick(row.reviewId)}
+            ><PlayArrowIcon style={{backgroundColor: 'rgb(37, 74, 158)', borderRadius: '5px'}}/></TableCell>
                 <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
                   {row.reviewId}
                 </TableCell>

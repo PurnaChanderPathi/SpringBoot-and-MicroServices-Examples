@@ -1,0 +1,51 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.CaseInfoheading {
+    background-color: rgb(37, 74, 158); 
+    color: white;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 20px;
+    font-size: 15px;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.ReviewIdinfo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+.inputReview {
+    border: none;
+    color: black;
+    font-size: medium;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    width: 200px;
+    text-align: center;
+}
+
+.fetchCaseInformation {
+    display: flex;
+    padding-top: 20px;
+    justify-content: space-around;
+    text-align: center;
+    border: 1px  rgb(37, 74, 158);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.ReviewLabel {
+    font-weight: 600;
+}
+

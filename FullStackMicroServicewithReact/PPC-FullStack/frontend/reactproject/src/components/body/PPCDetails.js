@@ -53,7 +53,7 @@ const PPCDetails = ({ handleClose }) => {
   
   const insertData = async () => {
     try {
-      const response = await fetch('http://localhost:9193/api/query/save', {
+      const response = await fetch('http://localhost:9194/api/query/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Set the Content-Type to JSON

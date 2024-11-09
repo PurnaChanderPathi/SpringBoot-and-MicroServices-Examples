@@ -1,0 +1,25 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.PlanningStage {
+    /* border: 1px solid rgb(37, 74, 158); */
+    /* padding-top: 20px; */
+}
+
+.PlanningStageHeading {
+    height: 40px;
+    background-color: rgb(37, 74, 158); 
+    color: white;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.PlanningStageDD {
+    border-top-left-radius: 5px rgb(37, 74, 158);
+    border-top-right-radius: 5px rgb(37, 74, 158);
+
+}
