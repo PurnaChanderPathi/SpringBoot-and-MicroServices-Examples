@@ -14,13 +14,18 @@ const CaseInformation = () => {
         assignedToUser: '',
     })
     const [loading, setLoading] = useState(true);
-
-      // Fetch data when the component mounts
+    const ApiToken = localStorage.getItem("authToken");
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:9193/api/query/${reviewId}`);
+        const response = await fetch(`http://localhost:9195/api/query/${reviewId}`, {
+            method: "GET",
+            headers : {
+                'Authorization': `Bearer ${ApiToken}`, // Pass token here
+                'Content-Type': 'application/json',
+            }
+        });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -35,14 +40,13 @@ const CaseInformation = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
-    fetchData(); // Call the fetch function
-  }, [reviewId]); // Re-run when reviewId changes
+    fetchData();
+  }, [reviewId,ApiToken]);
 
-  // If data is still loading, show a loading message
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -55,56 +59,57 @@ const CaseInformation = () => {
             </div>
       </div>
       <div className='fetchCaseInformation'>
-            <div className='ReviewIdinfo'>
-                <div className='ReviewLabel'>
+            <div className='ReviewIdinfoCS'>
+                <div className='ReviewLabelCS'>
                 ReviewId
                 </div>
-                <div className='ReviewInputCase'>
+                <div className='ReviewInputCS'>
                 <input type='text' value={caseData.reviewId}
-                 className='inputReview'
+                 className='inputReviewCS'
                   disabled/>
                 </div>
  
             </div>
-            <div className='ReviewIdinfo'>
-            <div className='ReviewLabel'>
+            <div className='ReviewIdinfoCS'>
+            <div className='ReviewLabelCS'>
                 GroupName
                 </div>
-                <div className='ReviewInputCase'>
+                <div className='ReviewInputCS'>
                 <input type='text'
                 value={caseData.groupName}
-                 className='inputReview'
+                 className='inputReviewCS'
                   disabled />
                 </div>
             </div>
-            <div className='ReviewIdinfo'>
-            <div className='ReviewLabel'>
+            <div className='ReviewIdinfoCS'>
+            <div className='ReviewLabelCS'>
                 Division
                 </div>
-                <div className='ReviewInputCase'>
+                <div className='ReviewInputCS'>
                 <input type='text'
                 value={caseData.division}
-                className='inputReview'
+                className='inputReviewCS'
                  disabled />
                 </div>
             </div>
-            <div className='ReviewIdinfo'>
-            <div className='ReviewLabel'>
+            <div className='ReviewIdinfoCS'>
+            <div className='ReviewLabelCS'>
                 Role
                 </div>
-                <div className='ReviewInputCase'>
+                <div className='ReviewInputCS'>
                 <input type='text'
                 value={caseData.role}
-                 className='inputReview' disabled />
+                 className='inputReviewCS' disabled />
                 </div>
             </div>
-            <div className='ReviewIdinfo'>
-            <div className='ReviewLabel'>
+            <div className='ReviewIdinfoCS'>
+            <div className='ReviewLabelCS'>
                 PPC Initiator
                 </div>
-                <div className='ReviewInputCase'>
+                <div className='ReviewInputCS'>
                 <input type='text'
-                value={caseData.assignedToUser} className='inputReview' disabled />
+                value={caseData.assignedToUser} 
+                className='inputReviewCS' disabled />
                 </div>
             </div>
       </div>

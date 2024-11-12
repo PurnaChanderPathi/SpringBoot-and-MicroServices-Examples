@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/query")
+@RequestMapping("/api/action")
 public class QueryController {
 
     @Autowired

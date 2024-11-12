@@ -21,13 +21,15 @@ export default function BasicTable({ searchParams }) {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
   const navigate = useNavigate();
+  const ApiToken = localStorage.getItem("authToken");
 
   React.useEffect(() => {
+
     const fetchData = async () => {
-      let url = 'http://localhost:9193/api/query/getAll'; 
+      let url = 'http://localhost:9195/api/query/getAll';
 
       const { reviewId, childReviewId } = searchParams;
-       url = 'http://localhost:9193/query-details'; 
+       url = 'http://localhost:9195/api/query/query-details';
       const queryParams = [];
       if (reviewId) {
         queryParams.push(`reviewId=${reviewId}`);
@@ -40,7 +42,13 @@ export default function BasicTable({ searchParams }) {
       }
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method : "GET",
+            headers : {
+                'Authorization': `Bearer ${ApiToken}`, // Pass token here
+                'Content-Type': 'application/json',
+            }
+        });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -53,7 +61,7 @@ export default function BasicTable({ searchParams }) {
     };
 
     fetchData();
-  }, [searchParams, rowsPerPage]);
+  }, [searchParams, rowsPerPage, ApiToken]);
 
   const handleRowsPerPageChange = (event) => {
     const value = Math.max(1, parseInt(event.target.value, 10));

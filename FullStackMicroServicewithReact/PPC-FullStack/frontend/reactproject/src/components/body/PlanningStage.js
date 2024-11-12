@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './PlanningStage.css';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types'; // Import PropTypes
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 // Custom Tab Panel Component
 function CustomTabPanel(props) {
@@ -36,10 +38,24 @@ function a11yProps(index) {
 }
 
 export default function PlanningStage() {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0); // Tab value state
+    const [comment, setComment] = useState(''); // State for the Quill editor content
+    const [theme, setTheme] = useState('snow'); // State for the Quill editor theme
 
+    // Handle tab change
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    };
+
+    // Handle changes in the editor content
+    const handleEditorChange = (html) => {
+        setComment(html);
+    };
+
+    // Handle theme change (You can add a selector later to toggle themes)
+    const handleThemeChange = (newTheme) => {
+        if (newTheme === 'core') newTheme = null;
+        setTheme(newTheme);
     };
 
     return (
@@ -137,11 +153,25 @@ export default function PlanningStage() {
                                         },
                                     }}
                                 />
-
                             </Tabs>
                         </Box>
-                        <CustomTabPanel value={value} index={0}>
-                            <div className='CommentsScreen'>
+                        <CustomTabPanel value={value} index={0} className="CommentsScreenPS">
+                            <div className="CommentsScreen">
+                                <div className='EnterCommentPS'>
+                                    Enter Comment
+                                </div>
+                                <div className='ReactQuillScreenPS'>
+                                <ReactQuill className='ReactQuillPS'
+                                    theme={theme}
+                                    onChange={handleEditorChange}
+                                    value={comment}
+                                    // modules={CustomTabPanel.modules}
+                                    // formats={CustomTabPanel.formats}
+                                    bounds={'.app'}
+                                    placeholder="Write your comment here..."
+                                />
+                                <button className='ButtonAddPS'>Add</button>
+                                </div>
 
                             </div>
                         </CustomTabPanel>
@@ -157,3 +187,26 @@ export default function PlanningStage() {
         </div>
     );
 }
+
+// Quill modules for the editor
+CustomTabPanel.modules = {
+    toolbar: [
+        [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+        ['link', 'image', 'video'],
+        ['clean'],
+    ],
+    clipboard: {
+        matchVisual: false, // Prevent additional line breaks when pasting HTML
+    },
+};
+
+// Quill editor formats
+CustomTabPanel.formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'video',
+];

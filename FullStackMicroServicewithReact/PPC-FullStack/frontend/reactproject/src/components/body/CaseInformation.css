@@ -16,22 +16,23 @@
     font-size: 15px;
     font-weight: 400;
     font-size: 15px;
+    overflow: hidden;
 }
 
-.ReviewIdinfo {
+.ReviewIdinfoCS {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
 
-.inputReview {
+.inputReviewCS {
     border: none;
     color: black;
     font-size: medium;
     padding-top: 10px;
     padding-bottom: 15px;
-    width: 200px;
+    width: 210px;
     text-align: center;
 }
 
@@ -45,7 +46,9 @@
     border-bottom-right-radius: 5px;
 }
 
-.ReviewLabel {
+
+
+.ReviewLabelCS {
     font-weight: 600;
 }
 

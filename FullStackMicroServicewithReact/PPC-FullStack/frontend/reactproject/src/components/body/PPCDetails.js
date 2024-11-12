@@ -7,11 +7,12 @@ const PPCDetails = ({ handleClose }) => {
   const [reviewId, setReviewId] = React.useState('');
   const [groupName, setGroupName] = React.useState('');
   const [division, setDivision] = React.useState('');
+  const token = localStorage.getItem('authToken');
 
 
   useEffect(() => {
     if (reviewId) {
-      console.log('Updated reviewId:', reviewId); // This will log the updated reviewId value
+      console.log('Updated reviewId:', reviewId);
     }
   }, [reviewId]); // Runs every time reviewId changes
 
@@ -20,10 +21,11 @@ const PPCDetails = ({ handleClose }) => {
 
     const fetchReviewId = async () => {
       try {
-        const response = await fetch('http://localhost:9193/api/query/generateReviewId', {
+        const response = await fetch('http://localhost:9195/api/query/generateReviewId', {
           method: 'GET', // Use POST method
           headers: {
-            'Content-Type': 'application/json', // Set the Content-Type to JSON
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
         });
         console.log("response object :",response);
@@ -53,10 +55,11 @@ const PPCDetails = ({ handleClose }) => {
   
   const insertData = async () => {
     try {
-      const response = await fetch('http://localhost:9194/api/query/save', {
+      const response = await fetch('http://localhost:9195/api/action/save', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Set the Content-Type to JSON
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(inputs), // Correctly stringify the body
       });
@@ -101,15 +104,15 @@ const PPCDetails = ({ handleClose }) => {
               className='ReviewText'
               id="ReviewId"
               value={reviewId}
-              onChange={(e) => setReviewId(e.target.value)} // Optional: to allow manual editing if needed
-              disabled // Prevent editing of the ReviewId
+              onChange={(e) => setReviewId(e.target.value)}
+              disabled
               sx={{
                 '& .MuiInputBase-root': {
                   fontWeight: 'bold', 
 
                 },
                 '& .MuiInputLabel-root': {
-                  fontWeight: 'bold', // To make the label bold
+                  fontWeight: 'bold',
                 }
               }}
               

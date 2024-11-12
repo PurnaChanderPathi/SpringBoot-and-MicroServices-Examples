@@ -19,6 +19,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
+  const ApiToken = localStorage.getItem("authToken");
 
   // Fetch data based on searchParams when the searchMultiParams changes
   React.useEffect(() => {
@@ -30,7 +31,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
     }
 
     const fetchData = async () => {
-      let url = 'http://localhost:9193/search?'; // Base URL for search API
+      let url = 'http://localhost:9195/api/query/search?'; // Base URL for search API
 
       // Build the query string based on the provided searchParams
       const { groupName, division, reviewId, fromDate, toDate } = searchMultiParams;
@@ -57,26 +58,33 @@ export default function MultiSearchTable({ searchMultiParams }) {
       }
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: "GET",
+            headers : {
+                'Authorization': `Bearer ${ApiToken}`, // Pass token here
+                'Content-Type': 'application/json',
+            }
+
+        });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
         setRows(data);
-        setTotalPages(Math.ceil(data.length / rowsPerPage)); // Calculate total pages for pagination
+        setTotalPages(Math.ceil(data.length / rowsPerPage));
       } catch (error) {
         console.error('Fetch error:', error);
       }
     };
 
     fetchData();
-  }, [searchMultiParams, rowsPerPage]); // Trigger when searchMultiParams or rowsPerPage changes
+  }, [searchMultiParams, rowsPerPage,ApiToken]);
 
   const handleRowsPerPageChange = (event) => {
     const value = Math.max(1, parseInt(event.target.value, 10));
     setRowsPerPage(value);
     setTotalPages(Math.ceil(rows.length / value));
-    setCurrentPage(1); // Reset to the first page when rows per page changes
+    setCurrentPage(1);
   };
 
   const handleNextPage = () => {

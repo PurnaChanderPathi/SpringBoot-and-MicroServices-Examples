@@ -1,0 +1,58 @@
+server:
+  port: 9195  # Gateway port
+
+spring:
+  application:
+    name: api-gateway  # Name of the Gateway
+
+  cloud:
+    gateway:
+      global-cors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "*"
+        default-filters:
+          - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+      routes:
+        - id: ActionService
+          uri: lb://Action-Service  # Load balancing via Eureka
+          predicates:
+            - Path=/api/action/**  # Route for Action Service
+          filters:
+            - AuthenticationFilter  # Apply authentication filter
+
+        - id: QueryService
+          uri: lb://Query-Service  # Load balancing via Eureka
+          predicates:
+            - Path=/api/query/** # Route for Query Service
+          filters:
+            - AuthenticationFilter  # Apply authentication filter
+
+#        - id: IDENTITY-SERVICE
+#          uri: lb://IDENTITY-SERVICE  # Load balancing via Eureka
+#          predicates:
+#            - Path=/auth/**  # Route for Query Service
+
+      discovery:
+        locator:
+          enabled: true  # Enable service discovery for Gateway
+
+    eureka:
+      client:
+        fetch-registry: true  # Gateway fetches the registry to discover services
+        register-with-eureka: true  # Register Gateway with Eureka
+        service-url:
+          defaultZone: http://localhost:8761/eureka  # Eureka server URL
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG

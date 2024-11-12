@@ -25,4 +25,12 @@ align-items: center;
     justify-items: center;
 }
 
+.LogoffButton {
+color: rgb(37, 74, 158); 
+}
+
+.LogoutButtonHeader {
+    color: rgb(37, 74, 158);
+}
+
 

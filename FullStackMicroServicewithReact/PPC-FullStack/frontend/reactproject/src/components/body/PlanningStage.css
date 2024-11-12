@@ -23,3 +23,36 @@
     border-top-right-radius: 5px rgb(37, 74, 158);
 
 }
+
+.CommentsScreenPS {
+    border: 1px solid black;
+    height: 300px;
+}
+
+.ReactQuillScreenPS {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+
+.ButtonAddPS {
+    width: 100px;
+    height: 30px;
+    background-color: rgb(37, 74, 158);
+    border-radius: 5px;
+    color: white;
+    border: none;
+}
+
+.ReactQuillPS {
+    height: 120px;
+    width: 1300px;
+}
+
+.EnterCommentPS {
+    display: flex;
+    justify-content: start;
+    font-weight: 500;
+    font-size: 15px;
+}
