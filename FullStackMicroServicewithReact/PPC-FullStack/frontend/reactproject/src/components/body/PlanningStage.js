@@ -5,6 +5,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types'; // Import PropTypes
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import axios from 'axios'; // Import Axios
+import PlanningStageTable from './PlanningStageTable';
 
 // Custom Tab Panel Component
 function CustomTabPanel(props) {
@@ -38,24 +40,71 @@ function a11yProps(index) {
 }
 
 export default function PlanningStage() {
-    const [value, setValue] = useState(0); // Tab value state
-    const [comment, setComment] = useState(''); // State for the Quill editor content
-    const [theme, setTheme] = useState('snow'); // State for the Quill editor theme
+    const [value, setValue] = useState(0); 
+    const [comment, setComment] = useState('');
+    const [theme, setTheme] = useState('snow');
+    const [buttonClicked, setButtonClicked] = useState(false);
 
-    // Handle tab change
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    // Handle changes in the editor content
-    const handleEditorChange = (html) => {
-        setComment(html);
+    const handleEditorChange = (value) => {
+        setComment(value);
     };
 
-    // Handle theme change (You can add a selector later to toggle themes)
-    const handleThemeChange = (newTheme) => {
-        if (newTheme === 'core') newTheme = null;
-        setTheme(newTheme);
+    const stripHtmlTags = (html) => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || "";
+    };
+
+    const handleSaveComment = async () => {
+
+        const plainTextComment = stripHtmlTags(comment);
+        console.log("Plain text comment before saving:", plainTextComment);
+
+        if (!plainTextComment.trim()) { 
+            alert("Please enter a comment before submitting.");
+            return;
+        }
+
+        try {
+            const reviewId = localStorage.getItem("reviewId");
+            console.log("LSreviewId",reviewId);
+
+            const username = localStorage.getItem("username");
+            console.log("LSusername",username);
+
+            const ApiToken = localStorage.getItem('authToken');
+            console.log("ApiToken",ApiToken);
+
+            if (!ApiToken) {
+                alert('Authentication token not found');
+                return;
+            }
+
+            const data = {
+                viewComment: plainTextComment,
+                reviewId : reviewId,
+                commentedBy : username
+            };
+
+            const response = await axios.post('http://localhost:9195/api/comment/saveComment', data, {
+                headers : {
+                    'Authorization': `Bearer ${ApiToken}`,
+                }
+            });
+            if (response.status === 200) {
+                console.log('Comment saved successfully!');
+                setComment('');
+                setButtonClicked(true);
+            } else {
+                console.log('Failed to save comment');
+            }
+        } catch (error) {
+            console.error('Error saving comment:', error);
+            alert('An error occurred while saving the comment');
+        }
     };
 
     return (
@@ -63,15 +112,15 @@ export default function PlanningStage() {
             <Accordion className="PlanningStageDD">
                 <AccordionSummary
                     sx={{
-                        backgroundColor: 'rgb(37, 74, 158)', // Blue background for the whole summary
-                        color: 'white', // White text color for the summary
-                        padding: '10px', // Optional padding for the summary
+                        backgroundColor: 'rgb(37, 74, 158)',
+                        color: 'white',
+                        padding: '10px',
                         height: '20px',
                         fontSize: '15px',
                         '& .MuiAccordionSummary-content': {
-                            backgroundColor: 'rgb(37, 74, 158)', // A slightly darker blue for the text background
-                            borderRadius: '4px', // Optional: rounded corners for the background
-                            padding: '5px 10px', // Optional: padding for the text background
+                            backgroundColor: 'rgb(37, 74, 158)',
+                            borderRadius: '4px',
+                            padding: '5px 10px',
                         },
                     }}
                     expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}
@@ -95,8 +144,8 @@ export default function PlanningStage() {
                                         marginLeft: 1.5,
                                         textTransform: 'none',
                                         position: 'relative',
-                                        padding: '4px 12px', // Reducing the padding to decrease height
-                                        fontSize: '14px', // Adjusting font size if needed
+                                        padding: '4px 12px',
+                                        fontSize: '14px',
                                         '&:hover': {
                                             bgcolor: value === 0 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
                                             color: value === 0 ? 'white' : 'black',
@@ -118,8 +167,8 @@ export default function PlanningStage() {
                                         marginLeft: 1.5,
                                         textTransform: 'none',
                                         position: 'relative',
-                                        padding: '4px 12px', // Reducing the padding to decrease height
-                                        fontSize: '14px', // Adjusting font size if needed
+                                        padding: '4px 12px',
+                                        fontSize: '14px', 
                                         '&:hover': {
                                             bgcolor: value === 1 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
                                             color: value === 1 ? 'white' : 'black',
@@ -141,8 +190,8 @@ export default function PlanningStage() {
                                         marginLeft: 1.5,
                                         textTransform: 'none',
                                         position: 'relative',
-                                        padding: '4px 12px', // Reducing the padding to decrease height
-                                        fontSize: '14px', // Adjusting font size if needed
+                                        padding: '4px 12px',
+                                        fontSize: '14px',
                                         '&:hover': {
                                             bgcolor: value === 2 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
                                             color: value === 2 ? 'white' : 'black',
@@ -161,18 +210,23 @@ export default function PlanningStage() {
                                     Enter Comment
                                 </div>
                                 <div className='ReactQuillScreenPS'>
-                                <ReactQuill className='ReactQuillPS'
-                                    theme={theme}
-                                    onChange={handleEditorChange}
-                                    value={comment}
-                                    // modules={CustomTabPanel.modules}
-                                    // formats={CustomTabPanel.formats}
-                                    bounds={'.app'}
-                                    placeholder="Write your comment here..."
-                                />
-                                <button className='ButtonAddPS'>Add</button>
+                                    <ReactQuill
+                                        className='ReactQuillPS'
+                                        theme={theme}
+                                        onChange={handleEditorChange}
+                                        value={comment}
+                                        placeholder="Write your comment here..."
+                                    />
+                                    <button
+                                        className='ButtonAddPS'
+                                        onClick={handleSaveComment}
+                                    >
+                                        Add
+                                    </button>
                                 </div>
-
+                                <div className='AddButtonPS'>
+                                <PlanningStageTable buttonClicked={buttonClicked} />
+                                </div>
                             </div>
                         </CustomTabPanel>
                         <CustomTabPanel value={value} index={1}>
@@ -188,7 +242,6 @@ export default function PlanningStage() {
     );
 }
 
-// Quill modules for the editor
 CustomTabPanel.modules = {
     toolbar: [
         [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
@@ -199,7 +252,7 @@ CustomTabPanel.modules = {
         ['clean'],
     ],
     clipboard: {
-        matchVisual: false, // Prevent additional line breaks when pasting HTML
+        matchVisual: false,
     },
 };
 

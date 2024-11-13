@@ -37,6 +37,7 @@ const LoginScreen = () => {
       }
       const token = await response.text();
       localStorage.setItem('authToken', token);
+      localStorage.setItem('username',credentials.username);
 
       window.location.href = '/home';
 

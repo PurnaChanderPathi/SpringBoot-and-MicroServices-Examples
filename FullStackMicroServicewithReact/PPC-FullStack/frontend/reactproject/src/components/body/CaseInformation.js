@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './CaseInformation.css'
 import { useParams } from 'react-router-dom';
-import PlanningStage from './PlanningStage';
 import PlanningTabs from './PlanningStage';
 
 const CaseInformation = () => {
@@ -37,6 +36,7 @@ const CaseInformation = () => {
           role: data.role,
           assignedToUser: data.assignedToUser
         });
+        localStorage.setItem("reviewId",data.reviewId);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {

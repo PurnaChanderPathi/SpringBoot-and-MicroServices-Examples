@@ -20,8 +20,14 @@ function Header() {
         RaghuKrishna Pvt Ltd
       </Grid>
       <Grid id='button' size={4}>
-        {/* <PowerSettingsNewIcon className='LogoffButton'/> */}
-        <Button className='LogoutButtonHeader'
+        <div className='LogoffButtonContainer'>
+          <button className='LogoutButtenH' onClick={handleLogout}>
+          <PowerSettingsNewIcon  className='LogoffButton'/>
+          </button>
+          <span className="logoutText">Logout</span>
+        </div>
+
+        {/* <Button className='LogoutButtonHeader'
           sx={{
             backgroundColor: 'rgb(37, 74, 158)',
             textTransform: 'none',
@@ -29,7 +35,7 @@ function Header() {
             marginLeft: '50px',
             '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' }
           }}
-          variant='contained' onClick={handleLogout}>Logout</Button>
+          variant='contained' onClick={handleLogout}>Logout</Button> */}
       </Grid>
 
     </Grid>

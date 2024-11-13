@@ -1,9 +1,9 @@
 server:
-  port: 9195  # Gateway port
+  port: 9195
 
 spring:
   application:
-    name: api-gateway  # Name of the Gateway
+    name: api-gateway
 
   cloud:
     gateway:
@@ -23,34 +23,31 @@ spring:
 
       routes:
         - id: ActionService
-          uri: lb://Action-Service  # Load balancing via Eureka
+          uri: lb://Action-Service
           predicates:
-            - Path=/api/action/**  # Route for Action Service
+            - Path=/api/action/**,/api/comment/**
+
           filters:
-            - AuthenticationFilter  # Apply authentication filter
+            - AuthenticationFilter
 
         - id: QueryService
-          uri: lb://Query-Service  # Load balancing via Eureka
+          uri: lb://Query-Service
           predicates:
-            - Path=/api/query/** # Route for Query Service
+            - Path=/api/query/**,/api/fetch/**
           filters:
-            - AuthenticationFilter  # Apply authentication filter
+            - AuthenticationFilter
 
-#        - id: IDENTITY-SERVICE
-#          uri: lb://IDENTITY-SERVICE  # Load balancing via Eureka
-#          predicates:
-#            - Path=/auth/**  # Route for Query Service
 
       discovery:
         locator:
-          enabled: true  # Enable service discovery for Gateway
+          enabled: true
 
     eureka:
       client:
-        fetch-registry: true  # Gateway fetches the registry to discover services
-        register-with-eureka: true  # Register Gateway with Eureka
+        fetch-registry: true
+        register-with-eureka: true
         service-url:
-          defaultZone: http://localhost:8761/eureka  # Eureka server URL
+          defaultZone: http://localhost:8761/eureka
 
 logging:
   level:

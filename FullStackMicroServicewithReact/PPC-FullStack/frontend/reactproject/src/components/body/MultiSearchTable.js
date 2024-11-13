@@ -167,7 +167,10 @@ export default function MultiSearchTable({ searchMultiParams }) {
           variant="contained"
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          sx={{ marginRight: 1 }}
+          sx={{ marginRight: 1,  backgroundColor: 'rgb(37, 74, 158)', 
+            textTransform: 'none', 
+            color: 'white', 
+            '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
         >
           Previous
         </Button>
@@ -178,6 +181,10 @@ export default function MultiSearchTable({ searchMultiParams }) {
           variant="contained"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
+          sx={{ marginRight: 1,  backgroundColor: 'rgb(37, 74, 158)', 
+            textTransform: 'none', 
+            color: 'white', 
+            '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
         >
           Next
         </Button>

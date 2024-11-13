@@ -33,4 +33,36 @@ color: rgb(37, 74, 158);
     color: rgb(37, 74, 158);
 }
 
+.LogoffButtonContainer {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding-left: 40px;
+}
+
+.LogoffButton {
+    font-size: 30px; /* Adjust icon size */
+}
+
+.logoutText {
+    display: none; /* Hide the text initially */
+    margin-left: 8px; /* Optional: Add some space between icon and text */
+    font-size: 14px; /* Adjust font size */
+    color: #000; /* Text color */
+}
+
+.LogoffButtonContainer:hover .logoutText {
+    display: inline-block; /* Show text when hovering */
+}
+
+.LogoffButtonContainer:hover .LogoffButton {
+    color: #007BFF; /* Optional: Change icon color on hover */
+}
+
+.LogoutButtenH {
+    border: none;
+}
+
+
 

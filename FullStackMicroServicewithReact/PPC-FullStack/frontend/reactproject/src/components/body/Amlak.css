@@ -7,7 +7,7 @@
     flex-direction: column;
 }
 .Heading {
-    background-color: rgb(37, 74, 158);
+    background-color:rgb(37, 74, 158); 
     height: 40px;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
