@@ -25,7 +25,7 @@ spring:
         - id: ActionService
           uri: lb://Action-Service
           predicates:
-            - Path=/api/action/**,/api/comment/**
+            - Path=/api/action/**,/api/comment/**,/api/ActionAT/**
 
           filters:
             - AuthenticationFilter
@@ -33,7 +33,7 @@ spring:
         - id: QueryService
           uri: lb://Query-Service
           predicates:
-            - Path=/api/query/**,/api/fetch/**
+            - Path=/api/query/**,/api/fetch/**,/api/QueryAT/**
           filters:
             - AuthenticationFilter
 

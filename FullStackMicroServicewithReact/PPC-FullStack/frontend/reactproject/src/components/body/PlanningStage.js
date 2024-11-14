@@ -7,6 +7,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios'; // Import Axios
 import PlanningStageTable from './PlanningStageTable';
+import AuditTrail from './AuditTrail';
 
 // Custom Tab Panel Component
 function CustomTabPanel(props) {
@@ -225,12 +226,12 @@ export default function PlanningStage() {
                                     </button>
                                 </div>
                                 <div className='AddButtonPS'>
-                                <PlanningStageTable buttonClicked={buttonClicked} />
+                                <PlanningStageTable buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} />
                                 </div>
                             </div>
                         </CustomTabPanel>
                         <CustomTabPanel value={value} index={1}>
-                            Audit trial
+                           <AuditTrail />
                         </CustomTabPanel>
                         <CustomTabPanel value={value} index={2}>
                             Documents

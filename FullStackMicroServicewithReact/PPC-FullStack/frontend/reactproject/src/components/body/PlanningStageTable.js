@@ -13,7 +13,7 @@ import {
 
 } from '@mui/material';
 
-export default function PlanningStageTable({buttonClicked}) {
+export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
   const [rows, setRows] = React.useState([]);
   const token = localStorage.getItem('authToken');
 
@@ -36,13 +36,16 @@ export default function PlanningStageTable({buttonClicked}) {
     }
   };
 
-  if (buttonClicked) {
-    fetchComments();
-  }
-
   React.useEffect(() => {
     fetchComments();
   }, []);
+
+  React.useEffect(() => {
+      if (buttonClicked) {
+    fetchComments();
+    setButtonClicked(false);
+  }
+  }, [buttonClicked,setButtonClicked]);
 
   const handleDeleteComment = async (viewComment) => {
     try {

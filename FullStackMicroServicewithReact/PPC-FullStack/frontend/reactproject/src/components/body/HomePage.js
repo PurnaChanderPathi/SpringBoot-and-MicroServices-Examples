@@ -1,20 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './HomePage.css';
-import { Box, Button, Modal } from '@mui/material';
+import { Box, Modal } from '@mui/material';
 import CachedIcon from '@mui/icons-material/Cached';
 import BasicTabs from './Tabs';
 import PPCDetails from './PPCDetails';
 import ReAssign from './ReAssign';
 import Header from '../header/Header';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomePage = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
+    const handleClose = () => {
+        setOpen(false);
+    }
     const [assignOpen, setAssignOpen] = React.useState(false);
     const handleOpenReAssign = () => setAssignOpen(true);
     const handleCloseAssign = () => setAssignOpen(false);
+    const handleReload = () => {
+        window.location.reload();
+    };
+    const [buttonClicked,setButtonClicked] = useState(false);
+
+    const showToast = (message) => {
+        toast.success(message, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+        setButtonClicked(true);
+    };
 
     return (
 
@@ -30,13 +51,14 @@ const HomePage = () => {
                 <button className="AdminButton" onClick={handleOpenReAssign}>Re-Assign</button>
             </div>
             <div className="Reload">
+                <button className='ReloadButtonHP' onClick={handleReload}>
                 <CachedIcon className="ReloadIcon" />
+                </button>
             </div>
             <div className="tabs">
-                <BasicTabs />
+                <BasicTabs buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} />
             </div>
 
-            {/* Wrap PPCDetails inside Box to support ref forwarding */}
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -44,7 +66,7 @@ const HomePage = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box className="modalBox">
-                    <PPCDetails handleClose={handleClose} />
+                    <PPCDetails handleClose={handleClose} showToast={showToast} />
                 </Box>
             </Modal>
             <Modal
@@ -57,6 +79,7 @@ const HomePage = () => {
                     <ReAssign handleCloseAssign={handleCloseAssign} />
                 </Box>
             </Modal>
+            <ToastContainer />
         </div>
 
     );

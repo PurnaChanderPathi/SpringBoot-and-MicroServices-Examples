@@ -28,7 +28,7 @@
 .Reload {
     display: flex;
     margin-top: 7px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     width: 35px;
     height: 35px;
     align-items: center;
@@ -45,4 +45,8 @@
 
 .tabs {
     margin-top: 13px;   
+}
+
+.ReloadButtonHP {
+    /* border: none; */
 }

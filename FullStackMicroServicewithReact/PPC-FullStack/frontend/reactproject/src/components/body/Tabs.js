@@ -38,7 +38,7 @@ function a11yProps(index) {
     };
 }
 
-export default function BasicTabs() {
+export default function BasicTabs(buttonClicked,setButtonClicked) {
     const [value, setValue] = React.useState(0);
     const [reviewId, setReviewId] = React.useState('');
     const [childReviewId, setChildReviewId] = React.useState('');
@@ -183,7 +183,7 @@ export default function BasicTabs() {
                         </div>
                     </div>
                     <div>
-                        <BasicTable searchParams={searchParams} />
+                        <BasicTable searchParams={searchParams} buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} />
                     </div>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>

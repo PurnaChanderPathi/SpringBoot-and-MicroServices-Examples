@@ -14,8 +14,9 @@ import {
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-export default function BasicTable({ searchParams }) {
+export default function BasicTable({ searchParams, buttonClicked, setButtonClicked}) {
   const [rows, setRows] = React.useState([]);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -24,41 +25,50 @@ export default function BasicTable({ searchParams }) {
   const ApiToken = localStorage.getItem("authToken");
 
   React.useEffect(() => {
+    if(buttonClicked){
+      fetchData();
+      // setButtonClicked(false);
+    }
+  },[buttonClicked,setButtonClicked]);
 
-    const fetchData = async () => {
-      let url = 'http://localhost:9195/api/query/getAll';
-
-      const { reviewId, childReviewId } = searchParams;
-       url = 'http://localhost:9195/api/query/query-details';
-      const queryParams = [];
-      if (reviewId) {
-        queryParams.push(`reviewId=${reviewId}`);
-      }
-      if (childReviewId) {
-        queryParams.push(`childReviewId=${childReviewId}`);
-      }
-      if (queryParams.length > 0) {
-        url = `${url}?${queryParams.join('&')}`;
-      }
-
-      try {
-        const response = await fetch(url, {
-            method : "GET",
-            headers : {
-                'Authorization': `Bearer ${ApiToken}`, // Pass token here
-                'Content-Type': 'application/json',
-            }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+  const fetchData = async () => {
+    let url = 'http://localhost:9195/api/query/getAll';
+  
+    const { reviewId, childReviewId } = searchParams;
+    url = 'http://localhost:9195/api/query/query-details';
+    
+    const queryParams = [];
+    if (reviewId) {
+      queryParams.push(`reviewId=${reviewId}`);
+    }
+    if (childReviewId) {
+      queryParams.push(`childReviewId=${childReviewId}`);
+    }
+    
+    if (queryParams.length > 0) {
+      url = `${url}?${queryParams.join('&')}`;
+    }
+  
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${ApiToken}`,
+          'Content-Type': 'application/json',
         }
-        const data = await response.json();
-        setRows(data);
-        setTotalPages(Math.ceil(data.length / rowsPerPage));
-      } catch (error) {
-        console.error('Fetch error:', error);
-      }
-    };
+      });
+  
+      const data = response.data;
+  
+      setRows(data);
+      setTotalPages(Math.ceil(data.length / rowsPerPage));
+  
+    } catch (error) {
+      console.error('Axios fetch error:', error);
+    }
+  };
+  
+
+  React.useEffect(() => {
 
     fetchData();
   }, [searchParams, rowsPerPage, ApiToken]);
