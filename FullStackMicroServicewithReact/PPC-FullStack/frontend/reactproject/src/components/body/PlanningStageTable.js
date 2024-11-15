@@ -12,6 +12,8 @@ import {
   Button,
 
 } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
 
 export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
   const [rows, setRows] = React.useState([]);
@@ -92,15 +94,15 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
                 <TableCell align="right" sx={{ border: '1px solid black' }}>
                   <Button
                     onClick={() => handleDeleteComment(row.viewComment)}
-                    variant="contained"
-                    sx={{
-                      backgroundColor: 'red',
-                      textTransform: 'none',
-                      color: 'white',
-                      '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' },
-                    }}
+                    // variant="contained"
+                    // sx={{
+                    //   backgroundColor: 'red',
+                    //   textTransform: 'none',
+                    //   color: 'white',
+                    //   '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' },
+                    // }}
                   >
-                    Delete
+                    {/* Delete */}<DeleteOutlineIcon/>
                   </Button>
                 </TableCell>
               </TableRow>

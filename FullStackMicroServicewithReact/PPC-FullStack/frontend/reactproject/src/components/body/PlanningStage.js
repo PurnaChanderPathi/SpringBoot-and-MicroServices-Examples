@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './PlanningStage.css';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs, TextField } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types'; // Import PropTypes
 import ReactQuill from 'react-quill';
@@ -8,8 +8,10 @@ import 'react-quill/dist/quill.snow.css';
 import axios from 'axios'; // Import Axios
 import PlanningStageTable from './PlanningStageTable';
 import AuditTrail from './AuditTrail';
+import Document from './Document';
+import { Label } from '@mui/icons-material';
 
-// Custom Tab Panel Component
+
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -230,15 +232,18 @@ export default function PlanningStage() {
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel value={value} index={1}>
+                        <CustomTabPanel value={value} index={1} style={{ border: '1px solid black' }}>
                            <AuditTrail />
                         </CustomTabPanel>
-                        <CustomTabPanel value={value} index={2}>
-                            Documents
+                        <CustomTabPanel value={value} index={2} style={{ border: '1px solid black' }}>
+                            <Document />
                         </CustomTabPanel>
                     </Box>
                 </AccordionDetails>
             </Accordion>
+            <div className='planningPS'>
+                    {/* <Label>Hello </Label> */}
+            </div>
         </div>
     );
 }
