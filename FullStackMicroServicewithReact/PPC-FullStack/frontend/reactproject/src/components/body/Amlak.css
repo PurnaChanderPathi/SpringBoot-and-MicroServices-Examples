@@ -19,4 +19,50 @@
 }
 .HomePage {
     border: 1px solid rgb(37, 74, 158);
+    overflow-y: auto; /* Enable vertical scrolling if the content exceeds the height */
+    height: calc(100vh - 40px); /* Adjust height based on the header */
+}
+
+/* Scrollbar styles */
+.HomePage::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+}
+
+.HomePage::-webkit-scrollbar-track {
+    background: linear-gradient(to bottom, #ffffff, #cce7ff); /* Linear gradient from white to light blue */
+    border-radius: 10px; /* Rounded corners for the track */
+}
+
+.HomePage::-webkit-scrollbar-thumb {
+    background-color: rgb(37, 74, 158); /* Color of the draggable thumb */
+    border-radius: 10px; /* Rounded corners for the thumb */
+    border: 3px solid #f1f1f1; /* Border around the thumb */
+}
+
+/* Scrollbar hover effect */
+.HomePage::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to top, #003366, #ffffff); /* Darker blue to white gradient on hover */}
+
+.mainDiv {
+    overflow-y: auto; /* Enable vertical scrolling if the content exceeds the height */
+    height: calc(100vh - 40px); /* Adjust height based on the header */
+}
+
+.mainDiv::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+}
+
+.mainDiv::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Color of the track */
+    border-radius: 10px; /* Rounded corners for the track */
+}
+
+.mainDiv::-webkit-scrollbar-thumb {
+    background-color: rgb(37, 74, 158); /* Color of the draggable thumb */
+    border-radius: 10px; /* Rounded corners for the thumb */
+    border: 3px solid #f1f1f1; /* Border around the thumb */ 
+}
+
+.mainDiv::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Change thumb color on hover */ 
 }

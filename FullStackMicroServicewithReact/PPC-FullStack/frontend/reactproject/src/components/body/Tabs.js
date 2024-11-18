@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { Button, Input, MenuItem, TextField } from '@mui/material';
+import { Alert, Button, Input, MenuItem, TextField } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import './Tabs.css'
 import BasicTable from './Table';
 import MultiSearchTable from './MultiSearchTable';
+import axios from 'axios';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -105,6 +106,75 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
             toDate: '',
         })
     }
+
+
+    const downloadExcel = async () => {
+        // Check if any one of reviewId, division, or groupName is not empty
+        if (reviewId !== "" || division !== "" || groupName !== "") {
+            const params = {
+                groupName: groupName,
+                division: division,
+                reviewId: reviewId,
+                fromDate: fromDate,
+                toDate: toDate,
+            };
+            console.log("params", params);
+    
+            const ApiToken = localStorage.getItem('authToken');
+            console.log("ApiToken", ApiToken);
+    
+            try {
+                const response = await axios.get('http://localhost:9195/api/query/download-query-details', {
+                    params: params,
+                    headers: {
+                        'Authorization': `Bearer ${ApiToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    responseType: 'blob'
+                });
+    
+                console.log('Response Headers:', response.headers);
+    
+                const contentDisposition = response.headers['content-disposition'];
+    
+                if (contentDisposition) {
+                    console.log('contentgg', contentDisposition);
+    
+                    const matches = contentDisposition.match(/filename="([^"]+)"/);
+    
+                    if (matches && matches[1]) {
+    
+                        const filename = matches[1];
+                        console.log('Filename:', filename);
+                        // Create a URL for the Blob object
+                        const blob = response.data;
+                        const url = window.URL.createObjectURL(blob);
+    
+                        // Create a temporary <a> element to trigger the download
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = filename;  // Set the filename for the download
+                        link.click();  // Trigger the download
+    
+                        // Clean up the URL object after download
+                        window.URL.revokeObjectURL(url);
+                    } 
+                    else {
+                        console.error('Filename not found in Content-Disposition header');
+                    }
+                } else {
+                    console.error('Content-Disposition header is missing');
+                }
+            } catch (error) {
+                console.error('Error downloading file:', error);
+            }
+        } else {
+            // Log or show an alert if none of the fields are filled
+            // console.error('At least one of reviewId, division, or groupName must be filled to download the Excel file.');
+            alert('Please fill at least one of the fields: Review ID, Division, with dates');
+        }
+    
+};
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -271,6 +341,7 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                                 textTransform: 'none', 
                                 color: 'white', 
                                 '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
+                                onClick={downloadExcel}
                         >
                             Data Export
                         </Button>

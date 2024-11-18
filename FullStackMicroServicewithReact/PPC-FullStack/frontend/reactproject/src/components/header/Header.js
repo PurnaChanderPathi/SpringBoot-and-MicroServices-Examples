@@ -16,7 +16,7 @@ function Header() {
     <Grid container spacing={3} display={'flex'} justifyContent={'center'} alignItems={'center'} height={'90px'} >
       <Grid size={4}>
       </Grid>
-      <Grid size={4} fontSize={'25px'}>
+      <Grid size={4} fontSize={'25px'} sx={{textAlign: 'center'}}>
         RaghuKrishna Pvt Ltd
       </Grid>
       <Grid id='button' size={4}>

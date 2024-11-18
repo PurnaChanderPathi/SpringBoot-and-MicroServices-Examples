@@ -27,7 +27,6 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
   React.useEffect(() => {
     if(buttonClicked){
       fetchData();
-      // setButtonClicked(false);
     }
   },[buttonClicked,setButtonClicked]);
 

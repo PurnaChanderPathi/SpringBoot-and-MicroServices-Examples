@@ -27,11 +27,11 @@ export default function MultiSearchTable({ searchMultiParams }) {
         setRows([]);
         setTotalPages(1);
         setCurrentPage(1);
-      return; // Do not fetch if search parameters are empty
+      return; 
     }
 
     const fetchData = async () => {
-      let url = 'http://localhost:9195/api/query/search?'; // Base URL for search API
+      let url = 'http://localhost:9195/api/query/search?'; 
 
       // Build the query string based on the provided searchParams
       const { groupName, division, reviewId, fromDate, toDate } = searchMultiParams;
@@ -61,7 +61,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
         const response = await fetch(url, {
             method: "GET",
             headers : {
-                'Authorization': `Bearer ${ApiToken}`, // Pass token here
+                'Authorization': `Bearer ${ApiToken}`,
                 'Content-Type': 'application/json',
             }
 

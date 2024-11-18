@@ -57,7 +57,7 @@ const Document = () => {
                 responseType: "blob",
             });
             const pdfBlob = response.data;
-            const pdfUrl = URL.createObjectURL(pdfBlob); 
+            const pdfUrl = URL.createObjectURL(pdfBlob);
             setPdfUrl(pdfUrl);
             setPdfOpen(true);
         } catch (error) {

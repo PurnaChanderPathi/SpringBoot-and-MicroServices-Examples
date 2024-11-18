@@ -12,6 +12,11 @@ import { Dashboard } from '@mui/icons-material';
 function App() {
   return (
     <div className="App">
+      {/* <iframe
+                title={'PDF-Viewer'}
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=http://localhost:3000/public/sample3.xlsx`}
+                frameBorder={0}
+                style={{ height: '100vh', width: '90vw' }}></iframe> */}
       {/* <Header/> */}
           <Router>
             <Routes>
