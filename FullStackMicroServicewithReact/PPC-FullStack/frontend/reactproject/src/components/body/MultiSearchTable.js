@@ -110,7 +110,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
           justifyContent: 'flex-end',
           alignItems: 'center',
           marginBottom: 0,
-          backgroundColor: 'rgb(37, 74, 158)',
+          backgroundColor: '#1B4D3E',
           padding: 1,
         }}
       >
@@ -123,14 +123,26 @@ export default function MultiSearchTable({ searchMultiParams }) {
           onChange={handleRowsPerPageChange}
           variant="outlined"
           size="small"
-          sx={{ width: '100px', marginRight: 2, backgroundColor: 'white' }}
+          sx={{ width: '100px', marginRight: 2, backgroundColor: 'white',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                  borderColor: '#1B4D3E',
+              },
+              '&:hover fieldset': {
+                  borderColor: '#1B4D3E',
+              },
+              '&.Mui-focused fieldset': {
+                  borderColor: '#1B4D3E',
+              },
+          },
+           }}
         />
       </Box>
 
       {/* Table */}
-      <TableContainer component={Paper} sx={{ backgroundColor: 'rgb(37, 74, 158)', marginTop: 0 }}>
+      <TableContainer component={Paper} sx={{ backgroundColor: '#1B4D3E', marginTop: 0 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: 'rgb(37, 74, 158)', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
             <TableRow>
               <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Division</TableCell>
@@ -167,10 +179,10 @@ export default function MultiSearchTable({ searchMultiParams }) {
           variant="contained"
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          sx={{ marginRight: 1,  backgroundColor: 'rgb(37, 74, 158)', 
+          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
+            '&:hover': { backgroundColor: '#1B4D3E' } }}
         >
           Previous
         </Button>
@@ -181,10 +193,10 @@ export default function MultiSearchTable({ searchMultiParams }) {
           variant="contained"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          sx={{ marginRight: 1,  backgroundColor: 'rgb(37, 74, 158)', 
+          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
+            '&:hover': { backgroundColor: '#1B4D3E' } }}
         >
           Next
         </Button>

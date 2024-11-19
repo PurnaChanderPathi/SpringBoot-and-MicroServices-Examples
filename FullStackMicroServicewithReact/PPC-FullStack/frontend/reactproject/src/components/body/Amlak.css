@@ -7,7 +7,8 @@
     flex-direction: column;
 }
 .Heading {
-    background-color:rgb(37, 74, 158); 
+    /* background-color:rgb(37, 74, 158);  */
+    background-color: #1B4D3E;
     height: 40px;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
@@ -18,7 +19,7 @@
 
 }
 .HomePage {
-    border: 1px solid rgb(37, 74, 158);
+    border: 1px solid #1B4D3E;
     overflow-y: auto; /* Enable vertical scrolling if the content exceeds the height */
     height: calc(100vh - 40px); /* Adjust height based on the header */
 }
@@ -34,7 +35,7 @@
 }
 
 .HomePage::-webkit-scrollbar-thumb {
-    background-color: rgb(37, 74, 158); /* Color of the draggable thumb */
+    background-color: #1B4D3E; /* Color of the draggable thumb */
     border-radius: 10px; /* Rounded corners for the thumb */
     border: 3px solid #f1f1f1; /* Border around the thumb */
 }
@@ -58,7 +59,7 @@
 }
 
 .mainDiv::-webkit-scrollbar-thumb {
-    background-color: rgb(37, 74, 158); /* Color of the draggable thumb */
+    background-color: #1B4D3E; /* Color of the draggable thumb */
     border-radius: 10px; /* Rounded corners for the thumb */
     border: 3px solid #f1f1f1; /* Border around the thumb */ 
 }

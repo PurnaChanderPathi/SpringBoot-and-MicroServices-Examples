@@ -16,6 +16,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 export default function BasicTable({ searchParams, buttonClicked, setButtonClicked}) {
   const [rows, setRows] = React.useState([]);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -94,8 +95,13 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
   const startIndex = (currentPage - 1) * rowsPerPage;
   const displayedRows = rows.slice(startIndex, startIndex + rowsPerPage);
 
+  // const handleStartCaseClick = (reviewId) => {
+  //   navigate(`/CaseInformation/${reviewId}`);
+  // }
+
   const handleStartCaseClick = (reviewId) => {
-    navigate(`/CaseInformation/${reviewId}`);
+    const url = `/CaseInformation/${reviewId}`;
+    window.open(url, '_blank');
   }
 
   return (
@@ -106,7 +112,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
           justifyContent: 'flex-end',
           alignItems: 'center',
           marginBottom: 0,
-          backgroundColor: 'rgb(37, 74, 158)',
+          backgroundColor: '#1B4D3E',
           padding: 1,
         }}
       >
@@ -119,12 +125,24 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
           onChange={handleRowsPerPageChange}
           variant="outlined"
           size="small"
-          sx={{ width: '100px', marginRight: 2, backgroundColor: 'white' }}
+          sx={{ width: '100px', marginRight: 2, backgroundColor: 'white',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                  borderColor: '#1B4D3E',
+              },
+              '&:hover fieldset': {
+                  borderColor: '#1B4D3E',
+              },
+              '&.Mui-focused fieldset': {
+                  borderColor: '#1B4D3E',
+              },
+          },
+           }}
         />
       </Box>
-      <TableContainer component={Paper} sx={{ backgroundColor: 'rgb(37, 74, 158)', marginTop: 0 }}>
+      <TableContainer component={Paper} sx={{ backgroundColor: '#1B4D3E', marginTop: 0 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: 'rgb(37, 74, 158)', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
             <TableRow>
             <TableCell sx={{ color: 'white', border: '1px solid black' }}>Start Case</TableCell>
               <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
@@ -133,7 +151,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Track Issue ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Division</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Group Name</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Task Status</TableCell>
+              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Current Status</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Assigned To User</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Role</TableCell>
             </TableRow>
@@ -143,7 +161,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
             <TableCell sx={{ color: 'white', border: '1px solid black' }}
             onClick={() => handleStartCaseClick(row.reviewId)}
-            ><PlayArrowIcon style={{backgroundColor: 'rgb(37, 74, 158)', borderRadius: '5px'}}/></TableCell>
+            ><PlayArrowIcon style={{backgroundColor: '#008080', borderRadius: '50%'}}/></TableCell>
                 <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
                   {row.reviewId}
                 </TableCell>
@@ -152,7 +170,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.trackIssueId}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.division}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.groupName}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.taskStatus}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.currentStatus}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedToUser}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.role}</TableCell>
               </TableRow>
@@ -165,10 +183,10 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
           variant="contained"
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          sx={{ marginRight: 1,  backgroundColor: 'rgb(37, 74, 158)', 
+          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
+            '&:hover': { backgroundColor: '#1B4D3E' } }}
         >
           Previous
         </Button>
@@ -179,10 +197,10 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
           variant="contained"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          sx={{ marginRight: 1,  backgroundColor: 'rgb(37, 74, 158)', 
+          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
+            '&:hover': { backgroundColor: '#1B4D3E' } }}
         >
           Next
         </Button>

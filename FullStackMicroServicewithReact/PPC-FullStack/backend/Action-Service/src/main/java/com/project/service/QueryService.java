@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.util.Map;
+
 @Service
 public class QueryService {
 
@@ -20,7 +22,10 @@ public class QueryService {
     @Autowired
     private WebClient.Builder builder;
 
+
     public String saveQueryDetails(QueryDetails queryDetails){
+       queryDetails.setRole("SrCreditReviewer");
+       queryDetails.setCurrentStatus("Created");
         return queryRepository.save(queryDetails);
     }
 
@@ -49,7 +54,7 @@ public class QueryService {
                 queryDetails.setIssueId(details.getIssueId());
             }
             if (queryDetails.getTrackIssueId() == null) {
-                queryDetails.setTaskStatus(details.getTaskStatus());
+                queryDetails.setTrackIssueId(details.getTrackIssueId());
             }
             if (queryDetails.getDivision() == null) {
                 queryDetails.setDivision(details.getDivision());
@@ -57,8 +62,8 @@ public class QueryService {
             if (queryDetails.getGroupName() == null) {
                 queryDetails.setGroupName(details.getGroupName());
             }
-            if (queryDetails.getTaskStatus() == null) {
-                queryDetails.setTaskStatus(details.getTaskStatus());
+            if (queryDetails.getAssignedTo() == null) {
+                queryDetails.setAssignedTo(details.getAssignedTo());
             }
             if (queryDetails.getAssignedToUser() == null) {
                 queryDetails.setAssignedToUser(details.getAssignedToUser());
@@ -85,3 +90,4 @@ public class QueryService {
         return queryRepository.deleteByReviewId(reviewId);
     }
 }
+

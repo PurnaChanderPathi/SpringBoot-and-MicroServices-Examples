@@ -8,8 +8,23 @@ import CaseInformation from './components/body/CaseInformation.js';
 import LoginScreen from './components/loginScreen/LoginScreen.js';
 import PrivateRoute from './components/Authenticate/PrivateRoute.js';
 import { Dashboard } from '@mui/icons-material';
+import axios from 'axios';
+
+axios.interceptors.response.use(
+  (response) => response, 
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.log('Token expired or invalid');
+      localStorage.removeItem('authToken'); 
+      window.location.href = '/'; 
+    }
+    return Promise.reject(error);
+  }
+);
 
 function App() {
+
+  
   return (
     <div className="App">
       {/* <iframe

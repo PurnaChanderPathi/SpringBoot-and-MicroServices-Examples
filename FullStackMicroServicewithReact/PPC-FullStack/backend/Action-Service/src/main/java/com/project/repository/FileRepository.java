@@ -7,5 +7,7 @@ public interface FileRepository {
 
     String saveFile(UploadedFile uploadedFile);
 
-    FileData getFileByFileId(Long fileId);
+//    FileData getFileByFileId(Long fileId);
+
+    String deleteByFileId(Long fileId);
 }

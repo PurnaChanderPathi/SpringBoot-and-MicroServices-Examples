@@ -179,12 +179,12 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
                     <Tab
                         label="my queue"
                         {...a11yProps(0)}
                         sx={{
-                            bgcolor: value === 0 ? 'rgb(37, 74, 158)' : 'transparent',
+                            bgcolor: value === 0 ? '#1B4D3E' : 'transparent',
                             color: value === 0 ? 'white' : 'black',
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
@@ -192,11 +192,11 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                             textTransform: 'none',
                             position: 'relative',
                             '&:hover': {
-                                bgcolor: value === 0 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
+                                bgcolor: value === 0 ? '#1B4D3E' : '#1B4D3E',
                                 color: value === 0 ? 'white' : 'black',
                             },
                             '&.Mui-selected': {
-                                bgcolor: 'rgb(37, 74, 158)',
+                                bgcolor: '#1B4D3E',
                                 color: 'white',
                             },
                         }}
@@ -205,7 +205,7 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                         label="search"
                         {...a11yProps(1)}
                         sx={{
-                            bgcolor: value === 1 ? 'rgb(37, 74, 158)' : 'transparent',
+                            bgcolor: value === 1 ? '#1B4D3E' : 'transparent',
                             color: value === 1 ? 'white' : 'black',
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
@@ -213,11 +213,11 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                             textTransform: 'none',
                             position: 'relative',
                             '&:hover': {
-                                bgcolor: value === 1 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
+                                bgcolor: value === 1 ? '#1B4D3E' : '#1B4D3E',
                                 color: value === 1 ? 'white' : 'black',
                             },
                             '&.Mui-selected': {
-                                bgcolor: 'rgb(37, 74, 158)',
+                                bgcolor: '#1B4D3E',
                                 color: 'white',
                             },
                         }}
@@ -242,7 +242,7 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                             className='ReviewIdInput' 
                             type='text' 
                             placeholder=''
-                            onChange={(e) => setChildReviewId(e.target.value)} />
+                            onChange={(e) => setChildReviewId(e.target.value)}  />
                         </div>
                         <div>
                             <button className='SearchButton' onClick={handleSearch}>
@@ -266,6 +266,19 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                                 select
                                 value={groupName}
                                 onChange={(e) => setGroupName(e.target.value)}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                    },
+                                }}
                             >
                                 <MenuItem value="">
                                     <em>None</em>
@@ -282,6 +295,19 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                                 select
                                 value={division}
                                 onChange={(e) => setDivision(e.target.value)}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                    },
+                                }}
 
                             >
                                 <MenuItem value="">
@@ -298,6 +324,19 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                                 id="ReviewId"
                                 value={reviewId}
                                 onChange={(e) => setReviewId(e.target.value)}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                    },
+                                }}
                             >
                             </TextField>
                         </div>
@@ -310,6 +349,19 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                                 onChange={(e) => setFromDate(e.target.value)}
                                 InputLabelProps={{
                                     shrink: true,
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                    },
                                 }}
                             >
                             </TextField>
@@ -324,6 +376,19 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                    },
+                                }}
                             >
                             </TextField>
                         </div>
@@ -337,10 +402,10 @@ export default function BasicTabs(buttonClicked,setButtonClicked) {
                             className='dataExportButton'
                             startIcon={<FileDownloadIcon />}
                             sx={{ 
-                                backgroundColor: 'rgb(37, 74, 158)', 
+                                backgroundColor: '#1B4D3E', 
                                 textTransform: 'none', 
                                 color: 'white', 
-                                '&:hover': { backgroundColor: 'rgba(37, 74, 158, 0.8)' } }}
+                                '&:hover': { backgroundColor: '#1B4D3E' } }}
                                 onClick={downloadExcel}
                         >
                             Data Export

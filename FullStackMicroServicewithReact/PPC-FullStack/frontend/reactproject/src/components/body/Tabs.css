@@ -17,7 +17,7 @@
     width: 300px;
     height: 35px;
     border-radius: 5px;
-    border: 1px solid rgb(37, 74, 158); 
+    border: 1px solid #1B4D3E; 
 }
 .ReviewIdLabel{
     font-weight: 600px;
@@ -32,7 +32,7 @@
     height: 40px;
     margin-top: 35px;
     border-radius: 5px;
-    background-color:  rgb(37, 74, 158);
+    background-color:  #1B4D3E;
     color: white;
     font-size: 15px;
     border: none;
@@ -94,7 +94,7 @@
     width: 100px;
     height: 40px;
     font-size: 15px;
-    background-color: rgb(37, 74, 158);
+    background-color: #1B4D3E;
     color: white;
     border-radius: 5px;
     border: none;

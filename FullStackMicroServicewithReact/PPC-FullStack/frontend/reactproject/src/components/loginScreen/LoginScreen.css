@@ -7,13 +7,17 @@
 .LoginScreenMainDiv {
     display: flex;
     align-items: center;
-    padding-top: 70px;
-    background-color: #3B3E40;
-    height: 91vh;
+    padding-top: 30px;
+    background-color: #1c362f;
+    height: 95.5vh;
+    width: 100%;
     overflow: hidden;
     flex-direction: column;
     gap: 15px;
 
+}
+.ImageRK {
+    border-radius: 50px;
 }
 
 .LoginScreenHeading {
@@ -34,7 +38,7 @@
 }
 
 .HPhotoheading {
-    color: white;
+    color: #c2a560;
     font-size: 24px;
     padding-top: 20px;
     font-weight: 500;
@@ -98,7 +102,7 @@
 .LSLoginButton {
     width: 100px;
     height: 30px;
-    background-color: #1b69a9;
+    background-color: #1B4D3E;
     border-radius: 5px;
     color: white;
     font-size: 15px;
@@ -106,7 +110,7 @@
 }
 
 .LSLoginButton:hover {
-    background-color: #155d8b; 
+    background-color: #1B4D3E; 
 }
 
 .LMP {
@@ -117,9 +121,9 @@
 
 .error-message {
     margin-top: 10px;
-     color: #93270c;
-     border: 1px solid #cd462f;
-     background-color: #fbdbd3;
+     color: #c2a560;
+     border: 1px solid #c2a560;
+     background-color: #1c362f;
 }
 
 

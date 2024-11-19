@@ -18,7 +18,7 @@ public class QueryDetails {
     private String trackIssueId;
     private String division;
     private String groupName;
-    private String taskStatus;
+    private String assignedTo;
     private String assignedToUser;
     private String role;
     private String currentStatus;

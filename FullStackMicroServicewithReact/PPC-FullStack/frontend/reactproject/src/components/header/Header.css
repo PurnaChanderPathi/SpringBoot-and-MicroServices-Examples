@@ -26,11 +26,11 @@ align-items: center;
 }
 
 .LogoffButton {
-color: rgb(37, 74, 158); 
+color: #1B4D3E;
 }
 
 .LogoutButtonHeader {
-    color: rgb(37, 74, 158);
+    color: #1B4D3E;
 }
 
 .LogoffButtonContainer {
@@ -38,7 +38,7 @@ color: rgb(37, 74, 158);
     display: inline-flex;
     align-items: center;
     cursor: pointer;
-    padding-left: 40px;
+    padding-left: 100px;
 }
 
 .LogoffButton {
@@ -56,9 +56,9 @@ color: rgb(37, 74, 158);
     display: inline-block; /* Show text when hovering */
 }
 
-.LogoffButtonContainer:hover .LogoffButton {
-    color: #007BFF; /* Optional: Change icon color on hover */
-}
+/* .LogoffButtonContainer:hover .LogoffButton {
+    color: #007BFF;
+} */
 
 .LogoutButtenH {
     border: none;

@@ -32,11 +32,19 @@ public class JdbcFileRepository implements FileRepository {
         return "File Uploaded SuccessFully";
     }
 
+//    @Override
+//    public FileData getFileByFileId(Long fileId) {
+//        String query = "SELECT reviewId,fileName,fileType,data,size,comment FROM DOCUMENT WHERE fileId=?";
+//        Object[] args = {fileId};
+//        return jdbcTemplate.queryForObject(query, args, new FileDataRowMapper());
+//    }
+
     @Override
-    public FileData getFileByFileId(Long fileId) {
-        String query = "SELECT reviewId,fileName,fileType,data,size,comment FROM DOCUMENT WHERE fileId=?";
-        Object[] args = {fileId};
-        return jdbcTemplate.queryForObject(query, args, new FileDataRowMapper());
+    public String deleteByFileId(Long fileId) {
+        String query = "DELETE FROM DOCUMENT WHERE fileId=?";
+        Object [] args = {fileId};
+        jdbcTemplate.update(query,args);
+        return "File Deleted Successfully";
     }
 
     private static class FileDataRowMapper implements RowMapper<FileData> {

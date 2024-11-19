@@ -1,7 +1,6 @@
 package com.project.controller;
 
 import com.project.Dto.FileData;
-import com.project.Dto.RolesData;
 import com.project.entity.UploadedFile;
 import com.project.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +28,6 @@ public class FileController {
     @Autowired
     private FileUploadService fileUploadService;
 
-    @Autowired
-    private RolesData rolesData;
 
     @GetMapping("/View/{fileId}")
     public ResponseEntity<byte[]> ViewPdf(@PathVariable Long fileId) {
@@ -41,7 +38,6 @@ public class FileController {
         if (fileData == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileData.getFileName() + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, fileData.getContentType())

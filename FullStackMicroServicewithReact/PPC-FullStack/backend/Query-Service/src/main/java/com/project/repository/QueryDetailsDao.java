@@ -35,7 +35,7 @@ public class QueryDetailsDao {
                 queryDetails.setTrackIssueId(rs.getString("trackIssueId"));
                 queryDetails.setDivision(rs.getString("division"));
                 queryDetails.setGroupName(rs.getString("groupName"));
-                queryDetails.setTaskStatus(rs.getString("taskStatus"));
+                queryDetails.setAssignedTo(rs.getString("assignedTo"));
                 queryDetails.setAssignedToUser(rs.getString("assignedToUser"));
                 queryDetails.setRole(rs.getString("role"));
                 queryDetails.setCurrentStatus(rs.getString("currentStatus"));

@@ -42,7 +42,7 @@ export default function AuditTrail() {
     <Box sx={{ padding: 2 }}>
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: 'rgb(37, 74, 158)', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
             <TableRow>
               <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>currentAction</TableCell>

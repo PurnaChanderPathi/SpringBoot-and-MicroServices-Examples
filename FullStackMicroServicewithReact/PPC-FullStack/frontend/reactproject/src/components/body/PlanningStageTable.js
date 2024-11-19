@@ -10,6 +10,7 @@ import {
   Paper,
   Box,
   Button,
+  Tooltip,
 
 } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -73,7 +74,7 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
       {/* Table */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: 'rgb(37, 74, 158)', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
             <TableRow>
               <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Commented By</TableCell>
@@ -102,7 +103,9 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
                     //   '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' },
                     // }}
                   >
-                    {/* Delete */}<DeleteOutlineIcon/>
+                    <Tooltip title="Delete">
+                    <DeleteOutlineIcon sx={{color:'#1b4d3E'}} />
+                    </Tooltip>
                   </Button>
                 </TableCell>
               </TableRow>

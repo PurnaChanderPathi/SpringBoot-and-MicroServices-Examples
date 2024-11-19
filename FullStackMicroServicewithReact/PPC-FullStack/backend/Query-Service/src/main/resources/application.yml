@@ -20,8 +20,12 @@ spring:
       enabled: false
 #spring.cloud.compatibility-verifier.enabled=false
 
-#flow:
-#  matrix:
-#    SrCreditReviewer:
-#      Case: "santosh"
-#      cemment: "rohit"
+flow:
+  matrix:
+    SrCreditReviewer:
+      caseStatus: Case Assigned to Head of PPC
+      milestone: Head of PPC
+      activityLevel: Head of PPC
+      bpmStatus: Submit to Head of PPC
+      profileActivityLevel: Head of PPC
+      auditText: Case submitted by Sr Credit Reviewer to Head of PPC

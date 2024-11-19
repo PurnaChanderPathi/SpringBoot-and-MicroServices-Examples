@@ -1,7 +1,7 @@
 import React from 'react'
 import './Header.css'
 import Grid from '@mui/material/Grid2';
-import { Avatar, Box, Button } from '@mui/material';
+import { Avatar, Box, Button, Tooltip } from '@mui/material';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,9 +22,11 @@ function Header() {
       <Grid id='button' size={4}>
         <div className='LogoffButtonContainer'>
           <button className='LogoutButtenH' onClick={handleLogout}>
-          <PowerSettingsNewIcon  className='LogoffButton'/>
+            <Tooltip title="Logout">
+            <PowerSettingsNewIcon  className='LogoffButton'/>
+            </Tooltip>
           </button>
-          <span className="logoutText">Logout</span>
+          {/* <span className="logoutText">Logout</span> */}
         </div>
 
         {/* <Button className='LogoutButtonHeader'

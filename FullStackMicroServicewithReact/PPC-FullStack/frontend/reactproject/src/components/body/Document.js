@@ -14,6 +14,7 @@ import {
     TableCell,
     TableBody,
     Paper,
+    Tooltip,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -21,6 +22,7 @@ import "./Document.css";
 import UploadIcon from "@mui/icons-material/Upload";
 import axios from "axios";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const Document = () => {
     const [open, setOpen] = useState(false);
@@ -29,7 +31,7 @@ const Document = () => {
     const [rows, setRows] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
-    const [fileSelected, setFileSelected] = useState(false); 
+    const [fileSelected, setFileSelected] = useState(false);
     const [pdfOpen, setPdfOpen] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
 
@@ -38,7 +40,7 @@ const Document = () => {
 
 
     const handlePdfOpen = (fileId) => {
-     
+
         fetchPdf(fileId);
     };
 
@@ -51,8 +53,8 @@ const Document = () => {
         try {
             const response = await axios.get(`http://localhost:9195/api/query/file/View/${fileId}`, {
                 headers: {
-                    'Authorization': `Bearer ${Token}`, 
-                'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${Token}`,
+                    'Content-Type': 'application/json',
                 },
                 responseType: "blob",
             });
@@ -65,6 +67,35 @@ const Document = () => {
             alert("Failed to fetch PDF.");
         }
     };
+
+    const deleteFile = (fileId, reviewId) => {
+        console.log("filedId", fileId);
+        console.log("reviewId", reviewId);
+        deleteRecord(fileId);
+        setTimeout(() => {
+            fetchData(reviewId);
+        }, 200);
+
+    }
+
+    const deleteRecord = async (fileId) => {
+        try {
+            const response = await axios.delete(`http://localhost:9195/api/file/delete/${fileId}`, {
+                headers: {
+                    'Authorization': `Bearer ${Token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            if (response.status === 200) {
+                console.log("File Deleted Successfully...!");
+            } else {
+                console.log('File deletion failed:', response.data.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error.message || error);
+            // alert('Error occurred while deleting the file. Please try again later.');
+        }
+    }
 
     useEffect(() => {
         if (reviewId) {
@@ -115,11 +146,10 @@ const Document = () => {
 
     const documentUpload = async () => {
 
-        console.log("reviewId:", reviewId); // Log reviewId
-        console.log("comment:", comment); // Log comment
-        console.log("input file:", input); // Log the file
+        console.log("reviewId:", reviewId);
+        console.log("comment:", comment);
+        console.log("input file:", input);
 
-        // Validate before uploading
         if (!reviewId || !comment || !input) {
             alert("Please ensure all fields are filled out.");
             return;
@@ -128,7 +158,7 @@ const Document = () => {
         const url = "http://localhost:9195/api/file/upload";
         const formData = new FormData();
         formData.append("file", input);
-        formData.append("reviewId", reviewId); 
+        formData.append("reviewId", reviewId);
         formData.append("comment", comment);
 
         try {
@@ -143,6 +173,7 @@ const Document = () => {
             if (response.status === 200) {
                 console.log("File uploaded successfully!");
                 handleClose();
+                fetchData(reviewId);
             }
         } catch (error) {
             console.log("Failed to upload file", error);
@@ -160,7 +191,7 @@ const Document = () => {
             <Accordion>
                 <AccordionSummary
                     sx={{
-                        backgroundColor: "rgb(37, 74, 158)",
+                        backgroundColor: "#1B4D3E",
                         color: "white",
                         borderTopLeftRadius: "5px",
                         borderTopRightRadius: "5px",
@@ -201,7 +232,7 @@ const Document = () => {
                                 <Accordion>
                                     <AccordionSummary
                                         sx={{
-                                            backgroundColor: "rgb(37, 74, 158)",
+                                            backgroundColor: "#1B4D3E",
                                             color: "white",
                                             borderTopLeftRadius: "5px",
                                             borderTopRightRadius: "5px",
@@ -234,7 +265,22 @@ const Document = () => {
                                             Comment
                                         </Typography>
                                         <TextField
-                                            sx={{ width: "510px", border: "rgb(37, 74, 158)" }}
+                                            sx={{
+                                                width: "510px",
+                                                border: "#1B4D3E",
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': {
+                                                        borderColor: '#1B4D3E',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: '#1B4D3E',
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: '#1B4D3E',
+                                                    },
+                                                },
+
+                                            }}
                                             value={comment}
                                             onChange={handleCommentChange}
                                         />
@@ -243,7 +289,7 @@ const Document = () => {
                                                 startIcon={<UploadIcon />}
                                                 className="UoloadBDOC"
                                                 sx={{
-                                                    backgroundColor: "rgb(37,74,158)",
+                                                    backgroundColor: "#1B4D3E",
                                                     color: "white",
                                                 }}
                                                 onClick={documentUpload}
@@ -253,7 +299,7 @@ const Document = () => {
                                             <Button
                                                 className="CloseBDOC"
                                                 sx={{
-                                                    backgroundColor: "rgb(37,74,158)",
+                                                    backgroundColor: "#1B4D3E",
                                                     color: "white",
                                                 }}
                                                 onClick={handleClose}
@@ -266,30 +312,30 @@ const Document = () => {
                             </Box>
                         </Modal>
 
-            <Modal open={pdfOpen} onClose={handlePdfClose}>
-                <Box
-                    sx={{
-                        width: "80%",
-                        height: "80%",
-                        backgroundColor: "white",
-                        margin: "auto",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    {pdfUrl && (
-                        <embed
-                            src={pdfUrl}
-                            width="100%"
-                            height="100%"
-                            type="application/pdf"
-                        />
-                    )}
-                </Box>
-            </Modal>
+                        <Modal open={pdfOpen} onClose={handlePdfClose}>
+                            <Box
+                                sx={{
+                                    width: "80%",
+                                    height: "80%",
+                                    backgroundColor: "white",
+                                    margin: "auto",
+                                    padding: "20px",
+                                    borderRadius: "8px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {pdfUrl && (
+                                    <embed
+                                        src={pdfUrl}
+                                        width="100%"
+                                        height="100%"
+                                        type="application/pdf"
+                                    />
+                                )}
+                            </Box>
+                        </Modal>
 
                         <div>
                             <TableContainer
@@ -301,7 +347,7 @@ const Document = () => {
                                     aria-label="simple table"
                                 >
                                     <TableHead
-                                        sx={{ backgroundColor: "rgb(37, 74, 158)", color: "white" }}
+                                        sx={{ backgroundColor: "#1B4D3E", color: "white" }}
                                     >
                                         <TableRow>
                                             <TableCell
@@ -344,6 +390,12 @@ const Document = () => {
                                                 sx={{ color: "white", border: "1px solid black" }}
                                             >
                                                 View Document
+                                            </TableCell>
+                                            <TableCell
+                                                align="right"
+                                                sx={{ color: "white", border: "1px solid black" }}
+                                            >
+                                                Delete
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -393,8 +445,20 @@ const Document = () => {
                                                     align="right"
                                                     sx={{ border: "1px solid black" }}
                                                 >
-                                                    <Button onClick={()=> handlePdfOpen(row.fileId)}>
-                                                        <OpenInNewIcon />
+                                                    <Button onClick={() => handlePdfOpen(row.fileId)}>
+                                                        <Tooltip title="Open Document">
+                                                            <OpenInNewIcon sx={{ color: '#1B4D3E' }} />
+                                                        </Tooltip>
+                                                    </Button>
+                                                </TableCell>
+                                                <TableCell
+                                                    align="right"
+                                                    sx={{ border: "1px solid black" }}
+                                                >
+                                                    <Button onClick={() => deleteFile(row.fileId, row.reviewId)} >
+                                                        <Tooltip title="Delete">
+                                                            <DeleteOutlineIcon sx={{ color: '#1B4D3E' }} />
+                                                        </Tooltip>
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>

@@ -119,6 +119,19 @@ const PPCDetails = ({ handleClose, showToast }) => {
               select
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                      borderColor: '#1B4D3E',
+                  },
+                  '&:hover fieldset': {
+                      borderColor: '#1B4D3E',
+                  },
+                  '&.Mui-focused fieldset': {
+                      borderColor: '#1B4D3E',
+                  },
+              },
+              }}
             >
               <MenuItem value="">
                 <em>None</em>
@@ -136,6 +149,19 @@ const PPCDetails = ({ handleClose, showToast }) => {
               select
               value={division}
               onChange={(e) => setDivision(e.target.value)}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                      borderColor: '#1B4D3E',
+                  },
+                  '&:hover fieldset': {
+                      borderColor: '#1B4D3E',
+                  },
+                  '&.Mui-focused fieldset': {
+                      borderColor: '#1B4D3E',
+                  },
+              },
+              }}
             >
               <MenuItem value="">
                 <em>None</em>

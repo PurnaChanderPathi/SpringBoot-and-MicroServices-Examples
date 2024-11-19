@@ -24,6 +24,19 @@ const ReAssign = ({handleCloseAssign}) => {
                                 select
                                 value={teamUsers}
                                 onChange={(e) => setTeamUsers(e.target.value)}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1B4D3E',
+                                        },
+                                    },
+                                }}
                             >
                                 <MenuItem value="">
                                     <em>None</em>

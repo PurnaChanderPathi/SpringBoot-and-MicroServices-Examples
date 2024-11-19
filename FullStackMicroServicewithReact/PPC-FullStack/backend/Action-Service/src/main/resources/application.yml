@@ -19,3 +19,20 @@ spring:
     compatibility-verifier:
       enabled: false
 #spring.cloud.compatibility-verifier.enabled=false
+
+flow:
+  matrix:
+    SrCreditReviewer:
+      caseStatus: Case Assigned to Head of PPC
+      milestone: Head of PPC
+      activityLevel: Head of PPC
+      bpmStatus: Submit to Head of PPC
+      profileActivityLevel: Head of PPC
+      auditText: Case submitted by Sr Credit Reviewer to Head of PPC
+    AssigntoCreditReviewer:
+      caseStatus: Case Assigned to Credit Reviewer
+      milestone: Credit Reviewer Review
+      activityLevel: Credit Reviewer
+      bpmStatus: Assign to Credit Reviewer
+      profileActivityLevel: Credit Reviewer
+      auditText: Case submitted by Sr Credit Reviewer to Credit Reviewer

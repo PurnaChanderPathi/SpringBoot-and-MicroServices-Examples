@@ -28,7 +28,7 @@ public class JdbcQueryRepository implements QueryRepository {
         if (queryDetails.getCreatedDate() == null) {
             queryDetails.setCreatedDate(new Date());
         }
-        String query = "INSERT INTO querydetails (reviewId,childReviewId, issueId, trackIssueId, division, groupName, taskStatus, assignedToUser, role,currentStatus,createdDate,createdBy) " +
+        String query = "INSERT INTO querydetails (reviewId,childReviewId, issueId, trackIssueId, division, groupName, assignedTo, assignedToUser, role,currentStatus,createdDate,createdBy) " +
                 "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Object[] args = {
@@ -38,7 +38,7 @@ public class JdbcQueryRepository implements QueryRepository {
                 queryDetails.getTrackIssueId(),
                 queryDetails.getDivision(),
                 queryDetails.getGroupName(),
-                queryDetails.getTaskStatus(),
+                queryDetails.getAssignedTo(),
                 queryDetails.getAssignedToUser(),
                 queryDetails.getRole(),
                 queryDetails.getCurrentStatus(),
@@ -73,9 +73,9 @@ public class JdbcQueryRepository implements QueryRepository {
             query.append("groupName=?, ");
             args.add(queryDetails.getGroupName());
         }
-        if (queryDetails.getTaskStatus() != null) {
-            query.append("taskStatus=?, ");
-            args.add(queryDetails.getTaskStatus());
+        if (queryDetails.getAssignedTo() != null) {
+            query.append("assignedTo=?, ");
+            args.add(queryDetails.getAssignedTo());
         }
         if (queryDetails.getAssignedToUser() != null) {
             query.append("assignedToUser=?, ");

@@ -4,7 +4,7 @@
 }
 
 .CaseInfoheading {
-    background-color: rgb(37, 74, 158); 
+    background-color: #1B4D3E;
     color: white;
     height: 40px;
     border-top-left-radius: 5px;
@@ -41,7 +41,7 @@
     padding-top: 20px;
     justify-content: space-around;
     text-align: center;
-    border: 1px  rgb(37, 74, 158);
+    border: 1px  #1B4D3E;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
@@ -51,4 +51,45 @@
 .ReviewLabelCS {
     font-weight: 600;
 }
+
+.PlanningMainDivCI {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #1B4D3E;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.PlanningStageCmptd {
+
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.TakeActionSubmitCS{
+    width: 220px;
+    height: 40px;
+    gap: 10px;
+}
+
+.submitTACI {
+    padding-right: 10px;
+}
+
+.planningTabsDiv {
+    margin-top: 20px;
+    display: flex;
+}
+
+.planningEditScreen {
+    display: flex;
+    width: 550px;
+    height: 40px;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 

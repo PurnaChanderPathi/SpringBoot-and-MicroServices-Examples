@@ -33,7 +33,11 @@ public class FileUploadService {
         }
     }
 
-    public FileData getFileData(Long fileId){
-        return fileRepository.getFileByFileId(fileId);
+//    public FileData getFileData(Long fileId){
+//        return fileRepository.getFileByFileId(fileId);
+//    }
+
+    public String deleteByFileId(Long fileId){
+        return fileRepository.deleteByFileId(fileId);
     }
 }

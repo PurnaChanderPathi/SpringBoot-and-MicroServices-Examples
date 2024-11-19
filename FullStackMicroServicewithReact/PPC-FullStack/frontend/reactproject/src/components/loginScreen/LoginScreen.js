@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './LoginScreen.css';
-import loginImage from './ibm_PNG19658.png';
+import loginImage from './Capture12.PNG';
 import { useNavigate } from 'react-router-dom';
 
 const LoginScreen = () => {
@@ -52,10 +52,10 @@ const LoginScreen = () => {
     <div className='LoginScreenMainDiv'>
       <div className='HeaderPhotoLS'>
         <div className='HPhoto'>
-          <img src={loginImage} alt="IBM Logo" width="110" height="50" />
+          <img src={loginImage} alt="IBM Logo" width="300" height="160" className='ImageRK' />
         </div>
         <div className='HPhotoheading'>
-          Workflow Center
+         Login
         </div>
       </div>
       <div className='LoginScreenHeading'>
@@ -90,9 +90,9 @@ const LoginScreen = () => {
           {error && <div className="error-message">{error}</div>}
         </form>
       </div>
-      <div className='LMP'>
+      {/* <div className='LMP'>
         Licensed Materials - Property of IBM. © Copyright IBM Corporation 2000, 2021.
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './PlanningStage.css';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs, TextField } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs, TextField, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types'; // Import PropTypes
 import ReactQuill from 'react-quill';
@@ -115,13 +115,13 @@ export default function PlanningStage() {
             <Accordion className="PlanningStageDD">
                 <AccordionSummary
                     sx={{
-                        backgroundColor: 'rgb(37, 74, 158)',
+                        backgroundColor: '#1B4D3E',
                         color: 'white',
                         padding: '10px',
                         height: '20px',
                         fontSize: '15px',
                         '& .MuiAccordionSummary-content': {
-                            backgroundColor: 'rgb(37, 74, 158)',
+                            backgroundColor: '#1B4D3E',
                             borderRadius: '4px',
                             padding: '5px 10px',
                         },
@@ -135,12 +135,12 @@ export default function PlanningStage() {
                 <AccordionDetails>
                     <Box sx={{ width: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
                                 <Tab
                                     label="Comments"
                                     {...a11yProps(0)}
                                     sx={{
-                                        bgcolor: value === 0 ? 'rgb(37, 74, 158)' : 'transparent',
+                                        bgcolor: value === 0 ? '#1B4D3E' : 'transparent',
                                         color: value === 0 ? 'white' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
@@ -150,11 +150,11 @@ export default function PlanningStage() {
                                         padding: '4px 12px',
                                         fontSize: '14px',
                                         '&:hover': {
-                                            bgcolor: value === 0 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
+                                            bgcolor: value === 0 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
                                             color: value === 0 ? 'white' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: 'rgb(37, 74, 158)',
+                                            bgcolor: '#1B4D3E',
                                             color: 'white',
                                         },
                                     }}
@@ -163,7 +163,7 @@ export default function PlanningStage() {
                                     label="Audit Trial"
                                     {...a11yProps(1)}
                                     sx={{
-                                        bgcolor: value === 1 ? 'rgb(37, 74, 158)' : 'transparent',
+                                        bgcolor: value === 1 ? '#1B4D3E' : 'transparent',
                                         color: value === 1 ? 'white' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
@@ -173,11 +173,11 @@ export default function PlanningStage() {
                                         padding: '4px 12px',
                                         fontSize: '14px', 
                                         '&:hover': {
-                                            bgcolor: value === 1 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
+                                            bgcolor: value === 1 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
                                             color: value === 1 ? 'white' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: 'rgb(37, 74, 158)',
+                                            bgcolor: '#1B4D3E',
                                             color: 'white',
                                         },
                                     }}
@@ -186,7 +186,7 @@ export default function PlanningStage() {
                                     label="Documents"
                                     {...a11yProps(2)}
                                     sx={{
-                                        bgcolor: value === 2 ? 'rgb(37, 74, 158)' : 'transparent',
+                                        bgcolor: value === 2 ? '#1B4D3E' : 'transparent',
                                         color: value === 2 ? 'white' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
@@ -196,11 +196,11 @@ export default function PlanningStage() {
                                         padding: '4px 12px',
                                         fontSize: '14px',
                                         '&:hover': {
-                                            bgcolor: value === 2 ? 'rgb(37, 74, 158)' : 'rgba(37, 74, 158, 0.5)',
+                                            bgcolor: value === 2 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
                                             color: value === 2 ? 'white' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: 'rgb(37, 74, 158)',
+                                            bgcolor: '#1B4D3E',
                                             color: 'white',
                                         },
                                     }}
