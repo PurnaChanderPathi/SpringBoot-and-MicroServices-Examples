@@ -6,9 +6,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
+
 @Configuration
 @ConfigurationProperties(prefix = "flow")
 @Data
 public class RolesData {
-    private Map<String,Map<String,String>> matrix;
+    private Map<String,Map<String,Map<String,String>>> matrix;
 }

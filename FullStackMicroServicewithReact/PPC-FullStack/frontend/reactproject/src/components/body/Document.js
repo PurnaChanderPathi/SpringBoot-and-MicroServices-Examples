@@ -103,6 +103,7 @@ const Document = () => {
         }
     }, [reviewId]);
 
+
     const fetchData = async (reviewId) => {
         try {
             const response = await axios.get(
@@ -112,11 +113,11 @@ const Document = () => {
                         Authorization: `Bearer ${Token}`,
                     },
                 }
-            );
-
+            );            
             if (Array.isArray(response.data.result)) {
                 setRows(response.data.result);
                 console.log("Fetched rows: ", response.data.result);
+
             } else {
                 console.error("Expected an array, but received:", response.data);
                 setRows([]);

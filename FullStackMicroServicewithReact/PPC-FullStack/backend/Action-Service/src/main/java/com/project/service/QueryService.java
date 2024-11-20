@@ -30,6 +30,8 @@ public class QueryService {
     }
 
 
+
+
     public QueryDetails updateQuery(QueryDetails queryDetails){
         QueryDetails details = new QueryDetails();
         String findByReviewId = "http://localhost:9193/api/query/"+queryDetails.getReviewId();
@@ -50,6 +52,9 @@ public class QueryService {
         if(details.getReviewId() == null || details.getReviewId().isEmpty()){
             throw new RuntimeException("QueryService not found with ReviewId :"+queryDetails.getReviewId());
         }else {
+            if(queryDetails.getChildReviewId() == null){
+                queryDetails.setChildReviewId(details.getChildReviewId());
+            }
             if (queryDetails.getIssueId() == null) {
                 queryDetails.setIssueId(details.getIssueId());
             }
