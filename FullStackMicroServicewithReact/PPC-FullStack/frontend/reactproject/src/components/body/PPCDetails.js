@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './PPCDetails.css';
-import { MenuItem, TextField } from '@mui/material';
+import { CircularProgress, MenuItem, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
@@ -8,15 +8,83 @@ const PPCDetails = ({ handleClose, showToast }) => {
   const [reviewId, setReviewId] = React.useState('');
   const [groupName, setGroupName] = React.useState('');
   const [division, setDivision] = React.useState('');
+  const [selectedGroup, setSelectedGroup] = useState('');
+  const [selectedDivision, setSelectedDivision] = useState('');
+  const [loadingGroupNames, setLoadingGroupNames] = useState(true);
+  const [loadingDivisions, setLoadingDivisions] = useState(false);
+  const [isDivisionDisabled, setIsDivisionDisabled] = useState(true);
   const token = localStorage.getItem('authToken');
-  const [buttonClicked,setButtonClicked] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  useEffect(() => {
+    const fetchGroupNames = async () => {
+      try {
+        const response = await axios.get('http://localhost:9195/api/adminConfig/getGroupNames', {
+          headers: {
+
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+          }
+        });
+        console.log("GroupNames API response:", response.data);
+        if (response.data && Array.isArray(response.data.result)) {
+          setGroupName(response.data.result);
+        } else {
+          console.error("Expected array but received:", response.data);
+          setGroupName([]);
+        }
+        setLoadingGroupNames(false);
+      } catch (error) {
+        console.error("Error fetching group names", error);
+        setGroupName([]);
+        setLoadingGroupNames(false);
+      }
+    };
+
+    fetchGroupNames();
+  }, []);
+
+
+  // Fetch Divisions when GroupName is selected
+  const handleGroupChange = async (event) => {
+    const selectedGroup = event.target.value;
+    setSelectedGroup(selectedGroup);
+    setSelectedDivision(''); // Reset selected division
+    setIsDivisionDisabled(false); // Enable Division dropdown
+
+    if (selectedGroup) {
+      setLoadingDivisions(true); // Start loading Divisions
+      try {
+        const response = await axios.get(`http://localhost:9195/api/adminConfig/getDivisions/${selectedGroup}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }
+        }
+        );
+        console.log("Divisions API response:", response.data);
+        if (response.data && Array.isArray(response.data.result)) {
+          setDivision(response.data.result)
+        } else {
+          console.error("Divisions response is not an array", response.data);
+          setDivision([]);
+        }
+      } catch (error) {
+        console.error("Error fetching divisions", error);
+        setDivision([]); // Reset divisions in case of error
+      } finally {
+        setLoadingDivisions(false); // Stop loading Divisions
+      }
+    }
+  };
 
   useEffect(() => {
     if (reviewId) {
       console.log('Updated reviewId:', reviewId);
     }
   }, [reviewId]);
-  
+
   useEffect(() => {
 
     const fetchReviewId = async () => {
@@ -34,7 +102,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
           console.log('Received data:', data);
           setReviewId(data);
           console.log("reviewId :", reviewId);
-          setButtonClicked(true); 
+          setButtonClicked(true);
         } else {
           console.error('Failed to fetch reviewId', response.status);
         }
@@ -48,8 +116,8 @@ const PPCDetails = ({ handleClose, showToast }) => {
 
   const inputs = {
     reviewId: reviewId,
-    groupName: groupName,
-    division: division,
+    groupName: selectedGroup,
+    division: selectedDivision,
   };
 
   const insertData = async () => {
@@ -117,28 +185,37 @@ const PPCDetails = ({ handleClose, showToast }) => {
               className='GroupNameText'
               id="GroupName"
               select
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
+              value={selectedGroup}
+              onChange={handleGroupChange}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
-                      borderColor: '#1B4D3E',
+                    borderColor: '#1B4D3E',
                   },
                   '&:hover fieldset': {
-                      borderColor: '#1B4D3E',
+                    borderColor: '#1B4D3E',
                   },
                   '&.Mui-focused fieldset': {
-                      borderColor: '#1B4D3E',
+                    borderColor: '#1B4D3E',
                   },
-              },
+                },
               }}
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="JDBC">JDBC</MenuItem>
-              <MenuItem value="JPA">JPA</MenuItem>
-              <MenuItem value="Servlet">Servlet</MenuItem>
+              {loadingGroupNames ? (
+                <MenuItem value="">
+                  <CircularProgress size={24} />
+                </MenuItem>
+              ) : (
+                Array.isArray(groupName) && groupName.length > 0 ? (
+                  groupName.map((group, index) => (
+                    <MenuItem key={index} value={group}>
+                      {group}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="">No group names available</MenuItem>
+                )
+              )}
             </TextField>
           </div>
           <div className='GroupNamePPC'>
@@ -147,28 +224,38 @@ const PPCDetails = ({ handleClose, showToast }) => {
               className='DivisionText'
               id="Division"
               select
-              value={division}
-              onChange={(e) => setDivision(e.target.value)}
+              value={selectedDivision}
+              onChange={(e) => setSelectedDivision(e.target.value)}
+              disabled={isDivisionDisabled || loadingDivisions}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
-                      borderColor: '#1B4D3E',
+                    borderColor: '#1B4D3E',
                   },
                   '&:hover fieldset': {
-                      borderColor: '#1B4D3E',
+                    borderColor: '#1B4D3E',
                   },
                   '&.Mui-focused fieldset': {
-                      borderColor: '#1B4D3E',
+                    borderColor: '#1B4D3E',
                   },
-              },
+                },
               }}
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="JDBC_Query">JDBC_Query</MenuItem>
-              <MenuItem value="JPA_Query">JPA_Query</MenuItem>
-              <MenuItem value="Servlet_Query">Servlet_Query</MenuItem>
+              {loadingDivisions ? (
+                <MenuItem value="" >
+                  <CircularProgress size={34} />
+                </MenuItem>
+              ) : (
+                Array.isArray(division) && division.length > 0 ? (
+                  division.map((div,index) => (
+                    <MenuItem key={index} value={div}>
+                      {div}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="">No divisions available</MenuItem>
+                )
+              )}
             </TextField>
           </div>
         </div>

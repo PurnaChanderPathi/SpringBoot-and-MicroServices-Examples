@@ -103,4 +103,16 @@
     padding-bottom: 10px;
 }
 
+.custom-toast {
+    background-color: #1B4D3E !important;
+    color: white !important;    
+    border-radius: 8px !important;
+    font-size: 14px !important;            
+  }
+  
+.custom-toast .Toastify__progress-bar {
+    background: #ffffff !important;
+}
+  
+
 

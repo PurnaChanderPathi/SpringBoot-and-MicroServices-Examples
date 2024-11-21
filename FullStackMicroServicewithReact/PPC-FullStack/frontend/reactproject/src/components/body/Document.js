@@ -24,7 +24,7 @@ import axios from "axios";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-const Document = () => {
+const Document = ({ documentMesage,onDocumentsFetched }) => {
     const [open, setOpen] = useState(false);
     const [comment, setComment] = useState("");
     const [input, setInput] = useState(null);
@@ -34,13 +34,13 @@ const Document = () => {
     const [fileSelected, setFileSelected] = useState(false);
     const [pdfOpen, setPdfOpen] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
-
     const Token = localStorage.getItem("authToken");
     const reviewId = localStorage.getItem("reviewId");
+    console.log("Review ID:", reviewId);
+
 
 
     const handlePdfOpen = (fileId) => {
-
         fetchPdf(fileId);
     };
 
@@ -93,16 +93,17 @@ const Document = () => {
             }
         } catch (error) {
             console.error('Error deleting file:', error.message || error);
-            // alert('Error occurred while deleting the file. Please try again later.');
         }
     }
 
     useEffect(() => {
         if (reviewId) {
             fetchData(reviewId);
-        }
-    }, [reviewId]);
+        } else {
+            console.log("ReviewId is missing");
 
+        }
+    }, [reviewId])
 
     const fetchData = async (reviewId) => {
         try {
@@ -113,20 +114,29 @@ const Document = () => {
                         Authorization: `Bearer ${Token}`,
                     },
                 }
-            );            
+            );
             if (Array.isArray(response.data.result)) {
                 setRows(response.data.result);
                 console.log("Fetched rows: ", response.data.result);
+                onDocumentsFetched(response.data.result.length > 0);
+                console.log("onDocumentsFetched",onDocumentsFetched);
+
 
             } else {
                 console.error("Expected an array, but received:", response.data);
                 setRows([]);
+                onDocumentsFetched(false);
             }
         } catch (error) {
             console.error("Error fetching data", error);
             setRows([]);
+            onDocumentsFetched(false);
         }
     };
+
+
+
+
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -471,6 +481,26 @@ const Document = () => {
                     </div>
                 </AccordionDetails>
             </Accordion>
+            {/* <div>
+                <TableBody>
+                    {displayedRows.length > 0 ? (
+                        displayedRows.map((row) => (
+                            <TableRow key={row.reviewId} sx={{ backgroundColor: "white" }}>
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={8} align="center">No documents found for this review ID.</TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </div>
+            <div>
+            {rows.length > 0 && (
+                <div>
+                </div>
+            )}
+        </div> */}
         </div>
     );
 };

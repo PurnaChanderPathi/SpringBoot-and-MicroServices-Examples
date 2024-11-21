@@ -22,12 +22,12 @@ const CaseInformation = () => {
   const [isFieldDisabled, setIsFieldDisabled] = useState(true);
   const [isCompleted, setIsCompleted] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDocument,setIsDocument] = useState(false);
-  console.log("isDocument",isDocument);
+  const [documentMesage,setDocumentMessage] = useState('');
+  const [documentExist, setDocumentExist] = useState(false);
   
 
   const showToast = (message) => {
-    toast.success(message, {
+    toast.error(message, {
         position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: false,
@@ -39,18 +39,40 @@ const CaseInformation = () => {
     });
 };
 
-  const handleDocument = (document) => {
-    setIsDocument(document);
-  }
+const showToastSuccess = (message) => {
+  toast.success(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    // className: "custom-toast",
+  })
+}
 
-  const update = () => {
-    if(isDocument === true){
-      UpdateDetails();
-      setIsDocument(false);
-    }else{
-      console.log("Upload one Document");
-    }
+
+const handleSubmit = () => {
+  if(!documentExist){
+    setDocumentMessage("Please add a document");
+    console.log("documentMesage",documentMesage);
+    console.log("Please add a document");
+    showToast("Please add a document");
+  }else{
+    setDocumentMessage('');
+    UpdateDetails();
+    setTimeout(()=> {
+      window.close();
+    },5000);
   }
+}
+
+const handleDocumentsFetched = (exists) => {
+  setDocumentExist(exists);
+}
+
 
     const UpdateDetails = async () => {
       const role = localStorage.getItem("role");
@@ -71,13 +93,24 @@ const CaseInformation = () => {
         })
         if(response.status === 200){
           console.log("Data updated Successfully");
-          showToast(response.data.message);
+          showToastSuccess(response.data.message);
+          setAction('');
+          setPlanning('');
+          localStorage.setItem("role",response.data.result.role);
+          console.log("role",response.data.result.role);
+          
+          
         }else{
           console.log("Failed To Update");
+          setAction('');
+          setPlanning('');
+          
           
         }
       } catch (error) {
-        console.log("Error updating Data",error);     
+        console.log("Error updating Data",error);
+        setAction('');
+        setPlanning('');    
       }
     }
 
@@ -150,6 +183,7 @@ const CaseInformation = () => {
 
   return (
     <div className='CaseInfoMainDiv'>
+      <ToastContainer />
       <div className='CaseInfoScreen'>
         <div className='CaseInfoheading'>
           Case Information
@@ -245,7 +279,7 @@ const CaseInformation = () => {
           </div>
           <div className='submitTACI'>
             <Button variant='contained' sx={{ backgroundColor: '#1B4D3E' }} 
-            onClick={update}
+            onClick={handleSubmit}
             disabled={action === ''}
             >Submit</Button>
           </div>
@@ -313,7 +347,7 @@ const CaseInformation = () => {
         </div>
       </div>
       <div className='planningTabsDiv'>
-        <PlanningTabs />
+        <PlanningTabs documentMesage={documentMesage} onDocumentsFetched={handleDocumentsFetched}/>
       </div>
     </div>
   )

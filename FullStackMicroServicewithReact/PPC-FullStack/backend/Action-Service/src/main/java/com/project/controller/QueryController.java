@@ -88,6 +88,7 @@ public class QueryController {
             if(updatedData != null){
                 response.put("status",HttpStatus.OK.value());
                 response.put("message","Successfully Updated...!");
+                response.put("result",queryDetails);
             }else{
                 response.put("status",HttpStatus.NOT_FOUND.value());
                 response.put("message","Not Updated Successfully...!");
