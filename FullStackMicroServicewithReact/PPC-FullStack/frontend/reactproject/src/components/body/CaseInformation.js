@@ -24,6 +24,8 @@ const CaseInformation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [documentMesage,setDocumentMessage] = useState('');
   const [documentExist, setDocumentExist] = useState(false);
+  const [actionOptions, setActionOptions] = useState([]);
+
   
 
   const showToast = (message) => {
@@ -53,7 +55,6 @@ const showToastSuccess = (message) => {
   })
 }
 
-
 const handleSubmit = () => {
   if(!documentExist){
     setDocumentMessage("Please add a document");
@@ -63,9 +64,9 @@ const handleSubmit = () => {
   }else{
     setDocumentMessage('');
     UpdateDetails();
-    setTimeout(()=> {
-      window.close();
-    },5000);
+    // setTimeout(()=> {
+    //   window.close();
+    // },5000);
   }
 }
 
@@ -81,11 +82,14 @@ const handleDocumentsFetched = (exists) => {
         reviewId: reviewId,
         action: action,
         role: role,
+        planning: planning
       }
       console.log("action",action);
+      console.log("inputs",inputs);
+      
       const token = localStorage.getItem('authToken');
       try {
-        const response = await axios.put("http://localhost:9195/api/action/submitTask",inputs, {
+        const response = await axios.put("http://localhost:9195/api/action/submitTask",inputs, {          
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -98,7 +102,8 @@ const handleDocumentsFetched = (exists) => {
           setPlanning('');
           localStorage.setItem("role",response.data.result.role);
           console.log("role",response.data.result.role);
-          
+          localStorage.setItem("assignedTo",response.data.result.assignedTo);
+          console.log("assignedTo",response.data.response.assignedTo);                
           
         }else{
           console.log("Failed To Update");
@@ -115,31 +120,26 @@ const handleDocumentsFetched = (exists) => {
     }
 
 
-    // Handle value change
     const handleValueChange = (e) => {
       const value = e.target.value;
       setPlanning(value);
-  
-      // Disable the field if the value is not empty
       if (value !== "") {
         setIsFieldDisabled(true);
+
       }
     };
 
-  // Open the modal when "Edit" is clicked
   const handleEditClick = () => {
     setIsModalOpen(true);
   };
 
-  // Handle modal confirmation
   const handleModalConfirm = () => {
-    setIsFieldDisabled(false); // Enable the TextField
-    setIsModalOpen(false); // Close the modal
+    setIsFieldDisabled(false); 
+    setIsModalOpen(false);
   };
 
-  // Handle modal cancellation
   const handleModalCancel = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false); 
   };
 
 
@@ -163,10 +163,31 @@ const handleDocumentsFetched = (exists) => {
           groupName: data.groupName,
           division: data.division,
           role: data.role,
-          assignedToUser: data.assignedToUser
+          assignedTo: data.assignedTo
         });
         localStorage.setItem("reviewId", data.reviewId);
         localStorage.setItem("role",data.role);
+        localStorage.setItem("assignedTo",data.assignedTo);
+
+      if (data.role === "SrCreditReviewer" && data.planning === "") {
+        console.log("Setting options for Sr CreditReviewer and empty planning");
+        
+        setActionOptions([
+          { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
+        ]);
+      } else if (data.role === "Head of PPC" && data.planning === "PlanningCompleted") {       
+        console.log("Setting options for Head of PPC");
+        setActionOptions([
+          { value: "Approve", label: "Approve" },
+          { value: "Reject", label: "Reject" }
+        ]);
+      } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted") {
+        console.log("Setting options for Sr CreditReviewer and PlanningCompleted");
+        setActionOptions([
+          { value: "SubmittedToCreditReviewer", label: "Submit to Credit Reviewer" }
+        ]);
+      }
+
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -239,7 +260,7 @@ const handleDocumentsFetched = (exists) => {
           </div>
           <div className='ReviewInputCS'>
             <input type='text'
-              value={caseData.assignedToUser}
+              value={caseData.assignedTo}
               className='inputReviewCS' disabled />
           </div>
         </div>
@@ -269,12 +290,19 @@ const handleDocumentsFetched = (exists) => {
                 },
               }}
             >
-              <MenuItem value="">
+              {/* <MenuItem value="">
                 <em>None</em>
-              </MenuItem>
-              <MenuItem value="SubmittedToHeadofPPC">Submit to Head of PPC</MenuItem>
-              {/* <MenuItem value="JPA">JPA</MenuItem>
-              <MenuItem value="Servlet">Servlet</MenuItem> */}
+              </MenuItem> */}
+              {actionOptions.length > 0 ? (
+                actionOptions.map((option,index) => (
+                  <MenuItem key={index} value={option.value}>
+                  {option.label}
+                </MenuItem>
+                ))
+              ):(
+                <MenuItem value="">No Option avaible</MenuItem>
+              )}
+              {/* <MenuItem value="SubmittedToHeadofPPC">Submit to Head of PPC</MenuItem> */}
             </TextField>
           </div>
           <div className='submitTACI'>

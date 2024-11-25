@@ -52,15 +52,6 @@ public class QueryService {
         if(details.getReviewId() == null || details.getReviewId().isEmpty()){
             throw new RuntimeException("QueryService not found with ReviewId :"+queryDetails.getReviewId());
         }else {
-            if(queryDetails.getChildReviewId() == null){
-                queryDetails.setChildReviewId(details.getChildReviewId());
-            }
-            if (queryDetails.getIssueId() == null) {
-                queryDetails.setIssueId(details.getIssueId());
-            }
-            if (queryDetails.getTrackIssueId() == null) {
-                queryDetails.setTrackIssueId(details.getTrackIssueId());
-            }
             if (queryDetails.getDivision() == null) {
                 queryDetails.setDivision(details.getDivision());
             }
@@ -69,9 +60,6 @@ public class QueryService {
             }
             if (queryDetails.getAssignedTo() == null) {
                 queryDetails.setAssignedTo(details.getAssignedTo());
-            }
-            if (queryDetails.getAssignedToUser() == null) {
-                queryDetails.setAssignedToUser(details.getAssignedToUser());
             }
             if (queryDetails.getRole() == null) {
                 queryDetails.setRole(details.getRole());
@@ -85,10 +73,14 @@ public class QueryService {
             if (queryDetails.getCreatedBy() == null) {
                 queryDetails.setCreatedBy(details.getCreatedBy());
             }
-
+            if(queryDetails.getPlanning() == null){
+                queryDetails.setPlanning(details.getPlanning());
+            }
+            if(queryDetails.getFieldwork() == null){
+                queryDetails.setFieldwork(details.getFieldwork());
+            }
             return queryRepository.updateQuery(queryDetails);
         }
-
     }
 
     public String deleteByReviewId (String reviewId){

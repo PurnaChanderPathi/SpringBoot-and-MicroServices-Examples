@@ -27,6 +27,11 @@ public class AuthServiceImpl implements AuthService {
         return userInfoRepository.findAll();
     }
 
+    @Override
+    public Optional<UserInfo> findByName(String Name) {
+        return userInfoRepository.findByName(Name);
+    }
+
     public String generateToken(String userName){
         return jwtService.generateToken(userName);
     }
@@ -52,4 +57,6 @@ public class AuthServiceImpl implements AuthService {
         userInfoRepository.save(userInfo);
         return userInfo;
     }
+
+
 }

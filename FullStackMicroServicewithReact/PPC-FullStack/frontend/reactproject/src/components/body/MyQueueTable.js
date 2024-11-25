@@ -1,154 +1,81 @@
-import * as React from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  Box,
-  Button,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Token } from '@mui/icons-material';
 
+const MyQueueTable = () => {
+    const [rowsPerPage,setRowsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [rows, setRows] = React.useState([]);
+    const [totalPages, setTotalPages] = React.useState(1);
 
-export default function BasicTable({ searchParams, buttonClicked, setButtonClicked}) {
+    const ApiToken = localStorage.getItem('authToken');
+    const assignedTo = localStorage.getItem('assignedTo');
 
-  console.log("searchParams12",searchParams);
-  
-  const [rows, setRows] = React.useState([]);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState(1);
-  const navigate = useNavigate();
-  const ApiToken = localStorage.getItem("authToken");
+    React.useEffect(() => {
+      MyQueueDetails();
+    },[])
 
+    const MyQueueDetails = async () => {
+      let role = '';
+      const rolesArray = JSON.parse(localStorage.getItem("userRoles"));
+      const rolesString = rolesArray.join(",");
+      console.log(rolesString)
+      role = rolesString;
+      console.log("role",role);
+      console.log("Token",ApiToken);
+      console.log("assignedTo",assignedTo);
 
-  React.useEffect(() => {
-    if(buttonClicked){
-      fetchTableData();
-    }
-  },[buttonClicked,setButtonClicked]);
-
-  React.useEffect(() => {
-    fetchTableData();
-  },[])
-
-  const fetchTableData = async () => {
-    let role = '';
-    let createdBy = '';
-    let url = "";
-    const rolesArray = JSON.parse(localStorage.getItem("userRoles"));
-    const rolesString = rolesArray.join(",");
-    console.log(rolesString);
-
-     role = rolesString;
-   createdBy = localStorage.getItem('username');
-
-    console.log("role",role);
-    console.log("createdBy",createdBy);
-
-  url = 'http://localhost:9195/api/query/getByRoleAndCreatedBy';
-const queryParams = [];
-if (role) {
-  queryParams.push(`role=${role}`);
-}
-if (queryParams.length > 0) {
-  url = `${url}?${queryParams.join('&')}&assignedTo=null`;
-  console.log("url", url);
-} else {
-  console.error('Insufficient parameters for RoleAndCreateBy');
-}
-
-try {
-  const response = await axios.get(url, {
-    headers: {
-      'Authorization': `Bearer ${ApiToken}`,
-      'Content-Type': 'application/json',
-    }
-  });
-
-  const data = response.data.result || [];
-
-  setRows(data);
-  setTotalPages(Math.ceil(data.length / rowsPerPage));
-
-} catch (error) {
-  console.error('Axios fetch error:', error);
-
-  if (error.response && error.response.status === 404) {
-    console.error('Data not found due to 404 error');
-    setRows([]); 
-    setTotalPages(0); 
-    console.log("Rows after clearing:", rows);
-  } else {
-    console.error('Other Axios error:', error);
-  }
-}
-
-  }
-
-  const fetchData = async () => { 
-    let url = '';
-    
-    const { reviewId, childReviewId } = searchParams;
-    console.log("reviewId",reviewId);
-    console.log("childReviewId",childReviewId);
-
-    if(reviewId != "" || childReviewId != ""){
-      url = 'http://localhost:9195/api/query/query-details';
+       let url = 'http://localhost:9195/api/query/getByRoleAndAssignedTo';
       const queryParams = [];
-  
-      if (reviewId) {
-        queryParams.push(`reviewId=${reviewId}`);
+      if (role) {
+        queryParams.push(`role=${role}`);
       }
-      if (childReviewId) {
-        queryParams.push(`childReviewId=${childReviewId}`);
+      if(assignedTo){
+        queryParams.push(`assignedTo=${assignedTo}`)
       }
-  
       if (queryParams.length > 0) {
         url = `${url}?${queryParams.join('&')}`;
+        console.log("url", url);
+      } else {
+        console.error('Insufficient parameters for RoleAndAssignedTo');
       }
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          'Authorization': `Bearer ${ApiToken}`,
-          'Content-Type': 'application/json',
-        }
-      });
-  
-      const data = response.data;
-      setRows(data);
-      setTotalPages(Math.ceil(data.length / rowsPerPage));
-  
-    } catch (error) {
-      console.error('Axios fetch error:', error);
-  }
-    }else{
-      console.log("ReviewId and childReviewId Both are empty");
-      
+
+      try {
+        const response = await axios.get(url,{
+          headers: {
+            'Authorization': `Bearer ${ApiToken}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        const data = response.data.result || [];
+
+        setRows(data);
+        setTotalPages(Math.ceil(data.length/rowsPerPage));
+      } catch (error) {
+        console.log('Axios fetch error: ',error);
+
+        if (error.response && error.response.status === 404) {
+          console.error('Data not found due to 404 error');
+          setRows([]); 
+          setTotalPages(0); 
+          console.log("Rows after clearing:", rows);
+        } else {
+          console.error('Other Axios error:', error);
+        }        
+      }
     }
-  };
-  
-  
 
-  React.useEffect(() => {
-     fetchData();
-  }, [searchParams]);
+    const handleRowsPerPageChange = (event) => {
+        const value = Math.max(1, parseInt(event.target.value,10));
+        setRowsPerPage(value);
+        setTotalPages(Math.ceil(rows.length / value));
+    }
 
-  const handleRowsPerPageChange = (event) => {
-    const value = Math.max(1, parseInt(event.target.value, 10));
-    setRowsPerPage(value);
-    setTotalPages(Math.ceil(rows.length / value));
-    setCurrentPage(1);
-  };
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const displayedRows = Array.isArray(rows) ? rows.slice(startIndex, startIndex + rowsPerPage) : [];
 
+    
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
@@ -161,20 +88,13 @@ try {
     }
   };
 
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const displayedRows = Array.isArray(rows) ? rows.slice(startIndex, startIndex + rowsPerPage) : [];
+    const handleStartCaseClick = (reviewId) => {
+        const url = `/CaseInformation/${reviewId}`;
+        window.open(url, '_blank');
+      }
 
-  // const handleStartCaseClick = (reviewId) => {
-  //   navigate(`/CaseInformation/${reviewId}`);
-  // }
-
-  const handleStartCaseClick = (reviewId) => {
-    const url = `/CaseInformation/${reviewId}`;
-    window.open(url, '_blank');
-  }
-
-  return (
-    <Box sx={{ padding: 2 }}>
+    return (
+        <Box sx={{ padding: 2 }}>
       <Box
         sx={{
           display: 'flex',
@@ -208,6 +128,7 @@ try {
           },
            }}
         />
+        
       </Box>
       <TableContainer component={Paper} sx={{ backgroundColor: '#1B4D3E', marginTop: 0 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
@@ -277,5 +198,7 @@ try {
         </Button>
       </Box>
     </Box>
-  );
+    )
 }
+
+export default MyQueueTable

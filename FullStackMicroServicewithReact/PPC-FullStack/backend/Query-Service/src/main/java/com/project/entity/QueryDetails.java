@@ -13,15 +13,13 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QueryDetails {
     private String reviewId;
-    private String childReviewId;
-    private String issueId;
-    private String trackIssueId;
     private String division;
     private String groupName;
     private String assignedTo;
-    private String assignedToUser;
     private String role;
     private String currentStatus;
     private Date createdDate;
     private String createdBy;
+    private String planning;
+    private String fieldwork;
 }

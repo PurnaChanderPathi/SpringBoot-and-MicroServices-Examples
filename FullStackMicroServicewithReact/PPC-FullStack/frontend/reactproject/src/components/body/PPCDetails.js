@@ -16,6 +16,8 @@ const PPCDetails = ({ handleClose, showToast }) => {
   const token = localStorage.getItem('authToken');
   const [buttonClicked, setButtonClicked] = useState(false);
 
+  const createdBy = localStorage.getItem('username');
+
   useEffect(() => {
     const fetchGroupNames = async () => {
       try {
@@ -46,15 +48,14 @@ const PPCDetails = ({ handleClose, showToast }) => {
   }, []);
 
 
-  // Fetch Divisions when GroupName is selected
   const handleGroupChange = async (event) => {
     const selectedGroup = event.target.value;
     setSelectedGroup(selectedGroup);
-    setSelectedDivision(''); // Reset selected division
-    setIsDivisionDisabled(false); // Enable Division dropdown
+    setSelectedDivision(''); 
+    setIsDivisionDisabled(false);
 
     if (selectedGroup) {
-      setLoadingDivisions(true); // Start loading Divisions
+      setLoadingDivisions(true); 
       try {
         const response = await axios.get(`http://localhost:9195/api/adminConfig/getDivisions/${selectedGroup}`, {
           headers: {
@@ -72,9 +73,9 @@ const PPCDetails = ({ handleClose, showToast }) => {
         }
       } catch (error) {
         console.error("Error fetching divisions", error);
-        setDivision([]); // Reset divisions in case of error
+        setDivision([]); 
       } finally {
-        setLoadingDivisions(false); // Stop loading Divisions
+        setLoadingDivisions(false);
       }
     }
   };
@@ -118,9 +119,13 @@ const PPCDetails = ({ handleClose, showToast }) => {
     reviewId: reviewId,
     groupName: selectedGroup,
     division: selectedDivision,
+    createdBy: createdBy
+
   };
 
   const insertData = async () => {
+    console.log("createdBy",createdBy);
+    
     try {
       const response = await axios.post('http://localhost:9195/api/action/save', inputs, {
         headers: {

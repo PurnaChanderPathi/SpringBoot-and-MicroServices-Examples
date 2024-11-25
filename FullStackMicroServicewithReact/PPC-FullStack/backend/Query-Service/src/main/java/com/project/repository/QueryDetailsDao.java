@@ -30,13 +30,9 @@ public class QueryDetailsDao {
             public QueryDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
                 QueryDetails queryDetails = new QueryDetails();
                 queryDetails.setReviewId(rs.getString("reviewId"));
-                queryDetails.setChildReviewId(rs.getString("childReviewId"));
-                queryDetails.setIssueId(rs.getString("issueId"));
-                queryDetails.setTrackIssueId(rs.getString("trackIssueId"));
                 queryDetails.setDivision(rs.getString("division"));
                 queryDetails.setGroupName(rs.getString("groupName"));
                 queryDetails.setAssignedTo(rs.getString("assignedTo"));
-                queryDetails.setAssignedToUser(rs.getString("assignedToUser"));
                 queryDetails.setRole(rs.getString("role"));
                 queryDetails.setCurrentStatus(rs.getString("currentStatus"));
                 queryDetails.setCreatedDate(rs.getDate("createdDate"));

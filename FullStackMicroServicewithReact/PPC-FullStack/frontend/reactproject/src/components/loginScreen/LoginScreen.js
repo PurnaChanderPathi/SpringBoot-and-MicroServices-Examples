@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './LoginScreen.css';
 import loginImage from './Capture12.PNG';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Timer10 } from '@mui/icons-material';
 
 const LoginScreen = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -18,6 +20,7 @@ const LoginScreen = () => {
     setLoading(true);
     setError('');
 
+   
     const credentials = {
       username: userCredentials.userName,
       password: userCredentials.password,
@@ -38,8 +41,14 @@ const LoginScreen = () => {
       const token = await response.text();
       localStorage.setItem('authToken', token);
       localStorage.setItem('username',credentials.username);
+      getUser(credentials.username);
 
-      window.location.href = '/home';
+      setTimeout(()=> {
+        window.location.href = '/home';
+      },500);
+
+
+ 
 
     } catch (err) {
       setError(err.message); 
@@ -47,6 +56,36 @@ const LoginScreen = () => {
       setLoading(false);
     }
   };
+
+  const getUser = async (name) => {
+
+    try {
+      const response = await axios.get(`http://localhost:1992/auth/getByName/${name}`,{
+        headers : {
+          'Content-Type': 'application/json',
+        }        
+      });
+      if(response.status === 200){
+
+        if(response.data.result && Array.isArray(response.data.result.roles)){
+          localStorage.setItem('userRoles',JSON.stringify([]));
+          const roles = response.data.result.roles;
+          console.log("Roles",roles);
+
+          localStorage.setItem('userRoles',JSON.stringify(roles));
+          console.log("Roles saved in localStorage:", roles);
+
+        }else {
+          console.log("Roles not found in the response.");
+        }
+      }else{
+        throw new Error("Failed to fetch user details with name: " + name);
+      }  
+    } catch (error) {
+      console.log("Error While Fetching Data",error.message);
+      
+    }
+    };
 
   return (
     <div className='LoginScreenMainDiv'>

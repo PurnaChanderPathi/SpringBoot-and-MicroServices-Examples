@@ -150,7 +150,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CreatedBy</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>createdDate</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>role</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Assigned To User</TableCell>
+              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>AssignedTo</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CurrentStatus</TableCell>
             </TableRow>
           </TableHead>
@@ -165,7 +165,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdBy}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdDate}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.role}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedToUser}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedTo}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.currentStatus}</TableCell>
               </TableRow>
             ))}

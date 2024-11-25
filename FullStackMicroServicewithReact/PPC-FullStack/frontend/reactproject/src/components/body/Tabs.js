@@ -9,6 +9,7 @@ import './Tabs.css'
 import BasicTable from './Table';
 import MultiSearchTable from './MultiSearchTable';
 import axios from 'axios';
+import MyQueueTable from './MyQueueTable';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -145,54 +146,54 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
 
 
     // Handle change in group selection
-const handleGroupChange = async (event) => {
-    const selectedGroup = event.target.value;
-    setSelectedGroup(selectedGroup); // Only store the selected group
+    const handleGroupChange = async (event) => {
+        const selectedGroup = event.target.value;
+        setSelectedGroup(selectedGroup); // Only store the selected group
 
-    setSelectedDivision(''); // Reset division when group changes
-    setIsDivisionDisabled(false); // Enable division dropdown when group is selected
+        setSelectedDivision(''); // Reset division when group changes
+        setIsDivisionDisabled(false); // Enable division dropdown when group is selected
 
-    if (selectedGroup) {
-        setLoadingDivisions(true);
-        try {
-            const response = await axios.get(`http://localhost:9195/api/adminConfig/getDivisions/${selectedGroup}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+        if (selectedGroup) {
+            setLoadingDivisions(true);
+            try {
+                const response = await axios.get(`http://localhost:9195/api/adminConfig/getDivisions/${selectedGroup}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
+                console.log("Divisions API response:", response.data);
+                if (response.data && Array.isArray(response.data.result)) {
+                    setDivision(response.data.result); // Set divisions based on the selected group
+                } else {
+                    console.error("Divisions response is not an array", response.data);
+                    setDivision([]);
                 }
-            });
-            console.log("Divisions API response:", response.data);
-            if (response.data && Array.isArray(response.data.result)) {
-                setDivision(response.data.result); // Set divisions based on the selected group
-            } else {
-                console.error("Divisions response is not an array", response.data);
+            } catch (error) {
+                console.error("Error fetching divisions", error);
                 setDivision([]);
+            } finally {
+                setLoadingDivisions(false);
             }
-        } catch (error) {
-            console.error("Error fetching divisions", error);
-            setDivision([]);
-        } finally {
-            setLoadingDivisions(false);
         }
+    };
+
+    // Handle change in division selection
+    const handleDivisionChange = (event) => {
+        const selectedDivision = event.target.value;
+        setSelectedDivision(selectedDivision); // Only store the selected division
+    };
+
+    // Use the selected group and division when submitting the search form
+    const handleMultiSearch = () => {
+        setSearchMultiParams({
+            reviewId,
+            groupName: selectedGroup,  // Store only the selected group name
+            division: selectedDivision,  // Store only the selected division
+            fromDate,
+            toDate,
+        });
     }
-};
-
-// Handle change in division selection
-const handleDivisionChange = (event) => {
-    const selectedDivision = event.target.value;
-    setSelectedDivision(selectedDivision); // Only store the selected division
-};
-
-// Use the selected group and division when submitting the search form
-const handleMultiSearch = () => {
-    setSearchMultiParams({
-        reviewId,
-        groupName: selectedGroup,  // Store only the selected group name
-        division: selectedDivision,  // Store only the selected division
-        fromDate,
-        toDate,
-    });
-}
 
 
     const downloadExcel = async () => {
@@ -233,17 +234,15 @@ const handleMultiSearch = () => {
 
                         const filename = matches[1];
                         console.log('Filename:', filename);
-                        // Create a URL for the Blob object
                         const blob = response.data;
                         const url = window.URL.createObjectURL(blob);
 
-                        // Create a temporary <a> element to trigger the download
                         const link = document.createElement('a');
                         link.href = url;
-                        link.download = filename;  // Set the filename for the download
-                        link.click();  // Trigger the download
+                        link.download = filename;
+                        link.click(); 
 
-                        // Clean up the URL object after download
+
                         window.URL.revokeObjectURL(url);
                     }
                     else {
@@ -256,8 +255,6 @@ const handleMultiSearch = () => {
                 console.error('Error downloading file:', error);
             }
         } else {
-            // Log or show an alert if none of the fields are filled
-            // console.error('At least one of reviewId, division, or groupName must be filled to download the Excel file.');
             alert('Please fill at least one of the fields: Review ID, Division, with dates');
         }
 
@@ -268,7 +265,7 @@ const handleMultiSearch = () => {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
                     <Tab
-                        label="my queue"
+                        label="Group Queue"
                         {...a11yProps(0)}
                         sx={{
                             bgcolor: value === 0 ? '#1B4D3E' : 'transparent',
@@ -289,19 +286,40 @@ const handleMultiSearch = () => {
                         }}
                     />
                     <Tab
-                        label="search"
-                        {...a11yProps(1)}
+                        label="My Queue"
+                        {...a11yProps(0)}
                         sx={{
                             bgcolor: value === 1 ? '#1B4D3E' : 'transparent',
                             color: value === 1 ? 'white' : 'black',
+                            borderTopLeftRadius: 5,
+                            borderTopRightRadius: 5,
+                            marginLeft: 1.5,
+                            textTransform: 'none',
+                            position: 'relative',
+                            '&:hover': {
+                                bgcolor: value === 1 ? '#1B4D3E' : '#1B4D3E',
+                                color: value === 1 ? 'white' : 'black',
+                            },
+                            '&.Mui-selected': {
+                                bgcolor: '#1B4D3E',
+                                color: 'white',
+                            },
+                        }}
+                    />
+                    <Tab
+                        label="search"
+                        {...a11yProps(1)}
+                        sx={{
+                            bgcolor: value === 2 ? '#1B4D3E' : 'transparent',
+                            color: value === 2 ? 'white' : 'black',
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
                             marginLeft: 1,
                             textTransform: 'none',
                             position: 'relative',
                             '&:hover': {
-                                bgcolor: value === 1 ? '#1B4D3E' : '#1B4D3E',
-                                color: value === 1 ? 'white' : 'black',
+                                bgcolor: value === 2 ? '#1B4D3E' : '#1B4D3E',
+                                color: value === 2 ? 'white' : 'black',
                             },
                             '&.Mui-selected': {
                                 bgcolor: '#1B4D3E',
@@ -344,6 +362,37 @@ const handleMultiSearch = () => {
                     </div>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
+                    {/* <div className='mainDivs'> */}
+                        {/* <div className='ReviewRow'>
+                            <label className='ReviewIdLabel'>ReviewID</label>
+                            <input
+                                className='ReviewIdInput'
+                                type='text'
+                                value={reviewId}
+                                onChange={(e) => setReviewId(e.target.value)} />
+                        </div> */}
+                        {/* <div>
+                            <label className='ReviewIdLabel'>ChildReviewID</label>
+                            <input
+                                className='ReviewIdInput'
+                                type='text'
+                                placeholder=''
+                                onChange={(e) => setChildReviewId(e.target.value)} />
+                        </div> */}
+                        {/* <div>
+                            <button className='SearchButton' onClick={handleSearch}>
+                                Search</button>
+                        </div>
+                        <div>
+                            <button className='SearchButton' onClick={handleClear}>Clear</button>
+                        </div> */}
+                    {/* </div> */}
+                    <div>
+                        {/* <BasicTable searchParams={searchParams} buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} /> */}
+                        <MyQueueTable />
+                    </div>
+                </CustomTabPanel>
+                <CustomTabPanel value={value} index={2}>
                     <div className='SearchMainDiv'>
                         <div className='GroupName'>
                             <label className='GroupNameLabel'>Group Name</label>

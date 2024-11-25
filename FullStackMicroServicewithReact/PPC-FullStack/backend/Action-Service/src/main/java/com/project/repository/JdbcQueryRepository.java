@@ -28,22 +28,21 @@ public class JdbcQueryRepository implements QueryRepository {
         if (queryDetails.getCreatedDate() == null) {
             queryDetails.setCreatedDate(new Date());
         }
-        String query = "INSERT INTO querydetails (reviewId,childReviewId, issueId, trackIssueId, division, groupName, assignedTo, assignedToUser, role,currentStatus,createdDate,createdBy) " +
-                "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO querydetails (reviewId, division, groupName, assignedTo, role,currentStatus,createdDate,createdBy,planning,fieldwork) " +
+                "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Object[] args = {
                 queryDetails.getReviewId(),
-                queryDetails.getChildReviewId(),
-                queryDetails.getIssueId(),
-                queryDetails.getTrackIssueId(),
                 queryDetails.getDivision(),
                 queryDetails.getGroupName(),
                 queryDetails.getAssignedTo(),
-                queryDetails.getAssignedToUser(),
                 queryDetails.getRole(),
                 queryDetails.getCurrentStatus(),
                 queryDetails.getCreatedDate(),
-                queryDetails.getCreatedBy()
+                queryDetails.getCreatedBy(),
+                queryDetails.getPlanning(),
+                queryDetails.getFieldwork()
+
         };
 
         jdbcTemplate.update(query, args);
@@ -52,19 +51,10 @@ public class JdbcQueryRepository implements QueryRepository {
 
     @Override
     public QueryDetails updateQuery(QueryDetails queryDetails) {
-        // Start with the basic SQL query
-        StringBuilder query = new StringBuilder("UPDATE querydetails SET ");
-        List<Object> args = new ArrayList<>();  // List to hold query parameters
 
-        // Dynamically build the SET clause based on the provided fields
-        if (queryDetails.getIssueId() != null) {
-            query.append("issueId=?, ");
-            args.add(queryDetails.getIssueId());
-        }
-        if (queryDetails.getTrackIssueId() != null) {
-            query.append("trackIssueId=?, ");
-            args.add(queryDetails.getTrackIssueId());
-        }
+        StringBuilder query = new StringBuilder("UPDATE querydetails SET ");
+        List<Object> args = new ArrayList<>();
+
         if (queryDetails.getDivision() != null) {
             query.append("division=?, ");
             args.add(queryDetails.getDivision());
@@ -76,10 +66,6 @@ public class JdbcQueryRepository implements QueryRepository {
         if (queryDetails.getAssignedTo() != null) {
             query.append("assignedTo=?, ");
             args.add(queryDetails.getAssignedTo());
-        }
-        if (queryDetails.getAssignedToUser() != null) {
-            query.append("assignedToUser=?, ");
-            args.add(queryDetails.getAssignedToUser());
         }
         if (queryDetails.getRole() != null) {
             query.append("role=?, ");
@@ -97,13 +83,20 @@ public class JdbcQueryRepository implements QueryRepository {
             query.append("createdBy=?, ");
             args.add(queryDetails.getCreatedBy());
         }
+        if(queryDetails.getPlanning() != null){
+            query.append("planning=?, ");
+            args.add(queryDetails.getPlanning());
+        }
+        if(queryDetails.getFieldwork() != null){
+            query.append("fieldwork=?, ");
+            args.add(queryDetails.getFieldwork());
+        }
 
-        // Remove the last comma and space from the SET clause
         query.setLength(query.length() - 2); // Remove trailing ", "
 
         // Add the WHERE clause
         query.append(" WHERE reviewId = ?");
-        args.add(queryDetails.getReviewId()); // Add reviewId as the last parameter
+        args.add(queryDetails.getReviewId());
 
         // Execute the query
         int result = jdbcTemplate.update(query.toString(), args.toArray());

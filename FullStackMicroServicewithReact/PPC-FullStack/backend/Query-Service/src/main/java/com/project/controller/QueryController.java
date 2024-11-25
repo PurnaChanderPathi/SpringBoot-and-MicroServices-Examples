@@ -3,6 +3,8 @@ package com.project.controller;
 import com.project.entity.QueryDetails;
 import com.project.service.QueryDetailsService;
 import com.project.service.QueryService;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,12 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 //@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/query")
+@Slf4j
 public class QueryController {
 
     @Autowired
@@ -73,6 +75,69 @@ public class QueryController {
         LocalDate to = (toDate != null) ? LocalDate.parse(toDate, formatter) : null;
 
         return queryDetailsService.fetchQueryDetails(groupName, division, reviewId, from, to);
+    }
+
+    @GetMapping("/getByRoleAndCreatedBy")
+    public ResponseEntity<Map<String, Object>> findByRoleAndCreatedBy(@RequestParam("role") String role,
+                                                                      @RequestParam("assignedTo") String assignedTo) {
+        log.info("Entered into getByRoleAndCreatedBy method");
+        log.info("role: {}", role);
+
+        List<String> roles = Arrays.asList(role.split(","));
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<QueryDetails> result = queryService.findByRoleAndCreatedBy(roles,assignedTo);
+            log.info("Fetched result: {}", result);
+
+            if (!result.isEmpty()) {
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Details Fetched Successfully");
+                response.put("result", result);
+                log.info("Details Fetched Successfully");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", HttpStatus.NOT_FOUND.value());
+                response.put("message", "No Details Found for the given role and createdBy");
+                log.warn("No Details Found for the given role and createdBy");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while fetching details for role: {} ", role, e);
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.put("message", "An error occurred while processing the request");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getByRoleAndAssignedTo")
+    public Map<String,Object> findByRoleAndAssignedTo(@RequestParam("role") String role,
+                                                      @RequestParam("assignedTo") String assignedTo) throws Exception {
+        log.info("Entered findByRoleAndAssignedTo");
+        log.info("role : {} assignedTo : {}",role,assignedTo);
+        Map<String,Object> response = new HashMap<>();
+
+        List<String> roles = Arrays.asList(role.split(","));
+
+        try {
+            List<QueryDetails> result = queryService.findByRoleAndAssignedTo(roles,assignedTo);
+            log.info("Fetched Details : {}",result);
+
+            if(!result.isEmpty()){
+                response.put("status",HttpStatus.OK.value());
+                response.put("message","Details Fetched Successfully...!");
+                response.put("result",result);
+                log.info("result: {}",result);
+            }else {
+                response.put("status",HttpStatus.NOT_FOUND.value());
+                response.put("message","Failed To Fetch Details with roles: "+roles + "assignedTo : "+assignedTo);
+                log.warn("Failed To Fetch Details with role: {} assignedTo: {}",roles,assignedTo);
+            }
+            return response;
+        }catch (Exception e){
+            throw new Exception("An error occurred while processing the request");
+        }
+
     }
 
     @GetMapping("/download-query-details")
@@ -122,7 +187,7 @@ public class QueryController {
         headerRow.createCell(3).setCellValue("Created By");
         headerRow.createCell(4).setCellValue("Created Date");
         headerRow.createCell(5).setCellValue("Role");
-        headerRow.createCell(6).setCellValue("Assigned To User");
+        headerRow.createCell(6).setCellValue("AssignedTo");
         headerRow.createCell(7).setCellValue("CurrentStatus");
 
         for (int i = 0; i < 8; i++) {
@@ -149,7 +214,7 @@ public class QueryController {
             row.createCell(3).setCellValue(queryDetails.getCreatedBy());
             row.createCell(4).setCellValue(queryDetails.getCreatedDate().toString());
             row.createCell(5).setCellValue(queryDetails.getRole());
-            row.createCell(6).setCellValue(queryDetails.getAssignedToUser());
+            row.createCell(6).setCellValue(queryDetails.getAssignedTo());
             row.createCell(7).setCellValue(queryDetails.getCurrentStatus());
         }
 
@@ -158,3 +223,11 @@ public class QueryController {
         workbook.close();
     }
 }
+
+
+//SELECT *
+//FROM querydetails
+//WHERE
+//        (ROLE IS NULL OR TRIM(ROLE) IN ('SrCreditReviewer', 'Head of PPC', 'CreditReviewer', 'SPOC'))
+//AND (createdBy IS NULL OR TRIM(createdBy) = 'Raghu')
+//AND (assignedTo IS NULL OR TRIM(assignedTo) = '');

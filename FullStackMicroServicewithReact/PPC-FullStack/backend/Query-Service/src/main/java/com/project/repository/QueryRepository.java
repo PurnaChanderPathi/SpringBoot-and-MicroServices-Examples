@@ -8,4 +8,5 @@ public interface QueryRepository {
     String generateReviewId();
     QueryDetails findByReviewId(String reviewId);
     List<QueryDetails> findAll();
+//    List<QueryDetails> findByRoleAndCreatedBy(List<String> roles, String createdBy, String assignedTo);
 }

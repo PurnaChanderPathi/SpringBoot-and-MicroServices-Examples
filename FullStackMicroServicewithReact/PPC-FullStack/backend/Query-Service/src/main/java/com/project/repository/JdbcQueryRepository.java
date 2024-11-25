@@ -88,4 +88,20 @@ public class JdbcQueryRepository implements QueryRepository {
         return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(QueryDetails.class));
     }
 
+//    @Override
+//    public List<QueryDetails> findByRoleAndCreatedBy(List<String> role, String createdBy,String assignedTo) {
+//        String query = "SELECT * " +
+//                "FROM querydetails " +
+//                "WHERE " +
+//                "    (ROLE IS NULL OR TRIM(ROLE) IN (?)) " +
+//                "    AND (createdBy IS NULL OR TRIM(createdBy) = ?) " +
+//                "    AND (assignedTo IS NULL OR TRIM(assignedTo) = ?)";
+//        Object[] args = new Object[role.size() + 2];
+//        args[0] = String.join(",", role);
+//        args[1] = createdBy != null ? createdBy : "";
+//        args[2] = assignedTo != null ? assignedTo : "";
+//
+//        return jdbcTemplate.query(query,args,BeanPropertyRowMapper.newInstance(QueryDetails.class));
+//    }
+
 }
