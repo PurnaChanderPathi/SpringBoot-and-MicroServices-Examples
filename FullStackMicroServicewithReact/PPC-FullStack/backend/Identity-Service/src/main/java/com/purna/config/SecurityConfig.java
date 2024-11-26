@@ -38,10 +38,13 @@ public class SecurityConfig {
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())  // Disabling CSRF protection
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/token", "/auth/validate", "/auth/create-user", "/auth/createUser", "/auth/getByName/{name}").permitAll()
+//                        .requestMatchers("/auth/token", "/auth/validate", "/auth/create-user",
+//                                "/auth/createUser", "/auth/getByName/{name}",
+//                                "/auth/getUsersWithCreditReviewerRole").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Ensure stateless session
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 

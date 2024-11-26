@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -100,5 +101,20 @@ public class AuthController {
             response.put("message","Error occurred while fetching User Details with UserName :"+name);
             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/getUserByCreditReviewerRole")
+    public Map<String,Object> getUserByCreditReviewerRole(){
+        Map<String,Object> response = new HashMap<>();
+        List<String> result = authService.getUsersWithCreditReviewerRole();
+        if(!result.isEmpty()){
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Users Fetched Successfully with CreditReviewer");
+            response.put("result",result);
+        }else {
+            response.put("status",HttpStatus.NOT_FOUND.value());
+            response.put("message","Users Failed to Fetched  with CreditReviewer");
+        }
+        return response;
     }
 }

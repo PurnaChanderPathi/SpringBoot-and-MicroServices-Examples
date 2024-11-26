@@ -13,4 +13,6 @@ public class RequestData {
     private String action;
     private String role;
     private String assignedTo;
+    private String planning;
+    private String fieldwork;
 }

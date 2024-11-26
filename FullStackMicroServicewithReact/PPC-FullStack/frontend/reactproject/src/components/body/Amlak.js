@@ -7,7 +7,7 @@ const Amlak = () => {
   return (
     <div className='mainDiv'>
                 <Header/>
-      <div className='Heading'>Purna Home Page</div>
+      <div className='Heading'>Home Page</div>
       <div className='HomePage'>
             <HomePage />
       </div>

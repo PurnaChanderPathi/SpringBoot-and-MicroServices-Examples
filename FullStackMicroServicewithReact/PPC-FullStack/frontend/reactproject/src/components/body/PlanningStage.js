@@ -130,7 +130,7 @@ export default function PlanningStage({documentMesage,onDocumentsFetched}) {
                     aria-controls="panel1-content"
                     id="panel1-header"
                 >
-                    Planning Stage
+                    Addional System Info
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{ width: '100%' }}>

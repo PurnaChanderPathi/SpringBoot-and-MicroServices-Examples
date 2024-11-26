@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface AuthService {
     public List<UserInfo> getAll();
     public Optional<UserInfo> findByName(String name);
+    public List<String> getUsersWithCreditReviewerRole();
 }

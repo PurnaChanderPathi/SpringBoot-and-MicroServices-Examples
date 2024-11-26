@@ -23,6 +23,8 @@ import UploadIcon from "@mui/icons-material/Upload";
 import axios from "axios";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useDispatch, useSelector } from "react-redux";
+import { toggle } from "../../redux/scoreSlice";
 
 const Document = ({ documentMesage,onDocumentsFetched }) => {
     const [open, setOpen] = useState(false);
@@ -37,6 +39,13 @@ const Document = ({ documentMesage,onDocumentsFetched }) => {
     const Token = localStorage.getItem("authToken");
     const reviewId = localStorage.getItem("reviewId");
     console.log("Review ID:", reviewId);
+
+    const dispatch = useDispatch();
+    const {isAction} = useSelector((state) => state.Score);
+
+    const handleToggle = () => {
+        dispatch(toggle());
+    }
 
 
 
@@ -120,8 +129,13 @@ const Document = ({ documentMesage,onDocumentsFetched }) => {
                 console.log("Fetched rows: ", response.data.result);
                 onDocumentsFetched(response.data.result.length > 0);
                 console.log("onDocumentsFetched",onDocumentsFetched);
+                if(response.data.result.length > 0){
+                    handleToggle();
+                    console.log("isAction",isAction);
+                    
+                }
 
-
+                    
             } else {
                 console.error("Expected an array, but received:", response.data);
                 setRows([]);

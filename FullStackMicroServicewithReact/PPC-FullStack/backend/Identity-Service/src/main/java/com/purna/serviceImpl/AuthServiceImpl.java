@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +33,32 @@ public class AuthServiceImpl implements AuthService {
     public Optional<UserInfo> findByName(String Name) {
         return userInfoRepository.findByName(Name);
     }
+
+
+    @Override
+    public List<String> getUsersWithCreditReviewerRole() {
+        List<String> usersWithCreditReviewer = new ArrayList<>();
+
+        List<UserInfo> userInfoList = userInfoRepository.findAll();
+
+        for (UserInfo userInfo : userInfoList) {
+            String roles = Arrays.toString(userInfo.getRoles());
+
+            if (roles != null && !roles.isEmpty()) {
+                String[] roleArray = roles.split(",");
+                for (String role : roleArray) {
+                    if (role.trim().equalsIgnoreCase("CreditReviewer")) {
+
+                        usersWithCreditReviewer.add(userInfo.getName());
+                        break;
+                    }
+                }
+            }
+        }
+
+        return usersWithCreditReviewer;
+    }
+
 
     public String generateToken(String userName){
         return jwtService.generateToken(userName);
@@ -57,6 +85,8 @@ public class AuthServiceImpl implements AuthService {
         userInfoRepository.save(userInfo);
         return userInfo;
     }
+
+
 
 
 }

@@ -44,4 +44,36 @@ flow:
         bpmStatus: Fieldwork Completed
         profileActivityLevel: ""
         auditText: Case Closed by Sr Credit Reviewer
+    HeadofPPC:
+      Approve:
+        caseStatus: Case Approved by Head of PPC
+        milestone: Sr Credit Reviewer Review
+        activityLevel: Sr Credit Reviewer
+        bpmStatus: Approve
+        profileActivityLevel: Sr Credit Reviewer
+        auditText: Case Approved by Head of PPC and assigned to Sr credit Reviewer
+      Reject:
+        caseStatus: Case Rejected by Head of PPC
+        milestone: Sr Credit Reviewer Review
+        activityLevel: Sr Credit Reviewer
+        bpmStatus: Reject
+        profileActivityLevel: Sr Credit Reviewer
+        auditText: Case Rejected by Head of PPC and assigned to Sr credit Reviewer
+    CreditReviewer:
+      SubmittoSPOC:
+        activityLevel: SPOC
+        auditText: Case submitted by Credit Reviewer to SPOC
+      SubmittoSrCreditReviewer:
+        caseStatus: Case Assigned to Sr Credit Reviewer
+        milestone: Sr Credit Reviewer Review
+        activityLevel: Sr Credit Reviewer
+        bpmStatus: Submit to Sr Credit Reviewer
+        profileActivityLevel: Sr Credit Reviewer
+        auditText: Case submitted by Credit Reviewer to Sr credit Reviewer
+    SPOC:
+      SubmittoCreditReviewer:
+        activityLevel: Credit Reviewer
+        auditText: Case submitted by SPOC to Credit Reviewer
+
+
 

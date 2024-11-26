@@ -36,7 +36,7 @@ public class QueryController {
 
     @PostMapping("/save")
     public Map<String,Object> createQuery(@RequestBody QueryDetails queryDetails){
-
+        log.info("QueryDetails : {}",queryDetails);
         Map<String,Object> response = new HashMap<>();
          queryService.saveQueryDetails(queryDetails);
         AuditTrail setAuditTrail = new AuditTrail();
@@ -57,6 +57,7 @@ public class QueryController {
 
     @PutMapping("/update")
     public Map<String,Object> updateQuery(@RequestBody QueryDetails queryDetails){
+        log.info("QueryDetails : {}",queryDetails);
         Map<String,Object> response = new HashMap<>();
         QueryDetails details = queryService.updateQuery(queryDetails);
         if(details != null){
@@ -71,14 +72,22 @@ public class QueryController {
 
     @PutMapping("/submitTask")
     public Map<String,Object> submitTask(@RequestBody RequestData requestData){
-        log.info("RequestData:- {}",requestData);
+        log.info("RequestData Update:- {}",requestData);
+        String role = requestData.getRole().replaceAll("\\s+", "");
+        log.info("roleWithoutSpaces : {}",role);
         Map<String,Object> response = new HashMap<>();
         if(requestData!=null){
-            Map<String,String> flowMatrix = rolesData.getMatrix().get(requestData.getRole()).get(requestData.getAction());
+            Map<String,String> flowMatrix = rolesData.getMatrix().get(role).get(requestData.getAction());
+
             QueryDetails queryDetails=new QueryDetails();
             queryDetails.setReviewId(requestData.getReviewId());
-            queryDetails.setRole(flowMatrix.get("activityLevel"));
+            String roleSet = flowMatrix.get("activityLevel").replaceAll("\\s+", "");
+            log.info("roleSet: {}",roleSet);
+            queryDetails.setRole(roleSet);
+//            queryDetails.setRole(flowMatrix.get("activityLevel"));
             queryDetails.setCurrentStatus(flowMatrix.get("caseStatus"));
+            queryDetails.setPlanning(requestData.getPlanning());
+            queryDetails.setFieldwork(requestData.getFieldwork());
             QueryDetails updatedData = queryService.updateQuery(queryDetails);
             AuditTrail setAuditTrail = new AuditTrail();
             setAuditTrail.setReviewId(queryDetails.getReviewId());
