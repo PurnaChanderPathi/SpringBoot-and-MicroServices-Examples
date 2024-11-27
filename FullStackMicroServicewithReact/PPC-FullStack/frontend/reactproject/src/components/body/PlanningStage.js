@@ -42,7 +42,7 @@ function a11yProps(index) {
     };
 }
 
-export default function PlanningStage({documentMesage,onDocumentsFetched}) {
+export default function PlanningStage({ documentMesage,fetchData,rows,setRows }) {
     const [value, setValue] = useState(0); 
     const [comment, setComment] = useState('');
     const [theme, setTheme] = useState('snow');
@@ -236,7 +236,10 @@ export default function PlanningStage({documentMesage,onDocumentsFetched}) {
                            <AuditTrail />
                         </CustomTabPanel>
                         <CustomTabPanel value={value} index={2} style={{ border: '1px solid black' }}>
-                            <Document documentMesage={documentMesage} onDocumentsFetched={onDocumentsFetched} />
+                            <Document documentMesage={documentMesage}
+                             fetchData={fetchData }
+                             rows={rows}
+                             setRows={setRows} />
                         </CustomTabPanel>
                     </Box>
                 </AccordionDetails>

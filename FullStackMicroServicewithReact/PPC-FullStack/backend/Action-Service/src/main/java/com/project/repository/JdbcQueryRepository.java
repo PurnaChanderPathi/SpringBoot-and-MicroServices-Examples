@@ -28,8 +28,8 @@ public class JdbcQueryRepository implements QueryRepository {
         if (queryDetails.getCreatedDate() == null) {
             queryDetails.setCreatedDate(new Date());
         }
-        String query = "INSERT INTO querydetails (reviewId, division, groupName, assignedTo, role,currentStatus,createdDate,createdBy,planning,fieldwork) " +
-                "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO querydetails (reviewId, division, groupName, assignedTo, role,currentStatus,createdDate,createdBy,planning,fieldwork,action) " +
+                "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         Object[] args = {
                 queryDetails.getReviewId(),
@@ -41,7 +41,8 @@ public class JdbcQueryRepository implements QueryRepository {
                 queryDetails.getCreatedDate(),
                 queryDetails.getCreatedBy(),
                 queryDetails.getPlanning(),
-                queryDetails.getFieldwork()
+                queryDetails.getFieldwork(),
+                queryDetails.getAction()
 
         };
 
@@ -90,6 +91,10 @@ public class JdbcQueryRepository implements QueryRepository {
         if(queryDetails.getFieldwork() != null){
             query.append("fieldwork=?, ");
             args.add(queryDetails.getFieldwork());
+        }
+        if(queryDetails.getAction() != null){
+            query.append("action=?, ");
+            args.add(queryDetails.getAction());
         }
 
         query.setLength(query.length() - 2); // Remove trailing ", "

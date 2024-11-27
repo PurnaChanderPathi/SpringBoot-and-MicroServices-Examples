@@ -30,13 +30,13 @@ function a11yProps(index) {
     };
 }
 
-const AssignmentStage = ({data}) => {
+const AssignmentStage = ({data,selectedUser,setSelectedUser}) => {
 
 console.log("data",data);
 
     
     const [value, setValue] = useState(0);
-    const [selectedUser, setSelectedUser] = useState('');
+    // const [selectedUser, setSelectedUser] = useState('');
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };

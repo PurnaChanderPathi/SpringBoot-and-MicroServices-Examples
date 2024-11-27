@@ -5,10 +5,12 @@ import PlanningTabs from './PlanningStage';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, TextField } from '@mui/material';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AssignmentStage from './AssignmentStage';
+import { setState, toggle } from '../../redux/scoreSlice';
 
 const CaseInformation = () => {
+  const dispatch = useDispatch();
   const { reviewId } = useParams();
   const [caseData, setCaseData] = useState({
     reviewId: '',
@@ -29,14 +31,63 @@ const CaseInformation = () => {
   const [documentExist, setDocumentExist] = useState(false);
   const [actionOptions, setActionOptions] = useState([]);
   const { isActive } = useSelector((state) => state.Score);
+  const [documentPresent, setDocumentPresent] = useState(false);
+
+  // const handleSetActive = (value) => {
+  //   dispatch(setState(value));
+  // }
 
 
   //// Document
 
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    if (reviewId) {
+      fetchData(reviewId);
+    } else {
+      console.log("ReviewId is missing");
+
+    }
+  }, [reviewId])
+
+  const fetchData = async (reviewId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9195/api/query/file/findByReviewId/${reviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${ApiToken}`,
+          },
+        }
+      );
+      if (Array.isArray(response.data.result)) {
+        setRows(response.data.result);
+        console.log("Fetched rows: ", response.data.result);
+        if (response.data.result.length > 0) {
+          setDocumentPresent(true);
+        }
+
+
+      } else {
+        console.error("Expected an array, but received:", response.data);
+        setRows([]);
+        setDocumentPresent(false);
+
+      }
+    } catch (error) {
+      console.error("Error fetching data", error);
+      setRows([]);
+      setDocumentPresent(false);
+
+    }
+  };
   //// End Document
 
   //// AssignmentStage
   const [data, setData] = useState([]);
+  const [selectedUser, setSelectedUser] = useState('');
+  console.log("selectedUser in CI", selectedUser);
+
   useEffect(() => {
     CreditReviewer();
   }, [])
@@ -98,34 +149,67 @@ const CaseInformation = () => {
   }
 
   const handleSubmit = () => {
-    console.log("isActive", isActive);
-    if (!documentExist) {
-      setDocumentMessage("Please add a document");
-      console.log("documentMesage", documentMesage);
-      console.log("Please add a document");
-      showToast("Please add a document");
+    const role = localStorage.getItem('role');
+    const planning = localStorage.getItem('planning');
+    const action = localStorage.getItem('currentStatus');
+    console.log("action current status ",action);
+    
+    if (role === "SrCreditReviewer" && planning === "PlanningCompleted" && action === "Approve") {
+      if (selectedUser == null || selectedUser === "") {
+        showToast("Select Credit Reviewer");
+      } else {
+        if (action === "") {
+          showToast("Select Action before Submit");
+        } else {
+          if (!documentPresent) {
+            setDocumentMessage("Please add a document");
+            showToast("Please add a document");
 
+          } else {
+            setDocumentMessage('');
+            UpdateDetails();
+            setTimeout(() => {
+              window.close();
+            }, 5000);
+          }
+        }
+      }
     } else {
-      setDocumentMessage('');
-      UpdateDetails();
-      setTimeout(()=> {
-        window.close();
-      },5000);
+      if (action === "") {
+        showToast("Select Action before Submit");
+      } else {
+        if (!documentPresent) {
+          setDocumentMessage("Please add a document");
+          showToast("Please add a document");
+
+        } else {
+          setDocumentMessage('');
+          UpdateDetails();
+          setTimeout(() => {
+            window.close();
+          }, 5000);
+        }
+      }
     }
   }
 
-  const handleDocumentsFetched = (exists) => {
-    setDocumentExist(exists);
-  }
+  // const handleDocumentsFetched = (exists) => {
+  //   setDocumentExist(exists);
+  // }
   const UpdateDetails = async () => {
     const role = localStorage.getItem("role");
+    const assignedTo = localStorage.getItem("assignedTo");
+
     console.log("role", role);
+    console.log("assignedTo", assignedTo);
+
     const inputs = {
       reviewId: reviewId,
       action: action,
       role: role,
       planning: planning,
-      fieldwork: fieldwork
+      fieldwork: fieldwork,
+      assignedTo: selectedUser
     }
     console.log("action", action);
     console.log("inputs", inputs);
@@ -141,15 +225,17 @@ const CaseInformation = () => {
       if (response.status === 200) {
         console.log("Data updated Successfully");
         showToastSuccess(response.data.message);
-
+        dispatch(setState(true));
+        localStorage.setItem('isActive', true);
 
         localStorage.setItem('planning', '');
         localStorage.setItem('action', '');
         localStorage.setItem("role", response.data.result.role);
-        localStorage.setItem("assignedTo", response.data.result.assignedTo);
-
         console.log("role", response.data.result.role);
         console.log("assignedTo", response.data.result.assignedTo);
+        localStorage.setItem('assignedTo', 'null');
+        console.log("on Update assignedTo is null");
+
 
         setAction('');
         setPlanning('');
@@ -163,8 +249,6 @@ const CaseInformation = () => {
         console.log("Failed To Update");
         setAction('');
         setPlanning('');
-
-
       }
     } catch (error) {
       console.log("Error updating Data", error);
@@ -219,10 +303,12 @@ const CaseInformation = () => {
 
   useEffect(() => {
     console.log("Updated Planning State:", planning);
-  }, [planning]); 
+    console.log("local storage planning : ", localStorage.getItem('planning'))
+  }, [planning]);
 
 
   useEffect(() => {
+  
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -242,13 +328,16 @@ const CaseInformation = () => {
           groupName: data.groupName,
           division: data.division,
           role: data.role,
-          assignedTo: data.assignedTo
+          assignedTo: data.assignedTo,
+          action:action
         });
         localStorage.setItem("reviewId", data.reviewId);
         localStorage.setItem("role", data.role);
-        localStorage.setItem("assignedTo", data.assignedTo);
+        // localStorage.setItem("assignedTo", data.assignedTo);
+        localStorage.setItem("planning",data.planning);
         setPlanning(data.planning);
         console.log("setPlanning", data.planning);
+        localStorage.setItem('currentStatus',data.action);
 
 
         if (data.role === "SrCreditReviewer" && data.planning === null) {
@@ -263,10 +352,17 @@ const CaseInformation = () => {
             { value: "Approve", label: "Approve" },
             { value: "Reject", label: "Reject" }
           ]);
-        } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted") {
+        } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "") {
           console.log("Setting options for Sr CreditReviewer and PlanningCompleted");
           setActionOptions([
             { value: "AssigntoCreditReviewer", label: "Submit to Credit Reviewer" }
+          ]);
+        }
+        else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Reject"){
+          console.log("After Reject");
+          
+          setActionOptions([
+            { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
           ]);
         }
 
@@ -459,10 +555,14 @@ const CaseInformation = () => {
         </div>
       </div>
       <div className='AssignmentStage'>
-        <AssignmentStage data={data} />
+        <AssignmentStage data={data} selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
       </div>
       <div className='planningTabsDiv'>
-        <PlanningTabs documentMesage={documentMesage} onDocumentsFetched={handleDocumentsFetched} />
+        <PlanningTabs documentMesage={documentMesage}
+          fetchData={fetchData}
+          rows={rows}
+          setRows={setRows}
+        />
       </div>
     </div>
   )

@@ -87,8 +87,11 @@ public class QueryController {
 //            queryDetails.setRole(flowMatrix.get("activityLevel"));
             queryDetails.setCurrentStatus(flowMatrix.get("caseStatus"));
             queryDetails.setPlanning(requestData.getPlanning());
+            queryDetails.setAction(requestData.getAction());
+            queryDetails.setAssignedTo(requestData.getAssignedTo());
             queryDetails.setFieldwork(requestData.getFieldwork());
             QueryDetails updatedData = queryService.updateQuery(queryDetails);
+            log.info("updatedData");
             AuditTrail setAuditTrail = new AuditTrail();
             setAuditTrail.setReviewId(queryDetails.getReviewId());
             setAuditTrail.setActionedBy(flowMatrix.get("activityLevel"));
@@ -97,7 +100,7 @@ public class QueryController {
             if(updatedData != null){
                 response.put("status",HttpStatus.OK.value());
                 response.put("message","Successfully Updated...!");
-                response.put("result",queryDetails);
+                response.put("result",updatedData);
             }else{
                 response.put("status",HttpStatus.NOT_FOUND.value());
                 response.put("message","Not Updated Successfully...!");

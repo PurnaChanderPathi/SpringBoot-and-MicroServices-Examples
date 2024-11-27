@@ -26,11 +26,11 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/scoreSlice";
 
-const Document = ({ documentMesage,onDocumentsFetched }) => {
+const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
     const [open, setOpen] = useState(false);
     const [comment, setComment] = useState("");
     const [input, setInput] = useState(null);
-    const [rows, setRows] = useState([]);
+    // const [rows, setRows] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [fileSelected, setFileSelected] = useState(false);
@@ -46,6 +46,17 @@ const Document = ({ documentMesage,onDocumentsFetched }) => {
     const handleToggle = () => {
         dispatch(toggle());
     }
+
+    useEffect(() => {
+        if(fetchData){
+            console.log("fetchData function is passed as a prop");
+            fetchData(reviewId);        
+        }
+    },[reviewId])
+
+    useEffect(() => {
+        console.log("Rows have been updated:", rows);
+      }, [rows]);
 
 
 
@@ -105,48 +116,48 @@ const Document = ({ documentMesage,onDocumentsFetched }) => {
         }
     }
 
-    useEffect(() => {
-        if (reviewId) {
-            fetchData(reviewId);
-        } else {
-            console.log("ReviewId is missing");
+    // useEffect(() => {
+    //     if (reviewId) {
+    //         fetchData(reviewId);
+    //     } else {
+    //         console.log("ReviewId is missing");
 
-        }
-    }, [reviewId])
+    //     }
+    // }, [reviewId])
 
-    const fetchData = async (reviewId) => {
-        try {
-            const response = await axios.get(
-                `http://localhost:9195/api/query/file/findByReviewId/${reviewId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${Token}`,
-                    },
-                }
-            );
-            if (Array.isArray(response.data.result)) {
-                setRows(response.data.result);
-                console.log("Fetched rows: ", response.data.result);
-                onDocumentsFetched(response.data.result.length > 0);
-                console.log("onDocumentsFetched",onDocumentsFetched);
-                if(response.data.result.length > 0){
-                    handleToggle();
-                    console.log("isAction",isAction);
+    // const fetchData = async (reviewId) => {
+    //     try {
+    //         const response = await axios.get(
+    //             `http://localhost:9195/api/query/file/findByReviewId/${reviewId}`,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${Token}`,
+    //                 },
+    //             }
+    //         );
+    //         if (Array.isArray(response.data.result)) {
+    //             setRows(response.data.result);
+    //             console.log("Fetched rows: ", response.data.result);
+    //             onDocumentsFetched(response.data.result.length > 0);
+    //             console.log("onDocumentsFetched",onDocumentsFetched);
+    //             if(response.data.result.length > 0){
+    //                 handleToggle();
+    //                 console.log("isAction",isAction);
                     
-                }
+    //             }
 
                     
-            } else {
-                console.error("Expected an array, but received:", response.data);
-                setRows([]);
-                onDocumentsFetched(false);
-            }
-        } catch (error) {
-            console.error("Error fetching data", error);
-            setRows([]);
-            onDocumentsFetched(false);
-        }
-    };
+    //         } else {
+    //             console.error("Expected an array, but received:", response.data);
+    //             setRows([]);
+    //             onDocumentsFetched(false);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching data", error);
+    //         setRows([]);
+    //         onDocumentsFetched(false);
+    //     }
+    // };
 
 
 

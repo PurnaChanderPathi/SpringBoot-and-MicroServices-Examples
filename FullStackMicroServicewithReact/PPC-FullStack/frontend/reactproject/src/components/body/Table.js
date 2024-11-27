@@ -13,9 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Token } from '@mui/icons-material';
+
 
 
 export default function BasicTable({ searchParams, buttonClicked, setButtonClicked}) {
@@ -26,9 +25,43 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
-  const navigate = useNavigate();
   const ApiToken = localStorage.getItem("authToken");
+  const[isActive,setIsActive] = React.useState(false);
 
+
+  React.useEffect(() => {
+    console.log("Component mounted or storage event triggered");
+
+
+    const checkIsActiveFromLocalStorage = () => {
+      const storedIsActive = localStorage.getItem('isActive');
+      if (storedIsActive === 'true') {
+        setIsActive(true);
+        fetchTableData();
+
+        localStorage.setItem('isActive', 'false');
+        setIsActive(false);
+      }
+    };
+
+    checkIsActiveFromLocalStorage();
+
+    const handleStorageChange = (event) => {
+      if (event.key === 'isActive' && event.newValue === 'true') {
+        setIsActive(true);
+        fetchTableData();
+        localStorage.setItem('isActive', 'false');
+        setIsActive(false);
+        console.log("handleStorageChange");
+        
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  },[]);
 
   React.useEffect(() => {
     if(buttonClicked){
@@ -60,7 +93,7 @@ if (role) {
   queryParams.push(`role=${role}`);
 }
 if (queryParams.length > 0) {
-  url = `${url}?${queryParams.join('&')}&assignedTo=null`;
+  url = `${url}?${queryParams.join('&')}&assignedTo=`;
   console.log("url", url);
 } else {
   console.error('Insufficient parameters for RoleAndCreateBy');
@@ -78,7 +111,6 @@ try {
 
   setRows(data);
   setTotalPages(Math.ceil(data.length / rowsPerPage));
-
 } catch (error) {
   console.error('Axios fetch error:', error);
 
@@ -168,9 +200,40 @@ try {
   //   navigate(`/CaseInformation/${reviewId}`);
   // }
 
+  const userLoad = async () => {
+
+    let assignedTo = localStorage.getItem('username');
+    let reviewId = localStorage.getItem('reviewId');
+    let inputs = {
+      reviewId : reviewId,
+      assignedTo : assignedTo
+    }
+    try {
+      const response = await axios.put("http://localhost:9195/api/action/update",inputs, {
+        headers : {
+          'Authorization': `Bearer ${ApiToken}`,
+          'Content-Type': 'application/json',
+        }
+      })
+      if(response.data.status === 200){
+        console.log("updated Data",response.data.message);
+      }else{
+        console.log("Failed to Update Details");        
+      }
+    } catch (error) {
+      console.log("Error while processing to update Details",error.message);
+      
+    }
+  }
+
   const handleStartCaseClick = (reviewId) => {
+    
+    userLoad();
     const url = `/CaseInformation/${reviewId}`;
-    window.open(url, '_blank');
+    setTimeout(()=> {
+      window.open(url, '_blank');
+    },2000);
+
   }
 
   return (

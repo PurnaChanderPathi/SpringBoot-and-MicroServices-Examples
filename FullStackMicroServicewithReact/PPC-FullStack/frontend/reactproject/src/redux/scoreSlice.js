@@ -32,3 +32,20 @@ const scoreSlice = createSlice({
 
 export const {toggle, setState, incrementScore, setUserData} = scoreSlice.actions;
 export default scoreSlice.reducer;
+
+
+
+// // Step 1: Use useSelector to get the value of `isActive` from the store
+// const isActive = useSelector((state) => state.Score.isActive);
+
+// // Step 2: Use useDispatch to dispatch actions to update the state
+// const dispatch = useDispatch();
+
+// // Step 3: Toggle `isActive` or set it directly using dispatch
+// const handleToggle = () => {
+//   dispatch(toggle()); // This will toggle the value of `isActive`
+// };
+
+// const handleSetActive = (value) => {
+//   dispatch(setState(value)); // This will directly set `isActive` to `true` or `false`
+// };

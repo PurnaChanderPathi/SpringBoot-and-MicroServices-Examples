@@ -8,9 +8,44 @@ const MyQueueTable = () => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [rows, setRows] = React.useState([]);
     const [totalPages, setTotalPages] = React.useState(1);
+    const[isActive,setIsActive] = React.useState(false);
 
     const ApiToken = localStorage.getItem('authToken');
-    const assignedTo = localStorage.getItem('assignedTo');
+    const assignedTo = localStorage.getItem('username');
+
+    React.useEffect(() => {
+      console.log("Component mounted or storage event triggered");
+  
+  
+      const checkIsActiveFromLocalStorage = () => {
+        const storedIsActive = localStorage.getItem('isActive');
+        if (storedIsActive === 'true') {
+          setIsActive(true);
+          MyQueueDetails();
+  
+          localStorage.setItem('isActive', 'false');
+          setIsActive(false);
+        }
+      };
+  
+      checkIsActiveFromLocalStorage();
+  
+      const handleStorageChange = (event) => {
+        if (event.key === 'isActive' && event.newValue === 'true') {
+          setIsActive(true);
+          MyQueueDetails();
+          localStorage.setItem('isActive', 'false');
+          setIsActive(false);
+          console.log("handleStorageChange");
+          
+        }
+      };
+  
+      window.addEventListener('storage', handleStorageChange);
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+      };
+    },[]);
 
     React.useEffect(() => {
       MyQueueDetails();

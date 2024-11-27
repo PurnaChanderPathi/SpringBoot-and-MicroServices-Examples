@@ -37,6 +37,9 @@ public class QueryDetailsDao {
                 queryDetails.setCurrentStatus(rs.getString("currentStatus"));
                 queryDetails.setCreatedDate(rs.getDate("createdDate"));
                 queryDetails.setCreatedBy(rs.getString("createdBy"));
+                queryDetails.setPlanning(rs.getString("planning"));
+                queryDetails.setFieldwork(rs.getString("fieldwork"));
+                queryDetails.setAction(rs.getString("action"));
                 return queryDetails;
             }
         });

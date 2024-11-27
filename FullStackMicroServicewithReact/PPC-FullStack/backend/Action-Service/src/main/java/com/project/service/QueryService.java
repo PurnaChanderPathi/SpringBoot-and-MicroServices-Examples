@@ -58,9 +58,9 @@ public class QueryService {
             if (queryDetails.getGroupName() == null) {
                 queryDetails.setGroupName(details.getGroupName());
             }
-            if (queryDetails.getAssignedTo() == null) {
-                queryDetails.setAssignedTo(details.getAssignedTo());
-            }
+//            if (queryDetails.getAssignedTo() == null) {
+//                queryDetails.setAssignedTo(details.getAssignedTo());
+//            }
             if (queryDetails.getRole() == null) {
                 queryDetails.setRole(details.getRole());
             }
@@ -78,6 +78,9 @@ public class QueryService {
             }
             if(queryDetails.getFieldwork() == null){
                 queryDetails.setFieldwork(details.getFieldwork());
+            }
+            if(queryDetails.getAction() == null){
+                queryDetails.setAction(details.getAction());
             }
             return queryRepository.updateQuery(queryDetails);
         }

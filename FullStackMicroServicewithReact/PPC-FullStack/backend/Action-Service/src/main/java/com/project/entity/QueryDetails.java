@@ -22,4 +22,5 @@ public class QueryDetails {
     private String createdBy;
     private String planning;
     private String fieldwork;
+    private String action;
 }

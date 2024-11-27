@@ -10,6 +10,7 @@ import BasicTable from './Table';
 import MultiSearchTable from './MultiSearchTable';
 import axios from 'axios';
 import MyQueueTable from './MyQueueTable';
+import { useSelector } from 'react-redux';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -53,6 +54,7 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     const [isDivisionDisabled, setIsDivisionDisabled] = React.useState(true);
     const [fromDate, setFromDate] = React.useState('');
     const [toDate, setToDate] = React.useState('');
+    const {isActive} = useSelector((state) => state.Score);
 
     const token = localStorage.getItem('authToken');
     const [searchParams, setSearchParams] = React.useState({
@@ -60,6 +62,10 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
         childReviewId: '',
 
     });
+
+    // React.useEffect(() => {
+    // console.log("isActive in tabs",isActive);    
+    // },[isActive])
 
     const [searchMultiParams, setSearchMultiParams] = React.useState({
         reviewId: '',
