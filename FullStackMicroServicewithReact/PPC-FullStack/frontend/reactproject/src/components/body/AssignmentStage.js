@@ -30,7 +30,7 @@ function a11yProps(index) {
     };
 }
 
-const AssignmentStage = ({data,selectedUser,setSelectedUser}) => {
+const AssignmentStage = ({data,selectedUser,setSelectedUser,readOnly}) => {
 
 console.log("data",data);
 
@@ -110,12 +110,13 @@ console.log("data",data);
                                         name="user"
                                         value={selectedUser}
                                         onChange={handleRadioChange}
+                                        disabled={readOnly}
                                     >
                                         {data.map((user, index) => (
                                             <FormControlLabel
                                                 key={index}
                                                 value={user}
-                                                control={<Radio />}
+                                                control={<Radio disabled={readOnly} />}
                                                 label={user}
                                             />
                                         ))}

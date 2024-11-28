@@ -77,15 +77,48 @@ public class QueryController {
         return queryDetailsService.fetchQueryDetails(groupName, division, reviewId, from, to);
     }
 
+//    @GetMapping("/getByRoleAndCreatedBy")
+//    public ResponseEntity<Map<String, Object>> findByRoleAndCreatedBy(@RequestParam("role") String role,
+//                                                                      @RequestParam("assignedTo") String assignedTo) {
+//        log.info("Entered into getByRoleAndCreatedBy method");
+//        log.info("role: {}", role);
+//
+//        List<String> roles = Arrays.asList(role.split(","));
+//
+//        Map<String, Object> response = new HashMap<>();
+//        try {
+//            List<QueryDetails> result = queryService.findByRoleAndCreatedBy(roles,assignedTo);
+//            log.info("Fetched result: {}", result);
+//
+//            if (!result.isEmpty()) {
+//                response.put("status", HttpStatus.OK.value());
+//                response.put("message", "Details Fetched Successfully");
+//                response.put("result", result);
+//                log.info("Details Fetched Successfully");
+//                return new ResponseEntity<>(response, HttpStatus.OK);
+//            } else {
+//                response.put("status", HttpStatus.NOT_FOUND.value());
+//                response.put("message", "No Details Found for the given role and createdBy");
+//                log.warn("No Details Found for the given role and createdBy");
+//                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//            }
+//        } catch (Exception e) {
+//            log.error("Error occurred while fetching details for role: {} ", role, e);
+//            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            response.put("message", "An error occurred while processing the request");
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     @GetMapping("/getByRoleAndCreatedBy")
-    public ResponseEntity<Map<String, Object>> findByRoleAndCreatedBy(@RequestParam("role") String role,
-                                                                      @RequestParam("assignedTo") String assignedTo) {
+    public Map<String,Object> findByRoleAndCreatedBy(@RequestParam("role") String role,
+                                                     @RequestParam("assignedTo") String assignedTo) throws Exception {
         log.info("Entered into getByRoleAndCreatedBy method");
         log.info("role: {}", role);
+        Map<String,Object> response = new HashMap<>();
 
         List<String> roles = Arrays.asList(role.split(","));
 
-        Map<String, Object> response = new HashMap<>();
         try {
             List<QueryDetails> result = queryService.findByRoleAndCreatedBy(roles,assignedTo);
             log.info("Fetched result: {}", result);
@@ -94,20 +127,17 @@ public class QueryController {
                 response.put("status", HttpStatus.OK.value());
                 response.put("message", "Details Fetched Successfully");
                 response.put("result", result);
-                log.info("Details Fetched Successfully");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                log.info("result : {}",result);
             } else {
                 response.put("status", HttpStatus.NOT_FOUND.value());
                 response.put("message", "No Details Found for the given role and createdBy");
-                log.warn("No Details Found for the given role and createdBy");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                log.warn("Failed To Fetch Details with role: {} assignedTo: {}",roles,assignedTo);
             }
+            return response;
         } catch (Exception e) {
-            log.error("Error occurred while fetching details for role: {} ", role, e);
-            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.put("message", "An error occurred while processing the request");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new Exception("An error occurred while processing the request");
         }
+
     }
 
     @GetMapping("/getByRoleAndAssignedTo")

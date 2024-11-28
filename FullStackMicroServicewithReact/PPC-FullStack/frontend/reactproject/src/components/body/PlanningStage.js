@@ -42,7 +42,7 @@ function a11yProps(index) {
     };
 }
 
-export default function PlanningStage({ documentMesage,fetchData,rows,setRows }) {
+export default function PlanningStage({ documentMesage,fetchData,rows,setRows, readOnly }) {
     const [value, setValue] = useState(0); 
     const [comment, setComment] = useState('');
     const [theme, setTheme] = useState('snow');
@@ -219,10 +219,12 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                                         onChange={handleEditorChange}
                                         value={comment}
                                         placeholder="Write your comment here..."
+                                        readOnly={readOnly}
                                     />
                                     <button
                                         className='ButtonAddPS'
                                         onClick={handleSaveComment}
+                                        disabled={readOnly}
                                     >
                                         Add
                                     </button>
@@ -239,7 +241,8 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                             <Document documentMesage={documentMesage}
                              fetchData={fetchData }
                              rows={rows}
-                             setRows={setRows} />
+                             setRows={setRows}
+                             readOnly={readOnly} />
                         </CustomTabPanel>
                     </Box>
                 </AccordionDetails>

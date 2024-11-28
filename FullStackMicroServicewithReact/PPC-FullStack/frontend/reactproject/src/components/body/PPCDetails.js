@@ -3,6 +3,7 @@ import './PPCDetails.css';
 import { CircularProgress, MenuItem, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 
 const PPCDetails = ({ handleClose, showToast }) => {
   const [reviewId, setReviewId] = React.useState('');
@@ -15,6 +16,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
   const [isDivisionDisabled, setIsDivisionDisabled] = useState(true);
   const token = localStorage.getItem('authToken');
   const [buttonClicked, setButtonClicked] = useState(false);
+  
 
   const createdBy = localStorage.getItem('username');
 
@@ -123,32 +125,49 @@ const PPCDetails = ({ handleClose, showToast }) => {
 
   };
 
+  const showToastmessage = (message) => {
+    toast.error(message, {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
   const insertData = async () => {
     console.log("createdBy",createdBy);
-    
-    try {
-      const response = await axios.post('http://localhost:9195/api/action/save', inputs, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
 
-      if (response.status === 200) {
-        console.log('Data inserted successfully');
+    if(inputs.groupName === "" || inputs.division === ""){
+      showToastmessage("select GroupName and Division")
+    }else{
+      try {
+        const response = await axios.post('http://localhost:9195/api/action/save', inputs, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+  
+        if (response.status === 200) {
+          console.log('Data inserted successfully');
+          setReviewId('');
+          setGroupName('');
+          setDivision('');
+          showToast(response.data.message);
+          handleClose();
+        } else {
+          console.error('Failed to insert data', response.status);
+        }
+      } catch (error) {
+        console.error('Error inserting data', error);
         setReviewId('');
         setGroupName('');
         setDivision('');
-        showToast(response.data.message);
-        handleClose();
-      } else {
-        console.error('Failed to insert data', response.status);
       }
-    } catch (error) {
-      console.error('Error inserting data', error);
-      setReviewId('');
-      setGroupName('');
-      setDivision('');
     }
   };
 
@@ -158,6 +177,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
 
   return (
     <div className='PPCDetails'>
+            <ToastContainer />
       <div className='PPCInitial'>
         <div className='PPCheading'>
           PPC DETAILS

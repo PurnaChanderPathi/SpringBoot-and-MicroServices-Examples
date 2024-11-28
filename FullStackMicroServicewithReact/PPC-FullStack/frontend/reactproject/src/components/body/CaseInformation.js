@@ -33,6 +33,46 @@ const CaseInformation = () => {
   const { isActive } = useSelector((state) => state.Score);
   const [documentPresent, setDocumentPresent] = useState(false);
 
+  // const [role, setRole] = useState('');
+  const [isReadonlyPT,setIsReadOnlyPT] = useState(false);
+  const[isReadonlyAS,setIsReadonlyAS] = useState(false);
+  
+  let role = localStorage.getItem('role');
+  console.log("setRole",role); 
+
+  const currentStatus = localStorage.getItem('currentStatus');
+  console.log("currentStatus for readonly",currentStatus);
+
+  useEffect(() => {
+    console.log("role:", role);
+    console.log("currentStatus:", currentStatus);
+    if(role === "HeadofPPC"){
+      setIsReadOnlyPT(true);
+      setIsReadonlyAS(true);
+      console.log("isReadonlyAS",isReadonlyAS);
+      console.log("isReadonlyPT",isReadonlyPT);
+    }else if(role === "SrCreditReviewer" && currentStatus === "Approve" && planning === "PlanningCompleted"){
+      setIsReadOnlyPT(true);
+      setIsReadonlyAS(false);
+      console.log("isReadonlyAS",isReadonlyAS);
+      console.log("isReadonlyPT",isReadonlyPT);
+    }
+    else if(role === "SrCreditReviewer" && currentStatus === "Reject" && planning === "PlanningCompleted"){
+      setIsReadOnlyPT(false);
+      setIsReadonlyAS(true);
+      console.log("isReadonlyAS",isReadonlyAS);
+      console.log("isReadonlyPT",isReadonlyPT);
+    }
+    else if(role === "SrCreditReviewer" && currentStatus === "null" && planning !=="null"){
+        setIsReadOnlyPT(false);
+        setIsReadonlyAS(true);
+        console.log("isReadonlyAS",isReadonlyAS);
+        console.log("isReadonlyPT",isReadonlyPT);
+    } 
+ 
+
+  },[role,planning,currentStatus])
+
   // const handleSetActive = (value) => {
   //   dispatch(setState(value));
   // }
@@ -65,6 +105,10 @@ const CaseInformation = () => {
         console.log("Fetched rows: ", response.data.result);
         if (response.data.result.length > 0) {
           setDocumentPresent(true);
+          console.log("document set to True");     
+        }else{
+          setDocumentPresent(false);
+          console.log("document set To False in length = 0",documentPresent);
         }
 
 
@@ -72,12 +116,15 @@ const CaseInformation = () => {
         console.error("Expected an array, but received:", response.data);
         setRows([]);
         setDocumentPresent(false);
+        console.log("document set To False");
+        
 
       }
     } catch (error) {
       console.error("Error fetching data", error);
       setRows([]);
       setDocumentPresent(false);
+      console.log("document set To False");
 
     }
   };
@@ -150,47 +197,77 @@ const CaseInformation = () => {
 
   const handleSubmit = () => {
     const role = localStorage.getItem('role');
-    const planning = localStorage.getItem('planning');
-    const action = localStorage.getItem('currentStatus');
+    // const planning = localStorage.getItem('planning');
+    // const action = localStorage.getItem('currentStatus');
     console.log("action current status ",action);
-    
-    if (role === "SrCreditReviewer" && planning === "PlanningCompleted" && action === "Approve") {
-      if (selectedUser == null || selectedUser === "") {
-        showToast("Select Credit Reviewer");
-      } else {
-        if (action === "") {
+
+
+    if (action === "") {
           showToast("Select Action before Submit");
         } else {
+          console.log("documentPresent",documentPresent);         
           if (!documentPresent) {
             setDocumentMessage("Please add a document");
-            showToast("Please add a document");
-
-          } else {
-            setDocumentMessage('');
-            UpdateDetails();
-            setTimeout(() => {
-              window.close();
-            }, 5000);
+            showToast("Please add a document");  
+          } else {            
+            if(action === "AssigntoCreditReviewer"){
+                if(selectedUser == null || selectedUser === ""){
+                  showToast("Select Credit Reviewer");
+                }else{
+                  setDocumentMessage('');
+                  UpdateDetails();
+                  setTimeout(() => {
+                    window.close();
+                  }, 5000);
+                }
+            }else{
+              setDocumentMessage('');
+              UpdateDetails();
+              setTimeout(() => {
+                window.close();
+              }, 5000);
+            }
+ 
           }
         }
-      }
-    } else {
-      if (action === "") {
-        showToast("Select Action before Submit");
-      } else {
-        if (!documentPresent) {
-          setDocumentMessage("Please add a document");
-          showToast("Please add a document");
 
-        } else {
-          setDocumentMessage('');
-          UpdateDetails();
-          setTimeout(() => {
-            window.close();
-          }, 5000);
-        }
-      }
-    }
+    // if (role === "SrCreditReviewer" && planning === "PlanningCompleted" && action === "Approve") {
+    //   if (selectedUser == null || selectedUser === "") {
+    //     showToast("Select Credit Reviewer");
+    //   } else {
+    //     if (action === "") {
+    //       showToast("Select Action before Submit");
+    //     } else {
+    //       if (!documentPresent) {
+    //         setDocumentMessage("Please add a document");
+    //         showToast("Please add a document");
+
+    //       } else {
+    //         setDocumentMessage('');
+    //         UpdateDetails();
+    //         setTimeout(() => {
+    //           window.close();
+    //         }, 5000);
+    //       }
+    //     }
+    //   }
+    // } else {
+    //   if (action === "") {
+    //     showToast("Select Action before Submit");
+    //   } else {
+    //     if (!documentPresent) {
+    //       setDocumentMessage("Please add a document");
+    //       showToast("Please add a document");
+
+    //     } else {
+    //       setDocumentMessage('');
+    //       UpdateDetails();
+    //       setTimeout(() => {
+    //         window.close();
+    //       }, 5000);
+    //     }
+    //   }
+    // }
   }
 
   // const handleDocumentsFetched = (exists) => {
@@ -352,7 +429,7 @@ const CaseInformation = () => {
             { value: "Approve", label: "Approve" },
             { value: "Reject", label: "Reject" }
           ]);
-        } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "") {
+        } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Approve") {
           console.log("Setting options for Sr CreditReviewer and PlanningCompleted");
           setActionOptions([
             { value: "AssigntoCreditReviewer", label: "Submit to Credit Reviewer" }
@@ -555,14 +632,31 @@ const CaseInformation = () => {
         </div>
       </div>
       <div className='AssignmentStage'>
-        <AssignmentStage data={data} selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+        <AssignmentStage 
+        data={data} 
+        selectedUser={selectedUser} 
+        setSelectedUser={setSelectedUser}
+        readOnly={isReadonlyAS}
+        />
+
       </div>
       <div className='planningTabsDiv'>
-        <PlanningTabs documentMesage={documentMesage}
+        <PlanningTabs 
+        documentMesage={documentMesage}
           fetchData={fetchData}
           rows={rows}
           setRows={setRows}
+          readOnly={isReadonlyPT} 
         />
+
+        {/* {
+          role == "HeadofPPC" && (
+            <div className="NoTabs">
+            <p>Both tabs are disabled for Head of PPC</p>
+          </div>
+          )
+        } */}
+
       </div>
     </div>
   )

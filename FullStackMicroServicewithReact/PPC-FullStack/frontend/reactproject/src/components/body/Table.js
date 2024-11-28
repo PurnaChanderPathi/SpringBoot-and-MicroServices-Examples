@@ -201,13 +201,19 @@ try {
   // }
 
   const userLoad = async () => {
-
-    let assignedTo = localStorage.getItem('username');
+      let assignedTo = "";
+     assignedTo = localStorage.getItem('username');
     let reviewId = localStorage.getItem('reviewId');
+    
+    console.log("reviewId",reviewId);
+    console.log("assignedTo",assignedTo);
+    
+    
     let inputs = {
       reviewId : reviewId,
       assignedTo : assignedTo
-    }
+    };
+    
     try {
       const response = await axios.put("http://localhost:9195/api/action/update",inputs, {
         headers : {
@@ -226,13 +232,15 @@ try {
     }
   }
 
+  
+
   const handleStartCaseClick = (reviewId) => {
-    
+    localStorage.setItem('reviewId',reviewId);
     userLoad();
     const url = `/CaseInformation/${reviewId}`;
     setTimeout(()=> {
       window.open(url, '_blank');
-    },2000);
+    },1000);
 
   }
 

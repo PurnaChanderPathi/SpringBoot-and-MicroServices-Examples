@@ -203,11 +203,16 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
 
 
     const downloadExcel = async () => {
-        // Check if any one of reviewId, division, or groupName is not empty
+            console.log("reviewId",reviewId);
+            console.log("division",division);
+            console.log("groupName",groupName);
+            
+            
+            
         if (reviewId !== "" || division !== "" || groupName !== "") {
             const params = {
-                selectedGroup: selectedGroup,
-                selectedDivision: division,
+                groupName: selectedGroup,
+                division: selectedDivision,
                 reviewId: reviewId,
                 fromDate: fromDate,
                 toDate: toDate,

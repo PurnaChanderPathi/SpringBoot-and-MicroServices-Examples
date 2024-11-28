@@ -25,8 +25,9 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/scoreSlice";
+import { toast, ToastContainer } from "react-toastify";
 
-const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
+const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
     const [open, setOpen] = useState(false);
     const [comment, setComment] = useState("");
     const [input, setInput] = useState(null);
@@ -94,6 +95,8 @@ const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
         deleteRecord(fileId);
         setTimeout(() => {
             fetchData(reviewId);
+            console.log("fetchData reloaded");
+            
         }, 200);
 
     }
@@ -108,6 +111,7 @@ const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
             });
             if (response.status === 200) {
                 console.log("File Deleted Successfully...!");
+                fetchData();
             } else {
                 console.log('File deletion failed:', response.data.message || 'Unknown error');
             }
@@ -180,6 +184,25 @@ const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
         setComment(e.target.value);
     };
 
+    const showToast = (message) => {
+        toast.error(message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      };
+
+      const handleDelete = () => {
+        fetchData(reviewId);
+        console.log("onClick Deleted Called fetch Document endpoint");
+        
+      }
+
     const documentUpload = async () => {
 
         console.log("reviewId:", reviewId);
@@ -187,7 +210,9 @@ const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
         console.log("input file:", input);
 
         if (!reviewId || !comment || !input) {
-            alert("Please ensure all fields are filled out.");
+            // alert("Please ensure all fields are filled out.");
+            showToast("Please ensure all fields are filled");
+            
             return;
         }
 
@@ -224,6 +249,7 @@ const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
 
     return (
         <div className="DocumentMain">
+                  <ToastContainer />
             <Accordion>
                 <AccordionSummary
                     sx={{
@@ -240,7 +266,7 @@ const Document = ({ documentMesage,fetchData, rows,setRows  }) => {
                 </AccordionSummary>
                 <AccordionDetails className="DocumentAD">
                     <div className="DcumentADMain">
-                        <button className="BrowseButtonAD" onClick={handleOpen}>
+                        <button className="BrowseButtonAD" onClick={handleOpen} disabled={readOnly}>
                             Browse
                         </button>
                         <Modal
