@@ -108,6 +108,8 @@ try {
   });
 
   const data = response.data.result || [];
+  console.log("fetchDataTable :",response.data.result);
+  
 
   setRows(data);
   setTotalPages(Math.ceil(data.length / rowsPerPage));
@@ -238,7 +240,9 @@ try {
     localStorage.setItem('reviewId',reviewId);
     userLoad();
     const url = `/CaseInformation/${reviewId}`;
+
     setTimeout(()=> {
+      fetchTableData();
       window.open(url, '_blank');
     },1000);
 

@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import './CaseInformation.css'
 import { useParams } from 'react-router-dom';
 import PlanningTabs from './PlanningStage';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField } from '@mui/material';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import AssignmentStage from './AssignmentStage';
 import { setState, toggle } from '../../redux/scoreSlice';
+import FieldWorkStage from './FieldWorkStage';
 
 const CaseInformation = () => {
   const dispatch = useDispatch();
@@ -27,51 +28,52 @@ const CaseInformation = () => {
   const [isFieldDisabled, setIsFieldDisabled] = useState(true);
   const [isCompleted, setIsCompleted] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModelOpenSubmit,setIsModelOpenSubmit] = useState(false);
   const [documentMesage, setDocumentMessage] = useState('');
   const [documentExist, setDocumentExist] = useState(false);
   const [actionOptions, setActionOptions] = useState([]);
-  const { isActive } = useSelector((state) => state.Score);
+  const { isActive } = useSelector((state) => state.Score.isActive);
   const [documentPresent, setDocumentPresent] = useState(false);
 
   // const [role, setRole] = useState('');
-  const [isReadonlyPT,setIsReadOnlyPT] = useState(false);
-  const[isReadonlyAS,setIsReadonlyAS] = useState(false);
-  
+  const [isReadonlyPT, setIsReadOnlyPT] = useState(false);
+  const [isReadonlyAS, setIsReadonlyAS] = useState(false);
+
   let role = localStorage.getItem('role');
-  console.log("setRole",role); 
+  console.log("setRole", role);
 
   const currentStatus = localStorage.getItem('currentStatus');
-  console.log("currentStatus for readonly",currentStatus);
+  console.log("currentStatus for readonly", currentStatus);
 
   useEffect(() => {
     console.log("role:", role);
     console.log("currentStatus:", currentStatus);
-    if(role === "HeadofPPC"){
+    if (role === "HeadofPPC") {
       setIsReadOnlyPT(true);
       setIsReadonlyAS(true);
-      console.log("isReadonlyAS",isReadonlyAS);
-      console.log("isReadonlyPT",isReadonlyPT);
-    }else if(role === "SrCreditReviewer" && currentStatus === "Approve" && planning === "PlanningCompleted"){
+      console.log("isReadonlyAS", isReadonlyAS);
+      console.log("isReadonlyPT", isReadonlyPT);
+    } else if (role === "SrCreditReviewer" && currentStatus === "Approve" && planning === "PlanningCompleted") {
       setIsReadOnlyPT(true);
       setIsReadonlyAS(false);
-      console.log("isReadonlyAS",isReadonlyAS);
-      console.log("isReadonlyPT",isReadonlyPT);
+      console.log("isReadonlyAS", isReadonlyAS);
+      console.log("isReadonlyPT", isReadonlyPT);
     }
-    else if(role === "SrCreditReviewer" && currentStatus === "Reject" && planning === "PlanningCompleted"){
+    else if (role === "SrCreditReviewer" && currentStatus === "Reject" && planning === "PlanningCompleted") {
       setIsReadOnlyPT(false);
       setIsReadonlyAS(true);
-      console.log("isReadonlyAS",isReadonlyAS);
-      console.log("isReadonlyPT",isReadonlyPT);
+      console.log("isReadonlyAS", isReadonlyAS);
+      console.log("isReadonlyPT", isReadonlyPT);
     }
-    else if(role === "SrCreditReviewer" && currentStatus === "null" && planning !=="null"){
-        setIsReadOnlyPT(false);
-        setIsReadonlyAS(true);
-        console.log("isReadonlyAS",isReadonlyAS);
-        console.log("isReadonlyPT",isReadonlyPT);
-    } 
- 
+    else if (role === "SrCreditReviewer" && currentStatus === "null" && planning !== "null") {
+      setIsReadOnlyPT(false);
+      setIsReadonlyAS(true);
+      console.log("isReadonlyAS", isReadonlyAS);
+      console.log("isReadonlyPT", isReadonlyPT);
+    }
 
-  },[role,planning,currentStatus])
+
+  }, [role, planning, currentStatus])
 
   // const handleSetActive = (value) => {
   //   dispatch(setState(value));
@@ -105,10 +107,10 @@ const CaseInformation = () => {
         console.log("Fetched rows: ", response.data.result);
         if (response.data.result.length > 0) {
           setDocumentPresent(true);
-          console.log("document set to True");     
-        }else{
+          console.log("document set to True");
+        } else {
           setDocumentPresent(false);
-          console.log("document set To False in length = 0",documentPresent);
+          console.log("document set To False in length = 0", documentPresent);
         }
 
 
@@ -117,7 +119,7 @@ const CaseInformation = () => {
         setRows([]);
         setDocumentPresent(false);
         console.log("document set To False");
-        
+
 
       }
     } catch (error) {
@@ -195,41 +197,45 @@ const CaseInformation = () => {
     })
   }
 
+
+
   const handleSubmit = () => {
     const role = localStorage.getItem('role');
     // const planning = localStorage.getItem('planning');
     // const action = localStorage.getItem('currentStatus');
-    console.log("action current status ",action);
+    console.log("action current status ", action);
 
 
     if (action === "") {
-          showToast("Select Action before Submit");
-        } else {
-          console.log("documentPresent",documentPresent);         
-          if (!documentPresent) {
-            setDocumentMessage("Please add a document");
-            showToast("Please add a document");  
-          } else {            
-            if(action === "AssigntoCreditReviewer"){
-                if(selectedUser == null || selectedUser === ""){
-                  showToast("Select Credit Reviewer");
-                }else{
-                  setDocumentMessage('');
-                  UpdateDetails();
-                  setTimeout(() => {
-                    window.close();
-                  }, 5000);
-                }
-            }else{
-              setDocumentMessage('');
-              UpdateDetails();
-              setTimeout(() => {
-                window.close();
-              }, 5000);
-            }
- 
+      showToast("Select Action before Submit");
+    } else {
+      console.log("documentPresent", documentPresent);
+      if (!documentPresent) {
+        setDocumentMessage("Please add a document");
+        showToast("Please add a document");
+      } else {
+        if (action === "AssigntoCreditReviewer") {
+          if (selectedUser == null || selectedUser === "") {
+            showToast("Select Credit Reviewer");
+          } else {
+            setDocumentMessage('');
+            setIsModelOpenSubmit(true);
+            // UpdateDetails();
+            // setTimeout(() => {
+            //   window.close();
+            // }, 5000);
           }
+        } else {
+          setDocumentMessage('');
+          setIsModelOpenSubmit(true);
+          // UpdateDetails();
+          // setTimeout(() => {
+          //   window.close();
+          // }, 5000);
         }
+
+      }
+    }
 
     // if (role === "SrCreditReviewer" && planning === "PlanningCompleted" && action === "Approve") {
     //   if (selectedUser == null || selectedUser === "") {
@@ -269,6 +275,19 @@ const CaseInformation = () => {
     //   }
     // }
   }
+
+  
+  const handleModelConfirmSubmit = () => {
+    UpdateDetails();
+    setIsModelOpenSubmit(false);
+    setTimeout(() => {
+      window.close();
+    }, 5000);
+  }
+
+  const handleModalCancelSubmit = () => {
+    setIsModelOpenSubmit(false);
+  };
 
   // const handleDocumentsFetched = (exists) => {
   //   setDocumentExist(exists);
@@ -361,20 +380,30 @@ const CaseInformation = () => {
 
     localStorage.setItem('planning', planning);
     localStorage.setItem('action', action);
+    localStorage.setItem('selectedUser', selectedUser);
 
     console.log('Saving planning to localStorage:', localStorage.getItem('planning'));
     console.log('Saving action to localStorage:', localStorage.getItem('action'));
-
+    console.log('Saving selectedUser to localStorage', localStorage.getItem('selectedUser'));
     window.close();
   }
   useEffect(() => {
     const savedPlanning = localStorage.getItem('planning');
     const savedAction = localStorage.getItem('action');
+    const savedSelectedUser = localStorage.getItem('selectedUser');
+
+
     if (savedPlanning) {
+      console.log("savedPlanning", savedPlanning);      
       setPlanning(savedPlanning);
     }
     if (savedAction) {
+      console.log("savedAction", savedAction);
       setAction(savedAction);
+    }
+    if (savedSelectedUser) {
+      console.log("savedSelectedUser", savedSelectedUser);
+      setSelectedUser(savedSelectedUser);
     }
   }, []);
 
@@ -385,7 +414,7 @@ const CaseInformation = () => {
 
 
   useEffect(() => {
-  
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -406,15 +435,15 @@ const CaseInformation = () => {
           division: data.division,
           role: data.role,
           assignedTo: data.assignedTo,
-          action:action
+          action: action
         });
         localStorage.setItem("reviewId", data.reviewId);
         localStorage.setItem("role", data.role);
         // localStorage.setItem("assignedTo", data.assignedTo);
-        localStorage.setItem("planning",data.planning);
+        localStorage.setItem("planning", data.planning);
         setPlanning(data.planning);
         console.log("setPlanning", data.planning);
-        localStorage.setItem('currentStatus',data.action);
+        localStorage.setItem('currentStatus', data.action);
 
 
         if (data.role === "SrCreditReviewer" && data.planning === null) {
@@ -435,9 +464,9 @@ const CaseInformation = () => {
             { value: "AssigntoCreditReviewer", label: "Submit to Credit Reviewer" }
           ]);
         }
-        else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Reject"){
+        else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Reject") {
           console.log("After Reject");
-          
+
           setActionOptions([
             { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
           ]);
@@ -593,9 +622,6 @@ const CaseInformation = () => {
               },
             }}
           >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
             <MenuItem value="PlanningCompleted">Planning Completed</MenuItem>
             <MenuItem value="Planninginprogress">Planning inprogress</MenuItem>
           </TextField>
@@ -632,33 +658,44 @@ const CaseInformation = () => {
         </div>
       </div>
       <div className='AssignmentStage'>
-        <AssignmentStage 
-        data={data} 
-        selectedUser={selectedUser} 
-        setSelectedUser={setSelectedUser}
-        readOnly={isReadonlyAS}
+        <AssignmentStage
+          data={data}
+          selectedUser={selectedUser}
+          setSelectedUser={setSelectedUser}
+          readOnly={isReadonlyAS}
         />
-
       </div>
       <div className='planningTabsDiv'>
-        <PlanningTabs 
-        documentMesage={documentMesage}
+        <PlanningTabs
+          documentMesage={documentMesage}
           fetchData={fetchData}
           rows={rows}
           setRows={setRows}
-          readOnly={isReadonlyPT} 
+          readOnly={isReadonlyPT}
         />
-
-        {/* {
-          role == "HeadofPPC" && (
-            <div className="NoTabs">
-            <p>Both tabs are disabled for Head of PPC</p>
-          </div>
-          )
-        } */}
-
       </div>
+      <div className='planningTabsDiv'>
+        <FieldWorkStage
+        />
+      </div>
+      <Dialog open={isModelOpenSubmit} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
+          <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width:'400px', height:'250' }}>Confirm Change</DialogTitle>
+          <DialogContent>
+            <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+              Do you want to submit ?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button variant='contained' onClick={handleModalCancelSubmit} sx={{ backgroundColor: '#1B4D3E' }}>
+              No
+            </Button>
+            <Button variant='contained' onClick={handleModelConfirmSubmit} sx={{ backgroundColor: '#1B4D3E' }}>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
     </div>
+
   )
 }
 

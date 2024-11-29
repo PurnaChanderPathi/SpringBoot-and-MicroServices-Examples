@@ -517,9 +517,9 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                                                     align="right"
                                                     sx={{ border: "1px solid black" }}
                                                 >
-                                                    <Button onClick={() => deleteFile(row.fileId, row.reviewId)} >
-                                                        <Tooltip title="Delete">
-                                                            <DeleteOutlineIcon sx={{ color: '#1B4D3E' }} />
+                                                    <Button onClick={() => deleteFile(row.fileId, row.reviewId)}  disabled={readOnly}>
+                                                        <Tooltip title="Delete" disabled={readOnly}>
+                                                            <DeleteOutlineIcon sx={{ color: '#1B4D3E' }}  disabled={readOnly}/>
                                                         </Tooltip>
                                                     </Button>
                                                 </TableCell>

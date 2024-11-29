@@ -1,0 +1,78 @@
+.MashMD {
+    display: flex;
+}
+.tablogout {
+    width: 87px;
+    height: 87.6vh;
+    border-right: 1px solid  #B2BEB5;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.topDiv {
+    padding-top: 30px;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.bottomDiv {
+    padding-left: 16px;
+}
+
+.MasqBodyMD {
+    width: 1450px;
+    height: 250px;
+    margin: 20px;
+    border: 1px solid #B2BEB5 ;
+    border-radius: 5px;
+}
+
+.CaseDetailsMD {
+    width: 1400px;
+    height: 227px;
+    margin: 10px;
+    border: 1px solid #B2BEB5 ;
+    border-radius: 5px;
+
+}
+
+.underlineText {
+    text-decoration: underline;
+    text-decoration-thickness: 2px; 
+    text-decoration-color: #FF5E00; 
+  }
+
+  .CaseDetailsHeading { 
+    margin: 20px;
+  }
+
+  .CaseDetails {
+    width: 200px;
+  }
+
+  .ReviewIdCD {
+    display: flex;
+    padding-left: 20px;
+  }
+
+  .ReviewLabelCD {
+    background-color: #FF5E00;  
+    color: white;                 
+    border-radius: 12px;         
+    padding: 8px 16px;            
+    font-weight: bold;          
+    display: inline-block;  
+  }
+
+  .inputReviewCD {
+    border: none;
+  }
+
+  .CaseDetailsDIv {
+    display: flex;
+
+  }
+
