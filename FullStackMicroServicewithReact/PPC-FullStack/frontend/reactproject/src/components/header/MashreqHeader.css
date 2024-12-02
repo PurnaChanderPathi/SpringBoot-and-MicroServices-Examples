@@ -3,11 +3,13 @@
     padding: 0px;
 }
 .MashreqMD {
+    margin-top: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #B2BEB5 ;
+    /* border-bottom: 1px solid #B2BEB5 ; */
     height: 80px;
+    padding-right: 15px;
 }
 
 .MASQ {
@@ -20,7 +22,6 @@
 }
 .MSHP1 {
     display: flex;
-    padding-right: 20px;
     gap: 20px;
     align-items: center;
 }

@@ -1,0 +1,66 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.PlanningStage {
+    /* border: 1px solid rgb(37, 74, 158); */
+    /* padding-top: 20px; */
+}
+
+.PlanningStageHeading {
+    height: 40px;
+    background-color: #1B4D3E;
+    color: white;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.PlanningStageDD {
+    border-top-left-radius: 5px #1B4D3E;
+    border-top-right-radius: 5px #1B4D3E;
+
+}
+
+.CommentsScreenPS {
+    border: 1px solid black;
+    height: max-content;
+}
+
+.EnterCommentPS {
+    padding-left: 16px;
+}
+
+.ReactQuillScreenPS {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 35px;
+    padding-left: 16px;
+
+}
+
+.ButtonAddPS {
+    width: 100px;
+    height: 30px;
+    background-color: #1B4D3E;
+    border-radius: 5px;
+    color: white;
+    border: none;
+}
+
+.ReactQuillPS {
+    height: 120px;
+    width: 1300px;
+}
+
+.EnterCommentPS {
+    display: flex;
+    justify-content: start;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+

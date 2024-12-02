@@ -7,9 +7,20 @@
     margin: 5px;
 }
 
+.CaseInfoScreen {
+    border: 1px solid #B2BEB5;
+    border-radius: 5px;
+}
+
+.CaseInfoScreen1{
+    margin: 5px;
+    border: 1px solid #B2BEB5;
+    border-radius: 5px;
+}
+
 .CaseInfoheading {
-    background-color: #1B4D3E;
-    color: white;
+    background-color: transparent;
+    color: black;
     height: 40px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -25,9 +36,14 @@
 
 .ReviewIdinfoCS {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        flex-direction: row;
+        justify-content: left;
         align-items: center;
+    }
+
+    .CDCT {
+        display: flex;
+        flex-direction: row;
     }
 
 .inputReviewCS {
@@ -36,32 +52,60 @@
     font-size: medium;
     padding-top: 10px;
     padding-bottom: 15px;
-    width: 210px;
-    text-align: center;
+    text-align: start;
+    transition: width 0.2s ease, font-size 0.2s ease;
+    min-width: 150px;
+    max-width: 500px;
+    width: auto;
 }
+
 
 .fetchCaseInformation {
     display: flex;
     padding-top: 20px;
-    justify-content: space-around;
+    padding-left: 20px;
+    justify-content: start;
     text-align: center;
-    border: 1px  #1B4D3E;
+    border: 1px  #FF5E00;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    width: 1300px;
+    flex-wrap: wrap;
+}
+
+.ReviewInputCS {
+padding-left: 15px;
+padding-top: 5px;
+}
+
+.ClassTimeLineDiv {
+    width: 550px;
 }
 
 
 
 .ReviewLabelCS {
     font-weight: 600;
+    background-color: #FF5E00;
+    color: white;
+    padding: 5px;
+    font-size: medium;
+    border-radius: 20px;
 }
 
 .PlanningMainDivCI {
     display: flex;
     flex-direction: column;
-    border: 1px solid #1B4D3E;
+    border: 1px solid #B2BEB5;
     margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.planningMainDiv {
+margin: 5px;
+border: 1px solid #B2BEB5;
+border-radius: 5px;
 }
 
 .PlanningStageCmptd {
@@ -81,10 +125,13 @@
 
 .submitTACI {
     padding-right: 10px;
+
 }
+
 
 .planningTabsDiv {
     margin-top: 20px;
+    padding: 10px;
 }
 
 .planningEditScreen {
@@ -104,7 +151,7 @@
 }
 
 .custom-toast {
-    background-color: #1B4D3E !important;
+    background-color: #FF5E00 !important;
     color: white !important;    
     border-radius: 8px !important;
     font-size: 14px !important;            

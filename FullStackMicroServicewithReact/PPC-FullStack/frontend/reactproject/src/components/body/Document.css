@@ -4,7 +4,7 @@
 }
 
 .DocumentAD {
-    border: 1px solid #1B4D3E;
+    border: 1px solid #FF5E00;
 }
 
 .DcumentADMain {
@@ -20,7 +20,7 @@
     border-radius: 5px;
     border: none;
     color: white;
-    background-color: #1B4D3E;
+    background-color: #FF5E00;
     font-size: 15px;
 }
 
@@ -36,7 +36,7 @@
     width: 300px;
     height: 40px;
     border-radius: 5px;
-    background-color: #1B4D3E;
+    background-color: #FF5E00;
     color: white;
     border: none;
 }
@@ -44,7 +44,7 @@
     width: 190px;
     height: 40px;
     border-radius: 5px;
-    background-color: #1B4D3E;
+    background-color: #FF5E00;
     color: white;
     border: none;
 }

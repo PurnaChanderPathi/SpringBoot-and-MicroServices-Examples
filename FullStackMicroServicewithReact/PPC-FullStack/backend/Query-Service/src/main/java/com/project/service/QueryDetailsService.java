@@ -31,8 +31,8 @@ public class QueryDetailsService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<QueryDetails> getQueryDetails(String childReviewId, String reviewId) {
-        return queryDetailsDao.getQueryDetails(childReviewId, reviewId);
+    public List<QueryDetails> getQueryDetails( String reviewId) {
+        return queryDetailsDao.getQueryDetails(reviewId);
     }
 
     public List<QueryDetails> fetchQueryDetails(String groupName, String division, String reviewId, LocalDate fromDate, LocalDate toDate) {

@@ -26,11 +26,11 @@ align-items: center;
 }
 
 .LogoffButton {
-color: #1B4D3E;
+color: #FF5E00;
 }
 
 .LogoutButtonHeader {
-    color: #1B4D3E;
+    color: #FF5E00;
 }
 
 .LogoffButtonContainer {
@@ -63,6 +63,7 @@ color: #1B4D3E;
 .LogoutButtenH {
     border: none;
 }
+
 
 
 

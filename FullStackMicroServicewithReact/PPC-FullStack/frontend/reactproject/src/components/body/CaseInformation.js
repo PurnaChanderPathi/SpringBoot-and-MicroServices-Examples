@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import './CaseInformation.css'
 import { useParams } from 'react-router-dom';
 import PlanningTabs from './PlanningStage';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import AssignmentStage from './AssignmentStage';
 import { setState, toggle } from '../../redux/scoreSlice';
 import FieldWorkStage from './FieldWorkStage';
+import MashreqHeader from '../header/MashreqHeader';
 
 const CaseInformation = () => {
   const dispatch = useDispatch();
@@ -25,10 +26,10 @@ const CaseInformation = () => {
   const [planning, setPlanning] = useState('');
   const [fieldwork, setFieldwork] = useState('');
   const ApiToken = localStorage.getItem("authToken");
-  const [isFieldDisabled, setIsFieldDisabled] = useState(true);
+  const [isFieldDisabled, setIsFieldDisabled] = useState(false);
   const [isCompleted, setIsCompleted] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModelOpenSubmit,setIsModelOpenSubmit] = useState(false);
+  const [isModelOpenSubmit, setIsModelOpenSubmit] = useState(false);
   const [documentMesage, setDocumentMessage] = useState('');
   const [documentExist, setDocumentExist] = useState(false);
   const [actionOptions, setActionOptions] = useState([]);
@@ -44,6 +45,11 @@ const CaseInformation = () => {
 
   const currentStatus = localStorage.getItem('currentStatus');
   console.log("currentStatus for readonly", currentStatus);
+
+  useEffect(() => {
+    console.log("selectedUdser", selectedUser);
+
+  })
 
   useEffect(() => {
     console.log("role:", role);
@@ -276,7 +282,7 @@ const CaseInformation = () => {
     // }
   }
 
-  
+
   const handleModelConfirmSubmit = () => {
     UpdateDetails();
     setIsModelOpenSubmit(false);
@@ -330,11 +336,13 @@ const CaseInformation = () => {
         console.log("role", response.data.result.role);
         console.log("assignedTo", response.data.result.assignedTo);
         localStorage.setItem('assignedTo', 'null');
+        localStorage.setItem('selectedUser', '');
         console.log("on Update assignedTo is null");
 
 
         setAction('');
         setPlanning('');
+        setSelectedUser('');
         setIsCompleted(true);
         setDocumentExist(false);
 
@@ -372,31 +380,65 @@ const CaseInformation = () => {
     setIsModalOpen(false);
   };
 
+  const updateBySAS = async () => {
+    let reviewId = localStorage.getItem('reviewId');
+
+
+    console.log("reviewId", reviewId);
+
+    let inputs = {
+      reviewId: reviewId,
+      planning: planning
+    };
+
+    try {
+      const response = await axios.put("http://localhost:9195/api/action/update", inputs, {
+        headers: {
+          'Authorization': `Bearer ${ApiToken}`,
+          'Content-Type': 'application/json',
+        }
+      })
+      if (response.data.status === 200) {
+        console.log("updated Data", response.data.message);
+      } else {
+        console.log("Failed to Update Details");
+      }
+    } catch (error) {
+      console.log("Error while processing to update Details", error.message);
+
+    }
+  }
+
+
   const handleModalCancel = () => {
     setIsModalOpen(false);
   };
 
   const handleSaveAndClose = () => {
 
-    localStorage.setItem('planning', planning);
+    // localStorage.setItem('planning', planning);
     localStorage.setItem('action', action);
     localStorage.setItem('selectedUser', selectedUser);
-
+    updateBySAS();
     console.log('Saving planning to localStorage:', localStorage.getItem('planning'));
     console.log('Saving action to localStorage:', localStorage.getItem('action'));
     console.log('Saving selectedUser to localStorage', localStorage.getItem('selectedUser'));
-    window.close();
+
+    setTimeout(() => {
+      window.close();
+    }, 2000);
+
   }
   useEffect(() => {
-    const savedPlanning = localStorage.getItem('planning');
+    // const savedPlanning = localStorage.getItem('planning');
     const savedAction = localStorage.getItem('action');
     const savedSelectedUser = localStorage.getItem('selectedUser');
 
 
-    if (savedPlanning) {
-      console.log("savedPlanning", savedPlanning);      
-      setPlanning(savedPlanning);
-    }
+    // if (savedPlanning) {
+    //   console.log("savedPlanning", savedPlanning);      
+    //   setPlanning(savedPlanning);
+    // }
     if (savedAction) {
       console.log("savedAction", savedAction);
       setAction(savedAction);
@@ -452,7 +494,15 @@ const CaseInformation = () => {
           setActionOptions([
             { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
           ]);
-        } else if (data.role === "HeadofPPC" && data.planning === "PlanningCompleted") {
+        }
+        else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === null) {
+          console.log("Setting options for Sr CreditReviewer and empty planning");
+          setActionOptions([
+            { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
+          ]);
+        }
+
+        else if (data.role === "HeadofPPC" && data.planning === "PlanningCompleted" && data.action === "SubmittedToHeadofPPC") {
           console.log("Setting options for Head of PPC");
           setActionOptions([
             { value: "Approve", label: "Approve" },
@@ -486,14 +536,37 @@ const CaseInformation = () => {
     return <div>Loading...</div>;
   }
 
+  const calculateFontSize = (content) => {
+    const length = content.length;
+    if (length < 20) return 'medium';    // Small content
+    if (length < 50) return 'large';     // Medium content
+    return 'x-large';                    // Large content
+  };
+
+  const calculateWidth = (content) => {
+    const length = content.length;
+    const baseWidth = 10;
+    return `${baseWidth + length * 6}px`;
+  };
+
+  const asmtAction = localStorage.getItem('currentStatus');
   return (
     <div className='CaseInfoMainDiv'>
+      <MashreqHeader />
       <ToastContainer />
       <div className='CaseInfoScreen'>
+        <div className='CaseInfoScreen1'>
         <div className='CaseInfoheading'>
-          Case Information
-        </div>
+          <Typography sx={{ fontWeight: '550' }}>
+            <span style={{
+              textDecoration: 'underline',
+              textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+              textUnderlineOffset: '4px'
+            }}
+              className='underlineText'>Case</span> Details
+          </Typography>
       </div>
+      <div className='CDCT'>
       <div className='fetchCaseInformation'>
         <div className='ReviewIdinfoCS'>
           <div className='ReviewLabelCS'>
@@ -502,7 +575,12 @@ const CaseInformation = () => {
           <div className='ReviewInputCS'>
             <input type='text' value={caseData.reviewId}
               className='inputReviewCS'
-              disabled />
+              disabled  
+              style={{ 
+                fontSize: calculateFontSize(caseData.reviewId),
+                width: calculateWidth(caseData.reviewId)}}
+              />
+              
           </div>
 
         </div>
@@ -514,7 +592,10 @@ const CaseInformation = () => {
             <input type='text'
               value={caseData.groupName}
               className='inputReviewCS'
-              disabled />
+              disabled
+              style={{ fontSize: calculateFontSize(caseData.groupName),
+                width: calculateWidth(caseData.groupName)
+              }} />
           </div>
         </div>
         <div className='ReviewIdinfoCS'>
@@ -525,7 +606,10 @@ const CaseInformation = () => {
             <input type='text'
               value={caseData.division}
               className='inputReviewCS'
-              disabled />
+              disabled 
+              style={{ fontSize: calculateFontSize(caseData.division),
+                width: calculateWidth(caseData.division)
+              }}/>
           </div>
         </div>
         <div className='ReviewIdinfoCS'>
@@ -535,7 +619,10 @@ const CaseInformation = () => {
           <div className='ReviewInputCS'>
             <input type='text'
               value={caseData.role}
-              className='inputReviewCS' disabled />
+              className='inputReviewCS' disabled 
+              style={{ fontSize: calculateFontSize(caseData.role),
+                width: calculateWidth(caseData.role)
+              }}/>
           </div>
         </div>
         <div className='ReviewIdinfoCS'>
@@ -545,11 +632,24 @@ const CaseInformation = () => {
           <div className='ReviewInputCS'>
             <input type='text'
               value={caseData.assignedTo}
-              className='inputReviewCS' disabled />
+              className='inputReviewCS' disabled 
+              style={{ fontSize: calculateFontSize(caseData.assignedTo),
+                width: calculateWidth(caseData.assignedTo)
+              }} />
           </div>
         </div>
+        
+      </div>
+      <div className='ClassTimeLineDiv'>
+        Hello
+      </div>
+      </div>
+      </div>
       </div>
       <div className='PlanningMainDivCI'>
+        <div className='planningMainDiv'>
+
+
         <div className='PlanningStageCmptd'>
           <div className='TakeActionSubmitCS'>
             <TextField
@@ -563,13 +663,13 @@ const CaseInformation = () => {
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                   '&:hover fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                 },
               }}
@@ -590,7 +690,9 @@ const CaseInformation = () => {
             </TextField>
           </div>
           <div className='submitTACI'>
-            <Button variant='contained' sx={{ backgroundColor: '#1B4D3E' }}
+            <Button variant='contained'sx={{ backgroundColor: '#1B4D3E', height: '30px', paddingBottom: '10px', 
+              backgroundColor: '#FF5E00', textAlign: 'center'
+            }}
               onClick={handleSubmit}
               disabled={planning !== 'PlanningCompleted'}
             >Submit</Button>
@@ -611,13 +713,13 @@ const CaseInformation = () => {
               paddingLeft: '10px',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00;',
                 },
                 '&:hover fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
                 },
               },
             }}
@@ -627,7 +729,7 @@ const CaseInformation = () => {
           </TextField>
           <Button className='BtnEditCI'
             variant='contained'
-            sx={{ backgroundColor: '#1B4D3E' }}
+            sx={{ backgroundColor: '#FF5E00', height: '30px', width: '70px' }}
             onClick={handleEditClick}
           >
             Edit
@@ -641,10 +743,10 @@ const CaseInformation = () => {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#1B4D3E' }}>
+              <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
                 No
               </Button>
-              <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#1B4D3E' }}>
+              <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
                 Yes
               </Button>
             </DialogActions>
@@ -652,18 +754,20 @@ const CaseInformation = () => {
         </div>
         <div className='SaveAndCloseButtonCI'>
           <Button variant='contained'
-            sx={{ backgroundColor: '#1B4D3E' }}
+            sx={{ backgroundColor: '#FF5E00', width: '140px', height: '30px' , fontSize: 'small'}}
             onClick={handleSaveAndClose}
           >Save & Close</Button>
         </div>
-      </div>
+
       <div className='AssignmentStage'>
-        <AssignmentStage
-          data={data}
-          selectedUser={selectedUser}
-          setSelectedUser={setSelectedUser}
-          readOnly={isReadonlyAS}
-        />
+        {role === "SrCreditReviewer" && asmtAction === "Approve" && (
+          <AssignmentStage
+            data={data}
+            selectedUser={selectedUser}
+            setSelectedUser={setSelectedUser}
+          // readOnly={isReadonlyAS}
+          />)}
+
       </div>
       <div className='planningTabsDiv'>
         <PlanningTabs
@@ -671,7 +775,8 @@ const CaseInformation = () => {
           fetchData={fetchData}
           rows={rows}
           setRows={setRows}
-          readOnly={isReadonlyPT}
+        // readOnly={isReadonlyPT}
+
         />
       </div>
       <div className='planningTabsDiv'>
@@ -679,21 +784,23 @@ const CaseInformation = () => {
         />
       </div>
       <Dialog open={isModelOpenSubmit} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
-          <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width:'400px', height:'250' }}>Confirm Change</DialogTitle>
-          <DialogContent>
-            <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-              Do you want to submit ?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button variant='contained' onClick={handleModalCancelSubmit} sx={{ backgroundColor: '#1B4D3E' }}>
-              No
-            </Button>
-            <Button variant='contained' onClick={handleModelConfirmSubmit} sx={{ backgroundColor: '#1B4D3E' }}>
-              Yes
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width: '400px', height: '250' }}>Confirm Change</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+            Do you want to submit ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='contained' onClick={handleModalCancelSubmit} sx={{backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+            No
+          </Button>
+          <Button variant='contained' onClick={handleModelConfirmSubmit} sx={{backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </div>
+      </div>
     </div>
 
   )

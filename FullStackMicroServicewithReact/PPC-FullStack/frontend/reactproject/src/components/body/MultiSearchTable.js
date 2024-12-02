@@ -110,7 +110,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
           justifyContent: 'flex-end',
           alignItems: 'center',
           marginBottom: 0,
-          backgroundColor: '#1B4D3E',
+          backgroundColor: 'white',
           padding: 1,
         }}
       >
@@ -126,13 +126,13 @@ export default function MultiSearchTable({ searchMultiParams }) {
           sx={{ width: '100px', marginRight: 2, backgroundColor: 'white',
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
               },
               '&:hover fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
               },
               '&.Mui-focused fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
               },
           },
            }}
@@ -140,33 +140,33 @@ export default function MultiSearchTable({ searchMultiParams }) {
       </Box>
 
       {/* Table */}
-      <TableContainer component={Paper} sx={{ backgroundColor: '#1B4D3E', marginTop: 0 }}>
+      <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', marginTop: 0 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: 'transparent', color: 'white' }}>
             <TableRow>
-              <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Division</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Group Name</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CreatedBy</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>createdDate</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>role</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>AssignedTo</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CurrentStatus</TableCell>
+              <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Review ID</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>Division</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>Group Name</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>CreatedBy</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>createdDate</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>role</TableCell>
+              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>AssignedTo</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>CurrentStatus</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {displayedRows.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
-                <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
+                <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                   {row.reviewId}
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.division}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.groupName}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdBy}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdDate}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.role}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedTo}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.currentStatus}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.division}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.groupName}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.createdBy}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.createdDate}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.role}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.assignedTo}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.currentStatus}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -179,10 +179,10 @@ export default function MultiSearchTable({ searchMultiParams }) {
           variant="contained"
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
+          sx={{ marginRight: 1,  backgroundColor: '#FF5E00', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: '#1B4D3E' } }}
+            '&:hover': { backgroundColor: '#FF5E00' } }}
         >
           Previous
         </Button>
@@ -193,10 +193,10 @@ export default function MultiSearchTable({ searchMultiParams }) {
           variant="contained"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
+          sx={{ marginRight: 1,  backgroundColor: '#FF5E00', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: '#1B4D3E' } }}
+            '&:hover': { backgroundColor: '#FF5E00' } }}
         >
           Next
         </Button>

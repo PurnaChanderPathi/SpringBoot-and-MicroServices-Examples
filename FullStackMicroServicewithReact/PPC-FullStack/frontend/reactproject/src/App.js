@@ -35,7 +35,7 @@ function App() {
                 frameBorder={0}
                 style={{ height: '100vh', width: '90vw' }}></iframe> */}
       {/* <Header/> */}
-          {/* <Router>
+          <Router>
             <Routes>
               <Route path="/home" element={<Amlak/>} />
               <Route path="/PPCDetails" element={<PPCDetails/>}/>
@@ -43,9 +43,9 @@ function App() {
               <Route path='/' element={<LoginScreen />} />
               <Route path='/dashboard' element={<PrivateRoute element={<Dashboard/>} />} />
             </Routes>
-          </Router> */}
-          <MashreqHeader />
-          <MashreqBody />
+          </Router>
+          {/* <MashreqHeader />
+          <MashreqBody /> */}
     </div>
   );
 }

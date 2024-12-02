@@ -1,0 +1,129 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+.LoginScreenMainDiv {
+    display: flex;
+    align-items: center;
+    padding-top: 30px;
+    background-color: #1c362f;
+    height: 95.5vh;
+    width: 100%;
+    overflow: hidden;
+    flex-direction: column;
+    gap: 15px;
+
+}
+.ImageRK {
+    border-radius: 50px;
+}
+
+.LoginScreenHeading {
+    width: 510px;
+    height: 280px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 40px 1px rgba(0,0,0,0.6);
+    padding: 15px;
+}
+
+.HeaderPhotoLS {
+    display: flex;
+    justify-content: start;
+    width: 500px;
+    align-items: center;
+    gap: 23px;
+}
+
+.HPhotoheading {
+    color: #c2a560;
+    font-size: 24px;
+    padding-top: 20px;
+    font-weight: 500;
+}
+
+.UserNameLS {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: start;
+    width: 450px;
+    height: 67px;
+    gap: 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    
+}
+    
+.PasswordLS {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: start;
+    width: 450px;
+    height: 67px;
+    gap: 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    
+}
+
+.UserInputsLS {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.UserLabelLS {
+    font-size: 20px;
+    color: #3B3E40;
+}
+
+/* input[type="text"], input[type="password"] {
+    padding: 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 450px;
+    box-sizing: border-box;
+} */
+
+.LSButton {
+    display: flex;
+    justify-content: start;
+    padding-left: 40px;
+    padding-top: 10px;
+    color: #1B69A9;
+}
+
+.LSLoginButton {
+    width: 100px;
+    height: 30px;
+    background-color: #1B4D3E;
+    border-radius: 5px;
+    color: white;
+    font-size: 15px;
+    border: none;
+}
+
+.LSLoginButton:hover {
+    background-color: #1B4D3E; 
+}
+
+.LMP {
+    color: #999;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.error-message {
+    margin-top: 10px;
+     color: #c2a560;
+     border: 1px solid #c2a560;
+     background-color: #1c362f;
+}
+
+

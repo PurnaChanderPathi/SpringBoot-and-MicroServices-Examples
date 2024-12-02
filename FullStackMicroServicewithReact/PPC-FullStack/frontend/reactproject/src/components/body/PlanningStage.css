@@ -10,7 +10,7 @@
 
 .PlanningStageHeading {
     height: 40px;
-    background-color: #1B4D3E;
+    background-color: #FF5E00;
     color: white;
     display: flex;
     justify-content: start;
@@ -19,8 +19,8 @@
 }
 
 .PlanningStageDD {
-    border-top-left-radius: 5px #1B4D3E;
-    border-top-right-radius: 5px #1B4D3E;
+    border-top-left-radius: 5px #FF5E00;
+    border-top-right-radius: 5px #FF5E00;
 
 }
 
@@ -45,7 +45,7 @@
 .ButtonAddPS {
     width: 100px;
     height: 30px;
-    background-color: #1B4D3E;
+    background-color: #FF5E00;
     border-radius: 5px;
     color: white;
     border: none;

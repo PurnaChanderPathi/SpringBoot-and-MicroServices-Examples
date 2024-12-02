@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './PlanningStage.css';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs, TextField, Tooltip } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs, TextField, Tooltip, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types'; // Import PropTypes
 import ReactQuill from 'react-quill';
@@ -42,7 +42,7 @@ function a11yProps(index) {
     };
 }
 
-export default function PlanningStage({ documentMesage,fetchData,rows,setRows, readOnly }) {
+export default function PlanningStage({ documentMesage,fetchData,rows,setRows }) {
     const [value, setValue] = useState(0); 
     const [comment, setComment] = useState('');
     const [theme, setTheme] = useState('snow');
@@ -115,22 +115,30 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows, r
             <Accordion className="PlanningStageDD">
                 <AccordionSummary
                     sx={{
-                        backgroundColor: '#1B4D3E',
-                        color: 'white',
+                        backgroundColor: 'transparent',
+                        color: 'black',
                         padding: '10px',
                         height: '20px',
-                        fontSize: '15px',
+                        fontSize: '18px',
+                        border: '1px solid #B2BEB5' ,
+                        borderRadius: '5px',
                         '& .MuiAccordionSummary-content': {
-                            backgroundColor: '#1B4D3E',
+                            backgroundColor: 'transparent',
                             borderRadius: '4px',
                             padding: '5px 10px',
                         },
                     }}
-                    expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}
+                    expandIcon={<ExpandMoreIcon style={{ color: '#FF5E00' }} />}
                     aria-controls="panel1-content"
                     id="panel1-header"
                 >
-                    Addional System Info
+                    <Typography
+                     sx={{fontWeight: 'bold'}}>
+                               <span style={{ textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                               textUnderlineOffset: '4px'  }} 
+                               className='underlineText'>Addi</span>onal System Info
+                            </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{ width: '100%' }}>
@@ -219,12 +227,10 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows, r
                                         onChange={handleEditorChange}
                                         value={comment}
                                         placeholder="Write your comment here..."
-                                        readOnly={readOnly}
                                     />
                                     <button
                                         className='ButtonAddPS'
                                         onClick={handleSaveComment}
-                                        disabled={readOnly}
                                     >
                                         Add
                                     </button>
@@ -241,8 +247,7 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows, r
                             <Document documentMesage={documentMesage}
                              fetchData={fetchData }
                              rows={rows}
-                             setRows={setRows}
-                             readOnly={readOnly} />
+                             setRows={setRows} />
                         </CustomTabPanel>
                     </Box>
                 </AccordionDetails>

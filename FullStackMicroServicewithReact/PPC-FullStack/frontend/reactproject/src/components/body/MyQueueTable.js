@@ -136,7 +136,7 @@ const MyQueueTable = () => {
           justifyContent: 'flex-end',
           alignItems: 'center',
           marginBottom: 0,
-          backgroundColor: '#1B4D3E',
+          backgroundColor: 'white',
           padding: 1,
         }}
       >
@@ -152,54 +152,54 @@ const MyQueueTable = () => {
           sx={{ width: '100px', marginRight: 2, backgroundColor: 'white',
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
               },
               '&:hover fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
               },
               '&.Mui-focused fieldset': {
-                  borderColor: '#1B4D3E',
+                  borderColor: '#FF5E00',
               },
           },
            }}
         />
         
       </Box>
-      <TableContainer component={Paper} sx={{ backgroundColor: '#1B4D3E', marginTop: 0 }}>
+      <TableContainer component={Paper} sx={{ backgroundColor: 'white', marginTop: 0 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: 'white', color: 'black'  }}>
             <TableRow>
-            <TableCell sx={{ color: 'white', border: '1px solid black' }}>Start Case</TableCell>
-              <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
+            <TableCell align='right' sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>Start Case</TableCell>
+              <TableCell align='right' sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold'}}>Review ID</TableCell>
               {/* <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Child Review ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Issue ID</TableCell>
               <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Track Issue ID</TableCell> */}
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Division</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Group Name</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Current Status</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>AssignedTo</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Role</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>CreateBy</TableCell>
+              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>Division</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>Group Name</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>Current Status</TableCell>
+              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>AssignedTo</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>Role</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight:'bold' }}>CreateBy</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {displayedRows.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
-            <TableCell sx={{ color: 'white', border: '1px solid black' }}
+            <TableCell align='center' sx={{ color: 'white', border: '1px solid #B2BEB5' }}
             onClick={() => handleStartCaseClick(row.reviewId)}
-            ><PlayArrowIcon style={{backgroundColor: '#008080', borderRadius: '50%'}}/></TableCell>
-                <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
+            ><PlayArrowIcon style={{ color: '#FF5E00'}}/></TableCell>
+                <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                   {row.reviewId}
                 </TableCell>
                 {/* <TableCell align="right" sx={{ border: '1px solid black' }}>{row.childReviewId}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.issueId}</TableCell>
                 <TableCell align="right" sx={{ border: '1px solid black' }}>{row.trackIssueId}</TableCell> */}
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.division}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.groupName}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.currentStatus}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.assignedTo}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.role}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.createdBy}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.division}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.groupName}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.currentStatus}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.assignedTo}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.role}</TableCell>
+                <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.createdBy}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -210,10 +210,10 @@ const MyQueueTable = () => {
           variant="contained"
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
+          sx={{ marginRight: 1,  backgroundColor: '#FF5E00', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: '#1B4D3E' } }}
+            '&:hover': { backgroundColor: '#FF5E00' } }}
         >
           Previous
         </Button>
@@ -224,10 +224,10 @@ const MyQueueTable = () => {
           variant="contained"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          sx={{ marginRight: 1,  backgroundColor: '#1B4D3E', 
+          sx={{ marginRight: 1,  backgroundColor: '#FF5E00', 
             textTransform: 'none', 
             color: 'white', 
-            '&:hover': { backgroundColor: '#1B4D3E' } }}
+            '&:hover': { backgroundColor: '#FF5E00' } }}
         >
           Next
         </Button>

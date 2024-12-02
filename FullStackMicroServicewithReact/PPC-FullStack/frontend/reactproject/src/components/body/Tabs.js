@@ -11,6 +11,7 @@ import MultiSearchTable from './MultiSearchTable';
 import axios from 'axios';
 import MyQueueTable from './MyQueueTable';
 import { useSelector } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -97,6 +98,19 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     //     })
     // }
 
+    const showToast = (message) => {
+        toast.error(message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      };
+
     const handleClear = () => {
         setReviewId('');
         setChildReviewId('');
@@ -108,10 +122,17 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
 
     const handleMultiClear = () => {
         setReviewId('');
-        setGroupName('');
-        setDivision('');
+   
         setFromDate('');
         setToDate('');
+        setSelectedDivision('');
+        setSelectedGroup('');
+
+        console.log("selectedDivision",selectedDivision);
+        console.log("selectedGroup",selectedGroup);
+        
+        
+
         setSearchMultiParams({
             reviewId: '',
             groupName: '',
@@ -119,6 +140,7 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
             fromDate: '',
             toDate: '',
         })
+        
     }
 
     React.useEffect(() => {
@@ -170,7 +192,7 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                 });
                 console.log("Divisions API response:", response.data);
                 if (response.data && Array.isArray(response.data.result)) {
-                    setDivision(response.data.result); // Set divisions based on the selected group
+                    setDivision(response.data.result);
                 } else {
                     console.error("Divisions response is not an array", response.data);
                     setDivision([]);
@@ -184,21 +206,24 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
         }
     };
 
-    // Handle change in division selection
     const handleDivisionChange = (event) => {
         const selectedDivision = event.target.value;
-        setSelectedDivision(selectedDivision); // Only store the selected division
+        setSelectedDivision(selectedDivision); 
     };
 
-    // Use the selected group and division when submitting the search form
     const handleMultiSearch = () => {
-        setSearchMultiParams({
-            reviewId,
-            groupName: selectedGroup,  // Store only the selected group name
-            division: selectedDivision,  // Store only the selected division
-            fromDate,
-            toDate,
-        });
+        if(reviewId !== "" || groupName !== "" || division !== ""){
+            setSearchMultiParams({
+                reviewId,
+                groupName: selectedGroup,
+                division: selectedDivision,
+                fromDate,
+                toDate,
+            });
+        }else{
+            showToast("no data found with empty");
+        }
+
     }
 
 
@@ -266,7 +291,9 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                 console.error('Error downloading file:', error);
             }
         } else {
-            alert('Please fill at least one of the fields: Review ID, Division, with dates');
+            
+            // alert('Please fill at least one of the fields: Review ID, Division, with dates');
+            showToast("Search data before Download");
         }
 
     };
@@ -276,10 +303,10 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
                     <Tab
-                        label="Group Queue"
+                        label="GROUP TASK"
                         {...a11yProps(0)}
                         sx={{
-                            bgcolor: value === 0 ? '#1B4D3E' : 'transparent',
+                            bgcolor: value === 0 ? 'white' : 'transparent',
                             color: value === 0 ? 'white' : 'black',
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
@@ -287,20 +314,21 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                             textTransform: 'none',
                             position: 'relative',
                             '&:hover': {
-                                bgcolor: value === 0 ? '#1B4D3E' : '#1B4D3E',
+                                bgcolor: value === 0 ? 'white' : 'white',
                                 color: value === 0 ? 'white' : 'black',
                             },
                             '&.Mui-selected': {
-                                bgcolor: '#1B4D3E',
-                                color: 'white',
+                                bgcolor: 'white',
+                                color: 'black',
+                                borderBottom: '2px solid #FF5E00',
                             },
                         }}
                     />
                     <Tab
-                        label="My Queue"
+                        label="MY TASK"
                         {...a11yProps(0)}
                         sx={{
-                            bgcolor: value === 1 ? '#1B4D3E' : 'transparent',
+                            bgcolor: value === 1 ? 'white' : 'transparent',
                             color: value === 1 ? 'white' : 'black',
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
@@ -308,20 +336,21 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                             textTransform: 'none',
                             position: 'relative',
                             '&:hover': {
-                                bgcolor: value === 1 ? '#1B4D3E' : '#1B4D3E',
+                                bgcolor: value === 1 ? 'white' : '#white',
                                 color: value === 1 ? 'white' : 'black',
                             },
                             '&.Mui-selected': {
-                                bgcolor: '#1B4D3E',
-                                color: 'white',
+                                bgcolor: 'white',
+                                color: 'black',
+                                borderBottom: '2px solid #FF5E00',
                             },
                         }}
                     />
                     <Tab
-                        label="search"
+                        label="SEARCH"
                         {...a11yProps(1)}
                         sx={{
-                            bgcolor: value === 2 ? '#1B4D3E' : 'transparent',
+                            bgcolor: value === 2 ? 'white' : 'transparent',
                             color: value === 2 ? 'white' : 'black',
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
@@ -329,12 +358,13 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                             textTransform: 'none',
                             position: 'relative',
                             '&:hover': {
-                                bgcolor: value === 2 ? '#1B4D3E' : '#1B4D3E',
+                                bgcolor: value === 2 ? 'white' : 'white',
                                 color: value === 2 ? 'white' : 'black',
                             },
                             '&.Mui-selected': {
-                                bgcolor: '#1B4D3E',
-                                color: 'white',
+                                bgcolor: 'white',
+                                color: 'black',
+                                borderBottom: '2px solid #FF5E00',
                             },
                         }}
                     />
@@ -342,6 +372,7 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                 </Tabs>
             </Box>
             <div className='borderDiv'>
+            <ToastContainer />
                 <CustomTabPanel value={value} index={0}>
                     <div className='mainDivs'>
                         <div className='ReviewRow'>
@@ -416,13 +447,13 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                     },
                                 }}
@@ -455,13 +486,13 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                     },
                                 }}
@@ -493,13 +524,13 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                     },
                                 }}
@@ -519,13 +550,13 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                     },
                                 }}
@@ -545,19 +576,19 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#1B4D3E',
+                                            borderColor: '#FF5E00',
                                         },
                                     },
                                 }}
                             >
                             </TextField>
-                        </div>
+                        </div>                        
                         <div className='SearchButtons'>
                             <button className='CleanButton' onClick={handleMultiSearch}>Search</button></div>
                         <div className='SearchButtons'>
@@ -568,10 +599,15 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                             className='dataExportButton'
                             startIcon={<FileDownloadIcon />}
                             sx={{
-                                backgroundColor: '#1B4D3E',
+                                backgroundColor: '#FF5E00',
                                 textTransform: 'none',
                                 color: 'white',
-                                '&:hover': { backgroundColor: '#1B4D3E' }
+                                width : '120px',
+                                height: '40px',
+                                fontSize: 'small',
+                                '&:hover': { backgroundColor: '#FF5E00'
+
+                                 }
                             }}
                             onClick={downloadExcel}
                         >

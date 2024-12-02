@@ -56,9 +56,8 @@ public class QueryController {
 
     @GetMapping("/query-details")
     public ResponseEntity<List<QueryDetails>> getQueryDetails(
-            @RequestParam(required = false) String childReviewId,
             @RequestParam(required = false) String reviewId) {
-        List<QueryDetails> queryDetails = queryDetailsService.getQueryDetails(childReviewId, reviewId);
+        List<QueryDetails> queryDetails = queryDetailsService.getQueryDetails( reviewId);
         return ResponseEntity.ok(queryDetails);
     }
 

@@ -1,0 +1,118 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.CaseInfoMainDiv {
+    margin: 5px;
+}
+
+.CaseInfoheading {
+    background-color: #1B4D3E;
+    color: white;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 20px;
+    font-size: 15px;
+    font-weight: 400;
+    font-size: 15px;
+    overflow: hidden;
+}
+
+.ReviewIdinfoCS {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+.inputReviewCS {
+    border: none;
+    color: black;
+    font-size: medium;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    width: 210px;
+    text-align: center;
+}
+
+.fetchCaseInformation {
+    display: flex;
+    padding-top: 20px;
+    justify-content: space-around;
+    text-align: center;
+    border: 1px  #1B4D3E;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+
+.ReviewLabelCS {
+    font-weight: 600;
+}
+
+.PlanningMainDivCI {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #1B4D3E;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.PlanningStageCmptd {
+
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.TakeActionSubmitCS{
+    width: 220px;
+    height: 40px;
+    gap: 10px;
+}
+
+.submitTACI {
+    padding-right: 10px;
+}
+
+.planningTabsDiv {
+    margin-top: 20px;
+}
+
+.planningEditScreen {
+    display: flex;
+    width: 550px;
+    height: 40px;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.SaveAndCloseButtonCI {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.custom-toast {
+    background-color: #1B4D3E !important;
+    color: white !important;    
+    border-radius: 8px !important;
+    font-size: 14px !important;            
+  }
+  
+.custom-toast .Toastify__progress-bar {
+    background: #ffffff !important;
+}
+  
+
+

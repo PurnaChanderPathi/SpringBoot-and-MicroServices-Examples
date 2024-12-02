@@ -18,12 +18,10 @@ public class QueryDetailsDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SELECT_QUERY = "SELECT * FROM querydetails " +
-            "WHERE (? IS NULL OR childReviewId = ?) " +
-            "AND (? IS NULL OR reviewId = ?)";
+            "WHERE (? IS NULL OR reviewId = ?)";
 
-    public List<QueryDetails> getQueryDetails(String childReviewId, String reviewId) {
+    public List<QueryDetails> getQueryDetails( String reviewId) {
         return jdbcTemplate.query(SELECT_QUERY, new Object[]{
-                childReviewId, childReviewId,
                 reviewId, reviewId
         }, new RowMapper<QueryDetails>() {
             @Override

@@ -1,0 +1,33 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+.MashreqMD {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #B2BEB5 ;
+    height: 80px;
+}
+
+.MASQ {
+    height: 50px;
+    width: 100px;
+}
+
+.MASQ1{
+    height: 50px;
+}
+.MSHP1 {
+    display: flex;
+    padding-right: 20px;
+    gap: 20px;
+    align-items: center;
+}
+
+.MSHP1_2 {
+    display: flex;
+    color: #FF5E00;
+    font-weight: bold;
+    align-items: center;
+}
