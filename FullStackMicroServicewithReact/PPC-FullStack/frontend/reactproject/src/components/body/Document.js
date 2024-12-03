@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/scoreSlice";
 import { toast, ToastContainer } from "react-toastify";
 
-const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
+const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
     const [open, setOpen] = useState(false);
     const [comment, setComment] = useState("");
     const [input, setInput] = useState(null);
@@ -42,22 +42,22 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
     console.log("Review ID:", reviewId);
 
     const dispatch = useDispatch();
-    const {isAction} = useSelector((state) => state.Score);
+    const { isAction } = useSelector((state) => state.Score);
 
     const handleToggle = () => {
         dispatch(toggle());
     }
 
     useEffect(() => {
-        if(fetchData){
+        if (fetchData) {
             console.log("fetchData function is passed as a prop");
-            fetchData(reviewId);        
+            fetchData(reviewId);
         }
-    },[reviewId])
+    }, [reviewId])
 
     useEffect(() => {
         console.log("Rows have been updated:", rows);
-      }, [rows]);
+    }, [rows]);
 
 
 
@@ -96,7 +96,7 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
         setTimeout(() => {
             fetchData(reviewId);
             console.log("fetchData reloaded");
-            
+
         }, 200);
 
     }
@@ -147,10 +147,10 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
     //             if(response.data.result.length > 0){
     //                 handleToggle();
     //                 console.log("isAction",isAction);
-                    
+
     //             }
 
-                    
+
     //         } else {
     //             console.error("Expected an array, but received:", response.data);
     //             setRows([]);
@@ -186,22 +186,22 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
 
     const showToast = (message) => {
         toast.error(message, {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
+            position: "bottom-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
         });
-      };
+    };
 
-      const handleDelete = () => {
+    const handleDelete = () => {
         fetchData(reviewId);
         console.log("onClick Deleted Called fetch Document endpoint");
-        
-      }
+
+    }
 
     const documentUpload = async () => {
 
@@ -212,7 +212,7 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
         if (!reviewId || !comment || !input) {
             // alert("Please ensure all fields are filled out.");
             showToast("Please ensure all fields are filled");
-            
+
             return;
         }
 
@@ -249,20 +249,28 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
 
     return (
         <div className="DocumentMain">
-                  <ToastContainer />
+            <ToastContainer />
             <Accordion>
                 <AccordionSummary
                     sx={{
-                        backgroundColor: "#1B4D3E",
-                        color: "white",
+                        backgroundColor: "transparent",
+                        color: "black",
                         borderTopLeftRadius: "5px",
                         borderTopRightRadius: "5px",
                     }}
-                    expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+                    expandIcon={<ExpandMoreIcon sx={{ color: "#FF5E00" }} />}
                     aria-controls="panel1-content"
                     id="panel1-header"
                 >
-                    Upload Document
+                    <Typography
+                        sx={{ fontWeight: 'bold' }}>
+                        <span style={{
+                            textDecoration: 'underline',
+                            textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                            textUnderlineOffset: '4px'
+                        }}
+                            className='underlineText'>Upl</span>oad Document
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails className="DocumentAD">
                     <div className="DcumentADMain">
@@ -294,16 +302,26 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                                 <Accordion>
                                     <AccordionSummary
                                         sx={{
-                                            backgroundColor: "#1B4D3E",
-                                            color: "white",
+                                            backgroundColor: "transparent",
+                                            color: "black",
                                             borderTopLeftRadius: "5px",
                                             borderTopRightRadius: "5px",
+
                                         }}
                                         expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
                                         aria-controls="panel1-content"
                                         id="panel1-header"
                                     >
-                                        Please select a file
+
+                                        <Typography
+                                            sx={{ fontWeight: 'bold' }}>
+                                            <span style={{
+                                                textDecoration: 'underline',
+                                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                                textUnderlineOffset: '4px'
+                                            }}
+                                                className='underlineText'>Plea</span>se select a file
+                                        </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails className="DocumentAD">
                                         <Typography
@@ -329,16 +347,16 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                                         <TextField
                                             sx={{
                                                 width: "510px",
-                                                border: "#1B4D3E",
+                                                border: "#FF5E00",
                                                 '& .MuiOutlinedInput-root': {
                                                     '& fieldset': {
-                                                        borderColor: '#1B4D3E',
+                                                        borderColor: '#FF5E00',
                                                     },
                                                     '&:hover fieldset': {
-                                                        borderColor: '#1B4D3E',
+                                                        borderColor: '#FF5E00',
                                                     },
                                                     '&.Mui-focused fieldset': {
-                                                        borderColor: '#1B4D3E',
+                                                        borderColor: '#FF5E00',
                                                     },
                                                 },
 
@@ -351,8 +369,9 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                                                 startIcon={<UploadIcon />}
                                                 className="UoloadBDOC"
                                                 sx={{
-                                                    backgroundColor: "#1B4D3E",
+                                                    backgroundColor: "#FF5E00",
                                                     color: "white",
+                                                    height: '33px'
                                                 }}
                                                 onClick={documentUpload}
                                             >
@@ -361,8 +380,9 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                                             <Button
                                                 className="CloseBDOC"
                                                 sx={{
-                                                    backgroundColor: "#1B4D3E",
+                                                    backgroundColor: "#FF5E00",
                                                     color: "white",
+                                                    height: '33px'
                                                 }}
                                                 onClick={handleClose}
                                             >
@@ -402,60 +422,61 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                         <div>
                             <TableContainer
                                 component={Paper}
-                                sx={{ backgroundColor: "white", marginTop: 0 }}
+                                sx={{ backgroundColor: "transparent", marginTop: 0 }}
                             >
                                 <Table
                                     sx={{ minWidth: 650, borderCollapse: "collapse" }}
                                     aria-label="simple table"
                                 >
                                     <TableHead
-                                        sx={{ backgroundColor: "#1B4D3E", color: "white" }}
+                                        sx={{ backgroundColor: "transparent", color: "black" }}
                                     >
                                         <TableRow>
                                             <TableCell
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                            align="right"
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 fileId
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 reviewId
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 fileName
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 fileType
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 comment
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 size
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 View Document
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                sx={{ color: "white", border: "1px solid black" }}
+                                                sx={{ color: "black", border: "1px solid #B2BEB5", fontWeight: 'bold' }}
                                             >
                                                 Delete
                                             </TableCell>
@@ -465,61 +486,61 @@ const Document = ({ documentMesage,fetchData, rows,setRows , readOnly }) => {
                                         {displayedRows.map((row) => (
                                             <TableRow
                                                 key={row.reviewId}
-                                                sx={{ backgroundColor: "white" }}
+                                                sx={{ backgroundColor: "transparent" }}
                                             >
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     {row.fileId}
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     {row.reviewId}
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     {row.fileName}
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     {row.fileType}
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     {row.comment}
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     {row.size}
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
                                                     <Button onClick={() => handlePdfOpen(row.fileId)}>
                                                         <Tooltip title="Open Document">
-                                                            <OpenInNewIcon sx={{ color: '#1B4D3E' }} />
+                                                            <OpenInNewIcon sx={{ color: '#FF5E00' }} />
                                                         </Tooltip>
                                                     </Button>
                                                 </TableCell>
                                                 <TableCell
                                                     align="right"
-                                                    sx={{ border: "1px solid black" }}
+                                                    sx={{ color: "black", border: "1px solid #B2BEB5" }}
                                                 >
-                                                    <Button onClick={() => deleteFile(row.fileId, row.reviewId)}  disabled={readOnly}>
+                                                    <Button onClick={() => deleteFile(row.fileId, row.reviewId)} disabled={readOnly}>
                                                         <Tooltip title="Delete" disabled={readOnly}>
-                                                            <DeleteOutlineIcon sx={{ color: '#1B4D3E' }}  disabled={readOnly}/>
+                                                            <DeleteOutlineIcon sx={{ color: '#FF5E00' }} disabled={readOnly} />
                                                         </Tooltip>
                                                     </Button>
                                                 </TableCell>

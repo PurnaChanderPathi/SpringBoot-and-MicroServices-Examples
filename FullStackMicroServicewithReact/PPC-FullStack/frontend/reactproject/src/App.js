@@ -11,6 +11,7 @@ import { Dashboard } from '@mui/icons-material';
 import axios from 'axios';
 import MashreqHeader from './components/header/MashreqHeader.js';
 import MashreqBody from './components/body/MashreqBody.js';
+import CircularIndeterminate from './components/loginScreen/loadingScreen.js';
 
 axios.interceptors.response.use(
   (response) => response, 

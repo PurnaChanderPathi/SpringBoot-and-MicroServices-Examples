@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './PPCDetails.css';
-import { CircularProgress, MenuItem, TextField } from '@mui/material';
+import { CircularProgress, MenuItem, TextField, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
@@ -16,7 +16,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
   const [isDivisionDisabled, setIsDivisionDisabled] = useState(true);
   const token = localStorage.getItem('authToken');
   const [buttonClicked, setButtonClicked] = useState(false);
-  
+
 
   const createdBy = localStorage.getItem('username');
 
@@ -53,11 +53,11 @@ const PPCDetails = ({ handleClose, showToast }) => {
   const handleGroupChange = async (event) => {
     const selectedGroup = event.target.value;
     setSelectedGroup(selectedGroup);
-    setSelectedDivision(''); 
+    setSelectedDivision('');
     setIsDivisionDisabled(false);
 
     if (selectedGroup) {
-      setLoadingDivisions(true); 
+      setLoadingDivisions(true);
       try {
         const response = await axios.get(`http://localhost:9195/api/adminConfig/getDivisions/${selectedGroup}`, {
           headers: {
@@ -75,7 +75,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
         }
       } catch (error) {
         console.error("Error fetching divisions", error);
-        setDivision([]); 
+        setDivision([]);
       } finally {
         setLoadingDivisions(false);
       }
@@ -139,11 +139,11 @@ const PPCDetails = ({ handleClose, showToast }) => {
   };
 
   const insertData = async () => {
-    console.log("createdBy",createdBy);
+    console.log("createdBy", createdBy);
 
-    if(inputs.groupName === "" || inputs.division === ""){
+    if (inputs.groupName === "" || inputs.division === "") {
       showToastmessage("select GroupName and Division")
-    }else{
+    } else {
       try {
         const response = await axios.post('http://localhost:9195/api/action/save', inputs, {
           headers: {
@@ -151,7 +151,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
             'Authorization': `Bearer ${token}`,
           },
         });
-  
+
         if (response.status === 200) {
           console.log('Data inserted successfully');
           setReviewId('');
@@ -177,10 +177,18 @@ const PPCDetails = ({ handleClose, showToast }) => {
 
   return (
     <div className='PPCDetails'>
-            <ToastContainer />
+      <ToastContainer />
       <div className='PPCInitial'>
         <div className='PPCheading'>
-          PPC DETAILS
+          <Typography
+            sx={{ fontWeight: 'bold' }}>
+            <span style={{
+              textDecoration: 'underline',
+              textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+              textUnderlineOffset: '4px'
+            }}
+              className='underlineText'>PPC</span> Details
+          </Typography>
           <button className='ExitIconButton' onClick={exitButton}>
             <CloseIcon className='ExitIcon' />
           </button>
@@ -215,13 +223,13 @@ const PPCDetails = ({ handleClose, showToast }) => {
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                   '&:hover fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                 },
               }}
@@ -255,13 +263,13 @@ const PPCDetails = ({ handleClose, showToast }) => {
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                   '&:hover fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#1B4D3E',
+                    borderColor: '#FF5E00',
                   },
                 },
               }}
@@ -272,7 +280,7 @@ const PPCDetails = ({ handleClose, showToast }) => {
                 </MenuItem>
               ) : (
                 Array.isArray(division) && division.length > 0 ? (
-                  division.map((div,index) => (
+                  division.map((div, index) => (
                     <MenuItem key={index} value={div}>
                       {div}
                     </MenuItem>

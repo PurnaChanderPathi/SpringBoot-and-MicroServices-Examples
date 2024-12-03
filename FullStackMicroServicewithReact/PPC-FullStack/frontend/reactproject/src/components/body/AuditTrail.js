@@ -42,23 +42,23 @@ export default function AuditTrail() {
     <Box sx={{ padding: 2 }}>
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: 'transparent', color: 'black' }}>
             <TableRow>
-              <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>currentAction</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>inTime</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>outTime</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>actionedBy</TableCell>
+              <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold'  }}>Review ID</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>currentAction</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>inTime</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>outTime</TableCell>
+              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>actionedBy</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
-                <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
+                <TableCell component="th" scope="row" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>
                   {row.reviewId}
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.currentAction}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.currentAction}</TableCell>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>
                   {new Date(row.inTime).toLocaleString('en-US',{
                       weekday: 'long',   // "Monday"
                       year: 'numeric',   // "2024"
@@ -70,7 +70,7 @@ export default function AuditTrail() {
                       hour12: true       // "AM/PM"
                   })}
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>
+                <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' }}>
                 {new Date(row.outTime).toLocaleString('en-US', {
                       weekday: 'long',   // "Monday"
                       year: 'numeric',   // "2024"
@@ -81,7 +81,7 @@ export default function AuditTrail() {
                       second: '2-digit', // "35"
                       hour12: true       // "AM/PM"
                 })}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.actionedBy}</TableCell>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.actionedBy}</TableCell>
               </TableRow>
             ))}
           </TableBody>

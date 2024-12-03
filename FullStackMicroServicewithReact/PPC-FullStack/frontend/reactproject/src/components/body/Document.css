@@ -4,7 +4,8 @@
 }
 
 .DocumentAD {
-    border: 1px solid #FF5E00;
+    border: 1px solid #B2BEB5;
+    border-radius: 5px;
 }
 
 .DcumentADMain {
@@ -16,12 +17,12 @@
 
 .BrowseButtonAD {
     width: 80px;
-    height: 40px;
+    height: 30px;
     border-radius: 5px;
     border: none;
     color: white;
     background-color: #FF5E00;
-    font-size: 15px;
+    font-size: 13px;
 }
 
 .UCButtonsDOC {

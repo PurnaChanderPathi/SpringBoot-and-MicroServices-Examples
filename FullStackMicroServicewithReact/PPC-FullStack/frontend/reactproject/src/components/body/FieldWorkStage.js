@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Tab, Tabs } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Tab, Tabs, Typography } from '@mui/material';
 import React, { useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
@@ -38,25 +38,33 @@ const FieldWorkStage = () => {
 
   return (
         <div className="PlanningStage">
-            <Accordion className="PlanningStageDD">
+            <Accordion className="PlanningStageDD" sx={{ boxShadow: 'none', border: 'none' }}>
                 <AccordionSummary
                     sx={{
-                        backgroundColor: '#1B4D3E',
-                        color: 'white',
+                        backgroundColor: 'transparent',
+                        color: 'black',
                         padding: '10px',
                         height: '20px',
                         fontSize: '15px',
+                        border: '1px solid #B2BEB5',
+                        borderRadius: '5px',
                         '& .MuiAccordionSummary-content': {
-                            backgroundColor: '#1B4D3E',
+                            backgroundColor: 'transparent',
                             borderRadius: '4px',
                             padding: '5px 10px',
                         },
                     }}
-                    expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}
+                    expandIcon={<ExpandMoreIcon style={{ color: '#FF5E00' }} />}
                     aria-controls="panel1-content"
                     id="panel1-header"
-                >
-                    Field Work Stage
+                >                    
+                    <Typography
+                     sx={{fontWeight: 'bold'}}>
+                               <span style={{ textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                               textUnderlineOffset: '4px'  }} 
+                               className='underlineText'>Fie</span>ld Work Stage
+                            </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{ width: '100%' }}>
@@ -66,8 +74,8 @@ const FieldWorkStage = () => {
                                     label="Field Work Stage"
                                     {...a11yProps(0)}
                                     sx={{
-                                        bgcolor: value === 0 ? '#1B4D3E' : 'transparent',   
-                                        color: value === 0 ? 'white' : 'black',
+                                        bgcolor: value === 0 ? 'transparent' : 'transparent',   
+                                        color: value === 0 ? 'black' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
                                         marginLeft: 1.5,
@@ -76,12 +84,13 @@ const FieldWorkStage = () => {
                                         padding: '4px 12px',
                                         fontSize: '14px',
                                         '&:hover': {
-                                            bgcolor: value === 0 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
-                                            color: value === 0 ? 'white' : 'black',
+                                            bgcolor: value === 0 ? 'transparent' : 'transparent',
+                                            color: value === 0 ? 'black' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: '#1B4D3E',
-                                            color: 'white',
+                                            bgcolor: 'transparent',
+                                            color: 'black',
+                                            borderBottom: '2px solid #FF5E00',
                                         },
                                     }}
                                 />

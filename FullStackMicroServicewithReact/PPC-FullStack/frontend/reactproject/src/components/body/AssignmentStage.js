@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, FormControlLabel, Radio, RadioGroup, Tab, Tabs } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, FormControlLabel, Radio, RadioGroup, Tab, Tabs, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Sync } from '@mui/icons-material';
@@ -53,35 +53,44 @@ console.log("data",data);
   
     return (
         <div className="PlanningStage">
-            <Accordion className="PlanningStageDD">
+            <Accordion className="PlanningStageDD" sx={{ boxShadow: 'none', border: 'none' }}>
                 <AccordionSummary
                     sx={{
-                        backgroundColor: '#1B4D3E',
-                        color: 'white',
+                        backgroundColor: 'transparent',
+                        color: 'black',
                         padding: '10px',
                         height: '20px',
                         fontSize: '15px',
+                        border: '1px solid #B2BEB5',
+                        borderRadius: '5px',
+                        margin: '10px',
                         '& .MuiAccordionSummary-content': {
-                            backgroundColor: '#1B4D3E',
+                            backgroundColor: 'transparent',
                             borderRadius: '4px',
                             padding: '5px 10px',
                         },
                     }}
-                    expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}
+                    expandIcon={<ExpandMoreIcon style={{ color: 'FF5E00' }} />}
                     aria-controls="panel1-content"
                     id="panel1-header"
                 >
-                    AssignmentStage
+                    <Typography
+                     sx={{fontWeight: 'bold'}}>
+                               <span style={{ textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                               textUnderlineOffset: '4px'  }} 
+                               className='underlineText'>Ass</span>ignmentStage
+                            </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{ width: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
                                 <Tab
-                                    label="Credit Reviewers"
+                                    label="CREDIT REVIEWER"
                                     {...a11yProps(0)}
                                     sx={{
-                                        bgcolor: value === 0 ? '#1B4D3E' : 'transparent',   
+                                        bgcolor: value === 0 ? 'transparent' : 'transparent',   
                                         color: value === 0 ? 'white' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
@@ -91,12 +100,13 @@ console.log("data",data);
                                         padding: '4px 12px',
                                         fontSize: '14px',
                                         '&:hover': {
-                                            bgcolor: value === 0 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
-                                            color: value === 0 ? 'white' : 'black',
+                                            bgcolor: value === 0 ? 'transparent' : '',
+                                            color: value === 0 ? 'black' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: '#1B4D3E',
-                                            color: 'white',
+                                            bgcolor: 'transparent',
+                                            color: 'black',
+                                            borderBottom: '2px solid #FF5E00',
                                         },
                                     }}
                                 />
@@ -105,7 +115,7 @@ console.log("data",data);
                         <CustomTabPanel value={value} index={0} className="CommentsScreenPS">
                             <div>
                                 {data.length > 0 ? (
-                                    <RadioGroup
+                                    <RadioGroup 
                                         aria-label="user"
                                         name="user"
                                         value={selectedUser}
@@ -115,7 +125,12 @@ console.log("data",data);
                                             <FormControlLabel
                                                 key={index}
                                                 value={user}
-                                                control={<Radio />}
+                                                control={<Radio sx={{
+                                                    color: '#FF5E00',
+                                                    '&.Mui-checked': {
+                                                        color: '#FF5E00', 
+                                                    },
+                                                }} />}
                                                 label={user}
                                             />
                                         ))}

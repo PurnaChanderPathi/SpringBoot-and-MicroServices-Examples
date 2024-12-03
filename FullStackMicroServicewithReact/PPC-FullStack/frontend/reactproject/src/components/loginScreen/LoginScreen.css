@@ -6,33 +6,52 @@
 
 .LoginScreenMainDiv {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     padding-top: 30px;
-    background-color: #1c362f;
+    background-color: transparent;
     height: 95.5vh;
     width: 100%;
     overflow: hidden;
     flex-direction: column;
-    gap: 15px;
+    flex-direction: row;
+    justify-content: space-around;
 
 }
+
+.ImageDivMash {
+    padding-top: 60px;
+}
+
+.loginScreenMash {
+    display: flex;
+    flex-direction: column;
+}
 .ImageRK {
-    border-radius: 50px;
+padding-left: 30px;
+
 }
 
 .LoginScreenHeading {
     width: 510px;
     height: 280px;
-    background-color: white;
+    background-color: transparent;
     border-radius: 5px;
-    box-shadow: 0 0 40px 1px rgba(0,0,0,0.6);
+    /* box-shadow: 0 0 40px 1px rgba(0,0,0,0.6); */
     padding: 15px;
+    display: flex;
+    justify-content: center;
 }
 
+.loginHeadingMash {
+    color: #3B3E40;
+    font-weight: 500;
+    font-size: 25px;
+    padding-bottom: 15px;
+}
 .HeaderPhotoLS {
     display: flex;
-    justify-content: start;
-    width: 500px;
+    justify-content: end;
+    width: 430px;
     align-items: center;
     gap: 23px;
 }
@@ -49,12 +68,24 @@
     flex-direction: column;
     padding: 10px;
     align-items: start;
-    width: 450px;
-    height: 67px;
+    width: 300px;
+    height: 60px;
     gap: 10px;
     font-size: 12px;
-    border-radius: 5px;
-    
+    border-radius: 5px;  
+    border-color: #B2BEB5;  
+}
+
+.UserNameLS fieldset {
+    border-color: #B2BEB5;
+}
+
+.UserNameLS :hover fieldset {
+    border-color: #B2BEB5;
+}
+
+.UserNameLS.Mui-focused fieldset  {
+    border-color: #B2BEB5;
 }
     
 .PasswordLS {
@@ -62,11 +93,12 @@
     flex-direction: column;
     padding: 10px;
     align-items: start;
-    width: 450px;
-    height: 67px;
+    width: 300px;
+    height: 60px;
     gap: 10px;
     font-size: 12px;
     border-radius: 5px;
+    border-color: #B2BEB5; 
     
 }
 
@@ -81,6 +113,11 @@
     font-size: 20px;
     color: #3B3E40;
 }
+.required-star {
+    color: red;
+    font-weight: bold;
+}
+  
 
 /* input[type="text"], input[type="password"] {
     padding: 10px;
@@ -94,24 +131,22 @@
 .LSButton {
     display: flex;
     justify-content: start;
-    padding-left: 40px;
-    padding-top: 10px;
+    padding-left: 10px;
+    padding-top: 25px;
     color: #1B69A9;
+    width: 325px;
 }
 
 .LSLoginButton {
-    width: 100px;
-    height: 30px;
-    background-color: #1B4D3E;
+    width: 380px;
+    height: 38px;
+    background-color: #FF5E00;
     border-radius: 5px;
     color: white;
     font-size: 15px;
     border: none;
 }
 
-.LSLoginButton:hover {
-    background-color: #1B4D3E; 
-}
 
 .LMP {
     color: #999;
@@ -121,9 +156,9 @@
 
 .error-message {
     margin-top: 10px;
-     color: #c2a560;
+     color: white;
      border: 1px solid #c2a560;
-     background-color: #1c362f;
+     background-color: #FF5E00;
 }
 
 

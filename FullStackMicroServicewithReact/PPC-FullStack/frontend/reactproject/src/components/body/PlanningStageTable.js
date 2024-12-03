@@ -74,25 +74,25 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
       {/* Table */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: '#1B4D3E', color: 'white' }}>
+          <TableHead sx={{ backgroundColor: 'transparent', color: 'white' }}>
             <TableRow>
-              <TableCell sx={{ color: 'white', border: '1px solid black' }}>Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Commented By</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Commented On</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>View Comment</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Actions</TableCell> {/* Action column for delete */}
+              <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Review ID</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Commented By</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Commented On</TableCell>
+              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>View Comment</TableCell>
+              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Actions</TableCell> {/* Action column for delete */}
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
-                <TableCell component="th" scope="row" sx={{ border: '1px solid black' }}>
+                <TableCell component="th" scope="row" sx={{color: 'black', border: '1px solid #B2BEB5' }}>
                   {row.reviewId}
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.commentedBy}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{new Date(row.commentedOn).toLocaleString()}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.viewComment}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5'  }}>{row.commentedBy}</TableCell>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5'  }}>{new Date(row.commentedOn).toLocaleString()}</TableCell>
+                <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' }}>{row.viewComment}</TableCell>
+                <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5'  }}>
                   <Button
                     onClick={() => handleDeleteComment(row.viewComment)}
                     // variant="contained"
@@ -104,7 +104,7 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
                     // }}
                   >
                     <Tooltip title="Delete">
-                    <DeleteOutlineIcon sx={{color:'#1b4d3E'}} />
+                    <DeleteOutlineIcon sx={{color:'#FF5E00'}} />
                     </Tooltip>
                   </Button>
                 </TableCell>

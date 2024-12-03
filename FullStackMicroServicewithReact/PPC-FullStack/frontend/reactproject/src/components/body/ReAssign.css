@@ -17,14 +17,14 @@
 }
 
 .PPCheading{
-    background-color: #FF5E00;
+    background-color: transparent;
     height: 40px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     display: flex;
     align-items: center;
     padding-left: 20px;
-    color: white;
+    color: black;
     justify-content: space-between;
 }
 

@@ -112,7 +112,7 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
 
     return (
         <div className="PlanningStage">
-            <Accordion className="PlanningStageDD">
+            <Accordion className="PlanningStageDD" sx={{ boxShadow: 'none', border: 'none' }}>
                 <AccordionSummary
                     sx={{
                         backgroundColor: 'transparent',
@@ -145,11 +145,11 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
                                 <Tab
-                                    label="Comments"
+                                    label="COMMENTS"
                                     {...a11yProps(0)}
                                     sx={{
-                                        bgcolor: value === 0 ? '#1B4D3E' : 'transparent',
-                                        color: value === 0 ? 'white' : 'black',
+                                        bgcolor: value === 0 ? 'transparent' : 'transparent',
+                                        color: value === 0 ? 'black' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
                                         marginLeft: 1.5,
@@ -158,21 +158,22 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                                         padding: '4px 12px',
                                         fontSize: '14px',
                                         '&:hover': {
-                                            bgcolor: value === 0 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
-                                            color: value === 0 ? 'white' : 'black',
+                                            bgcolor: value === 0 ? 'transparent' : 'transparent',
+                                            color: value === 0 ? 'black' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: '#1B4D3E',
-                                            color: 'white',
+                                            bgcolor: 'transparent',
+                                            color: 'black',
+                                            borderBottom: '2px solid #FF5E00',
                                         },
                                     }}
                                 />
                                 <Tab
-                                    label="Audit Trial"
+                                    label="AUDIT TRIAL"
                                     {...a11yProps(1)}
                                     sx={{
-                                        bgcolor: value === 1 ? '#1B4D3E' : 'transparent',
-                                        color: value === 1 ? 'white' : 'black',
+                                        bgcolor: value === 1 ? 'transparent' : 'transparent',
+                                        color: value === 1 ? 'black' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
                                         marginLeft: 1.5,
@@ -181,21 +182,22 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                                         padding: '4px 12px',
                                         fontSize: '14px', 
                                         '&:hover': {
-                                            bgcolor: value === 1 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
-                                            color: value === 1 ? 'white' : 'black',
+                                            bgcolor: value === 1 ? 'transparent' : 'transparent',
+                                            color: value === 1 ? 'black' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: '#1B4D3E',
-                                            color: 'white',
+                                            bgcolor: 'transparent',
+                                            color: 'black',
+                                            borderBottom: '2px solid #FF5E00',
                                         },
                                     }}
                                 />
                                 <Tab
-                                    label="Documents"
+                                    label="DOCUMENTS"
                                     {...a11yProps(2)}
                                     sx={{
-                                        bgcolor: value === 2 ? '#1B4D3E' : 'transparent',
-                                        color: value === 2 ? 'white' : 'black',
+                                        bgcolor: value === 2 ? 'transparent' : 'transparent',
+                                        color: value === 2 ? 'black' : 'black',
                                         borderTopLeftRadius: 5,
                                         borderTopRightRadius: 5,
                                         marginLeft: 1.5,
@@ -204,12 +206,13 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                                         padding: '4px 12px',
                                         fontSize: '14px',
                                         '&:hover': {
-                                            bgcolor: value === 2 ? '#1B4D3E' : 'rgba(27, 77, 62, 0.5)',
-                                            color: value === 2 ? 'white' : 'black',
+                                            bgcolor: value === 2 ? 'transparent' : 'transparent',
+                                            color: value === 2 ? 'black' : 'black',
                                         },
                                         '&.Mui-selected': {
-                                            bgcolor: '#1B4D3E',
-                                            color: 'white',
+                                            bgcolor: 'transparent',
+                                            color: 'black',
+                                            borderBottom: '2px solid #FF5E00',
                                         },
                                     }}
                                 />
@@ -240,10 +243,10 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                                 </div>
                             </div>
                         </CustomTabPanel>
-                        <CustomTabPanel value={value} index={1} style={{ border: '1px solid black' }}>
+                        <CustomTabPanel value={value} index={1} style={{ border: '1px solid #B2BEB5', borderRadius:'5px' }}>
                            <AuditTrail />
                         </CustomTabPanel>
-                        <CustomTabPanel value={value} index={2} style={{ border: '1px solid black' }}>
+                        <CustomTabPanel value={value} index={2} style={{  border: '1px solid #B2BEB5', borderRadius:'5px' }}>
                             <Document documentMesage={documentMesage}
                              fetchData={fetchData }
                              rows={rows}

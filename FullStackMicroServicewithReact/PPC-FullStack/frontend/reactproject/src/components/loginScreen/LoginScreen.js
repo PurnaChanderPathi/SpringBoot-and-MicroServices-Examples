@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import './LoginScreen.css';
-import loginImage from './Capture12.PNG';
+import loginImage from './mash.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Timer10 } from '@mui/icons-material';
+import ImageMash from './loginMash.PNG'
+import { Typography } from '@mui/material';
+import CircularIndeterminate from './loadingScreen';
+
 
 const LoginScreen = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -37,23 +41,30 @@ const LoginScreen = () => {
 
       if (!response.ok) {
         throw new Error('Login failed, please check your credentials');
+        
       }
+      // setLoading(true);
       const token = await response.text();
       localStorage.setItem('authToken', token);
       localStorage.setItem('username',credentials.username);
-      getUser(credentials.username);
+      await getUser(credentials.username);
 
       setTimeout(()=> {
-        window.location.href = '/home';
-      },500);
+        // window.location.href = '/home';
+        setLoading(false);
+        navigate('/home'); 
+      },1500);
+     
+    
 
+      // navigate('/home');
 
  
 
     } catch (err) {
       setError(err.message); 
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -88,33 +99,39 @@ const LoginScreen = () => {
     };
 
   return (
+  <>
+ { loading ? (
+      <CircularIndeterminate/>
+  ):(
     <div className='LoginScreenMainDiv'>
+      <div className='loginScreenMash'>
       <div className='HeaderPhotoLS'>
         <div className='HPhoto'>
-          <img src={loginImage} alt="IBM Logo" width="300" height="160" className='ImageRK' />
+          <img src={loginImage} alt="IBM Logo" width="200" height="190" className='ImageRK' />
         </div>
-        <div className='HPhotoheading'>
+        {/* <div className='HPhotoheading'>
          Login
-        </div>
+        </div> */}
       </div>
       <div className='LoginScreenHeading'>
         <form onSubmit={handleLogin}>
           <div className='UserInputsLS'>
+            <text className='loginHeadingMash'>Log in to your account</text>
             <div className='UserNameLS'>
-              <label className='UserLabelLS'>User name</label>
+              <label className='UserLabelLS'>User name<span className='required-star'>*</span></label>
               <input
                 className='UserNameLS'
                 type='text'
                 value={userCredentials.userName}
                 onChange={(e) => setUserCredentials({ ...userCredentials, userName: e.target.value })}
-                required
+                required 
               />
             </div>
             <div className='PasswordLS'>
-              <label className='UserLabelLS'>Password</label>
+              <label className='UserLabelLS'>Password<span className='required-star'>*</span></label>
               <input
                 className='PasswordLS'
-                type='password'  // Use password type for security
+                type='password' 
                 value={userCredentials.password}
                 onChange={(e) => setUserCredentials({ ...userCredentials, password: e.target.value })}
                 required
@@ -122,17 +139,25 @@ const LoginScreen = () => {
             </div>
           </div>
           <div className='LSButton'>
-            <button className='LSLoginButton' type='submit' disabled={loading}>
-              {loading ? 'Logging in...' : 'Log in'}
+            <button className='LSLoginButton' type='submit'>
+              SIGN IN
             </button>
           </div>
           {error && <div className="error-message">{error}</div>}
         </form>
       </div>
-      {/* <div className='LMP'>
-        Licensed Materials - Property of IBM. © Copyright IBM Corporation 2000, 2021.
-      </div> */}
+      </div>
+      
+    <div className='ImageDiv'>
+      <div className='ImageDivMash'>
+      <img src={ImageMash} alt="IBM Logo" width="800" height="400" className='ImageDivMashq' />
+      </div>
     </div>
+    </div>
+  )
+}
+    </>
+        
   );
 };
 
