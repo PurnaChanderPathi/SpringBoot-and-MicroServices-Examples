@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/Action/Obligor")
+@RequestMapping("api/ActionObligor")
 public class ObligorController {
 
     @Autowired

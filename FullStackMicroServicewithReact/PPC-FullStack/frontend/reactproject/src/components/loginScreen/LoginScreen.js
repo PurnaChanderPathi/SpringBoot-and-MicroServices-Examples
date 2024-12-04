@@ -53,7 +53,7 @@ const LoginScreen = () => {
         // window.location.href = '/home';
         setLoading(false);
         navigate('/home'); 
-      },1500);
+      },500);
      
     
 
