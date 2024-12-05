@@ -1,5 +1,5 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Modal, Tab, Tabs, TextField, Typography } from '@mui/material';
-import React, { useState } from 'react'
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Modal, Tab, Tabs, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import './FieldWorkStage.css'
@@ -8,6 +8,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDropzone } from 'react-dropzone';
 import { Margin } from '@mui/icons-material';
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import axios from 'axios';
+import Obligortable from './Obligortable';
+import OblogorDocumentTable from './OblogorDocumentTable';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -51,21 +54,28 @@ const FieldWorkStage = () => {
         PremId: ''
     });
 
+    //     const [rows, setRows] = React.useState([]);
+    // const [totalPages, setTotalPages] = React.useState(1);
+    // const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
     const [fileName, setFileName] = useState('');
+    const [file,setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadMessage, setUploadMessage] = useState('');
   
-    // Function to handle file drop
+
     const onDrop = (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file) {
         setFileName(file.name);  
-        // uploadImage(file);  
+        setFile(file); 
       }
     };
   
     const { getRootProps, getInputProps } = useDropzone({
       onDrop,
-      accept: 'image/*',  // Allow only image files
+      accept: '.pdf,.doc,.docx,.jpg,.png,.jfif', 
+      maxFiles: 1
     });
 
     const style = {
@@ -79,20 +89,224 @@ const FieldWorkStage = () => {
         height: 450,
     };
 
-    const handleInput = () => {
-            console.log("input",input);
-            
+    const ApiToken = localStorage.getItem("authToken");
+    const reviewId = localStorage.getItem("reviewId");
+    const [ObligorDetails, setObligorDetails] = useState(null);
+    const [ObligorDocument, setObligorDocument] = useState(null);
+ 
+    
+    useEffect(() => {
+        if(reviewId){
+            getObligorDetailsByReviewId();
+            getObligorDocumentByReviewId();
+
+        }
+    },[reviewId]);
+
+    const handleUploadobligorDocument = () => {
+    handleDocumentUpload();
     }
+
+    const handleDocumentUpload = async () => {
+
+        if (!file) {
+            setUploadMessage("Please select a file before uploading.");
+            return;
+        }
+    
+        setIsUploading(true); 
+        setUploadMessage("Uploading...");
+    
+        const url = "http://localhost:9195/api/ActionObligor/obligorDocument";
+        const reviewId = localStorage.getItem("reviewId"); 
+        const uploadedBy = localStorage.getItem("username");
+    
+        const formData = new FormData();
+        formData.append("reviewId", reviewId); 
+        formData.append("documentName", fileName); 
+        formData.append("uploadedBy", uploadedBy);
+        formData.append("file", file);  
+    
+        try {
+            const response = await axios.post(url, formData, {
+                headers: {
+                    'Authorization': `Bearer ${ApiToken}`,
+                    'Content-Type': 'multipart/form-data',  
+                }
+            });
+    
+            if (response.data.status === 200) {
+                setUploadMessage("File uploaded successfully!");
+                setFileName(''); 
+                setFile(null); 
+                
+            } else {
+                setUploadMessage("Failed to upload file. Please try again.");
+                setFileName(''); 
+                setFile(null); 
+            }
+        } catch (error) {
+            console.error("Error uploading file: ", error.message);
+            setUploadMessage("Error during upload. Please try again.");
+            setFileName(''); 
+            setFile(null); 
+        } finally {
+            setIsUploading(false); 
+            setFileName('');
+            setFile(null); 
+        }
+    }
+
+ 
 
     const handleobligor = async () => {
         const inputs = {
+            reviewId : reviewId,
             obligorName : input.Obligor,
             division : input.Division,
             obligorCifId : input.Cifid,
-            obligorPremId : PremId.PremId
+            obligorPremId : input.PremId
         }
-
+        console.log("inputs for FWS",inputs);
+        console.log("reviewId at FWS",reviewId);
+        
       let  url = "http://localhost:9195/api/ActionObligor/save";
+      console.log("token at FWS",ApiToken);
+      
+      try {
+
+        const response = await axios.post(url, inputs, {
+            headers : {
+                'Authorization': `Bearer ${ApiToken}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if(response.data.status === 200 ){
+            console.log("FWS inserted Successfully...!",response.data.message)
+            setInput({
+                Obligor: '',
+                Division: '',
+                Cifid: '',
+                PremId: ''
+            });
+            getObligorDetailsByReviewId();   
+            handleClose();      
+        }else{
+            console.log("Failed to insert FWS Details");     
+            setInput({
+                Obligor: '',
+                Division: '',
+                Cifid: '',
+                PremId: ''
+            });   
+            handleClose();      
+        }        
+      } catch (error) {
+        console.log("Error while processing to insert FWS Details",error.message);  
+        setInput({
+            Obligor: '',
+            Division: '',
+            Cifid: '',
+            PremId: ''
+        });
+        handleClose();   
+      }
+    }
+
+    const handleDelete = (obligorId) => {
+
+        handleObligorDelete(obligorId);
+        setTimeout(() => {
+            getObligorDetailsByReviewId();
+        },500)
+    }
+
+    const handleObligorDelete = async (obligorId) => {
+
+        let url = `http://localhost:9195/api/ActionObligor/delete/${obligorId}`;
+
+        try {
+            const response = await axios.delete(url, {
+                headers : {
+                    'Authorization': `Bearer ${ApiToken}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            if(response.data.status === 200){
+                console.log("obligor Deleted Successfully...!");           
+            }else {
+                console.log("File Deletion Failed");
+                
+            }
+        } catch (error) {
+            console.log("Error deleting file :",error.message);
+            
+        }
+    }
+
+    const getObligorDocumentByReviewId = async () => {
+
+        const reviewId = localStorage.getItem("reviewId");
+        console.log("reviewId at Obligor get function",reviewId);
+
+
+        const url = `http://localhost:9195/api/QueryObligor/getObligorDocumentByReviewId?reviewId=${reviewId}`;
+
+        try {
+            const response = await axios.get(url, {
+                headers : {
+                    'Authorization': `Bearer ${ApiToken}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if(response.data.status === 200){
+                setObligorDocument(response.data.result);
+                console.log("getObligorDocumentByReviewId",ObligorDocument);
+            }else if(response.data.status === 404){
+                setObligorDocument(null);              
+            }else{
+                console.log("data not found with reviewId :",reviewId);
+            }
+                       
+        } catch (error) {
+            console.log("Error fetching Obligor Document with reviewId :",reviewId);
+            
+        }
+        
+    }
+
+    const getObligorDetailsByReviewId = async () => {
+
+        const reviewId = localStorage.getItem("reviewId");
+        console.log("reviewId at Obligor get function",reviewId);
+
+
+        const url = `http://localhost:9195/api/QueryObligor/getObligorDetailsByReviewId?reviewId=${reviewId}`;
+
+        try {
+            const response = await axios.get(url, {
+                headers : {
+                    'Authorization': `Bearer ${ApiToken}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if(response.data.status === 200){
+                setObligorDetails(response.data.result);
+                console.log("getObligorDetailsByReviewId",ObligorDetails);
+            }else if(response.data.status === 404){
+                setObligorDetails(null);              
+            }else{
+                console.log("data not found with reviewId :",reviewId);
+            }
+                       
+        } catch (error) {
+            console.log("Error fetching Obligor Details with reviewId :",reviewId);
+            
+        }
+        
     }
 
     return (
@@ -151,7 +365,6 @@ const FieldWorkStage = () => {
                                         '&.Mui-selected': {
                                             bgcolor: 'transparent',
                                             color: 'black',
-                                            // borderBottom: '2px solid #FF5E00',
                                         },
                                     }}
                                 />
@@ -213,7 +426,7 @@ const FieldWorkStage = () => {
                                                              
                                                             <Button 
                                                             startIcon={<EditOffIcon />} variant='contained' sx={{ backgroundColor: '#093414' }}
-                                                            onClick={() => handleInput()}
+                                                            onClick={handleobligor}
                                                             >UPDATE</Button>
                                                         </div>
                                                         <div className='FieldWorkDocument'>
@@ -235,7 +448,8 @@ const FieldWorkStage = () => {
                                                                         }}
                                                                     >
                                                                         <input {...getInputProps()} />
-                                                                        <p className='DragAndDropHeading'>Drag & Drop your files or Browse</p>
+                                                                        <p className='DragAndDropHeading'>
+                                                                        {fileName ? fileName : "Drag & Drop your files or Browse"}</p>
                                                                     </div>
 
                                                                     {/* {isUploading ? (
@@ -245,9 +459,13 @@ const FieldWorkStage = () => {
                                                                     )} */}
                                                             </div>
                                                             <div className='uploadButtonDAD'>
-                                                                    <Button variant='contained' 
+                                                                    <Button variant='contained'
                                                                     sx={{backgroundColor : '#FF5E00', width: '100px', height: '35px', fontSize: '12px'}} 
+                                                                    onClick={() => handleUploadobligorDocument()}
                                                                     startIcon={<DriveFolderUploadIcon />}>UPLOAD</Button>
+                                                            </div>
+                                                            <div>
+                                                                <OblogorDocumentTable ObligorDocument={ObligorDocument} />
                                                             </div>
                                                         </div>
 
@@ -260,6 +478,9 @@ const FieldWorkStage = () => {
                                         </Modal>
                                     </div>
 
+                                </div>
+                                <div className='FWSTable'>
+                                    <Obligortable ObligorDetails={ObligorDetails} handleDelete={handleDelete} />
                                 </div>
                             </div>
                         </CustomTabPanel>

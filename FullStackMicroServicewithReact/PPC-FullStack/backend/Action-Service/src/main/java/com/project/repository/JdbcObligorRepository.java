@@ -1,15 +1,20 @@
 package com.project.repository;
 
 import com.project.entity.Obligor;
+import com.project.entity.ObligorDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 public class JdbcObligorRepository implements ObligorRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
 
     @Override
     public void saveObligor(Obligor obligor) {
@@ -58,6 +63,25 @@ public class JdbcObligorRepository implements ObligorRepository {
         String query = "UPDATE OBLIGOR SET reviewId=? division=? obligorName=? premId=? cifId=? WHERE childReviewId=?";
         Object[] args = {obligor.getReviewId(),obligor.getDivision(),obligor.getObligorName(),
                 obligor.getObligorPremId(),obligor.getObligorCifId(),obligor.getChildReviewId()};
+        jdbcTemplate.update(query,args);
+    }
+
+    @Override
+    public void deleteobligor(String obligorId) {
+        String query = "DELETE FROM OBLIGOR WHERE obligorId = ?";
+        Object[] args = {obligorId};
+        jdbcTemplate.update(query,obligorId);
+
+    }
+
+    @Override
+    public void saveObligorDocument(ObligorDocument obligorDocument) {
+        String query = "INSERT INTO OBLIGORDOCUMENT (reviewId,documentName,uploadedOn,uploadedBy,file)VALUES(?,?,?,?,?)";
+        Object[] args = {obligorDocument.getReviewId(),
+        obligorDocument.getDocumentName(),
+        obligorDocument.getUploadedOn(),
+        obligorDocument.getUploadedBy(),
+        obligorDocument.getFile()};
         jdbcTemplate.update(query,args);
     }
 }

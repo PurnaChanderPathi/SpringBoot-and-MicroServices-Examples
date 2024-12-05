@@ -33,7 +33,7 @@ spring:
         - id: QueryService
           uri: lb://Query-Service
           predicates:
-            - Path=/api/query/**,/api/fetch/**,/api/QueryAT/**,/api/query/file/**,/api/adminConfig/**
+            - Path=/api/query/**,/api/fetch/**,/api/QueryAT/**,/api/query/file/**,/api/adminConfig/**,/api/QueryObligor/**
           filters:
             - AuthenticationFilter
 
