@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.Dto.FileData;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
 import com.project.repository.ObligorRepository;
@@ -20,5 +21,13 @@ public class ObligorService {
 
     public List<ObligorDocument> getObligorDocumentDetails(String reviewId){
         return obligorRepository.getObligorDocumentByReviewId(reviewId);
+    }
+
+    public ObligorDocument getObligorDocument(String obligorDocId) {
+        return obligorRepository.getObligorDocumentByobligorDocId(obligorDocId);
+    }
+
+    public Obligor getObligorByChildReviewId(String childReviewId){
+        return obligorRepository.findByChildReviewId(childReviewId);
     }
 }

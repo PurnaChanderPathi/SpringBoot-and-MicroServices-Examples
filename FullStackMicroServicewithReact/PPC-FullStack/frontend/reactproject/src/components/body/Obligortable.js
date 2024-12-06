@@ -7,7 +7,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 
-const Obligortable = ({ObligorDetails,handleDelete}) => {
+const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsWithChildReviewId,handleOpenObservation}) => {
 
     const [rows, setRows] = React.useState([]);
     const [totalPages, setTotalPages] = React.useState(1);
@@ -48,6 +48,13 @@ const Obligortable = ({ObligorDetails,handleDelete}) => {
           setCurrentPage((prev) => prev - 1);
         }
       };
+
+      const handleGetAndUpdateObligor = (childReviewId) => {
+        console.log("childReviewId in ObligorTable Page :",childReviewId);
+        localStorage.setItem("childReviewId",childReviewId);
+        getObligorDetailsWithChildReviewId(childReviewId);
+        handleOpen();
+      }
 
     return (
         <Box sx={{ padding: 2 }}>
@@ -119,9 +126,9 @@ const Obligortable = ({ObligorDetails,handleDelete}) => {
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorPremId}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorCifId}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><OutboxIcon sx={{color : '#FF5E00'}} /></TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><AddTaskIcon sx={{color : '#FF5E00'}}/></TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleOpenObservation()}><AddTaskIcon sx={{color : '#FF5E00'}}/></Button></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><DeleteIcon sx={{color : '#FF5E00'}} onClick = {() => {handleDelete(row.obligorId)}}/></TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><PreviewIcon sx={{color : '#FF5E00'}}/></TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleGetAndUpdateObligor(row.childReviewId)}><PreviewIcon sx={{color : '#FF5E00'}}/></Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

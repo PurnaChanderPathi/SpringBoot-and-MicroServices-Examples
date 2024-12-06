@@ -6,8 +6,9 @@ import com.project.entity.ObligorDocument;
 public interface ObligorRepository {
 
     void saveObligor(Obligor obligor);
-    void updateObligor(Obligor obligor);
+    Obligor updateObligor(Obligor obligor);
     void deleteobligor(String obligorId);
 
     void saveObligorDocument(ObligorDocument obligorDocument);
+    void deleteObligorDocument(String obligorDocId);
 }

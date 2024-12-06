@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -42,28 +42,79 @@ public class JdbcObligorRepository implements ObligorRepository {
 
     }
 
-//    private int obligorId;
-//    private String reviewId;
-//    private String obligorName;
-//    private String obligorCifId;
-//    private String obligorPremId;
-//    private String groupName;
-//    private String createdBy;
-//    private String createdOn;
-//    private String reviewStatus;
-//    private String childReviewId;
-//    private String division;
-//    private String isActive;
-//    private String observation;
-//    private String taskStatus;
-//    private String activityLevel;
 
     @Override
-    public void updateObligor(Obligor obligor) {
-        String query = "UPDATE OBLIGOR SET reviewId=? division=? obligorName=? premId=? cifId=? WHERE childReviewId=?";
-        Object[] args = {obligor.getReviewId(),obligor.getDivision(),obligor.getObligorName(),
-                obligor.getObligorPremId(),obligor.getObligorCifId(),obligor.getChildReviewId()};
-        jdbcTemplate.update(query,args);
+    public Obligor updateObligor(Obligor obligor) {
+
+        StringBuilder query = new StringBuilder("UPDATE OBLIGOR SET ");
+        List<Object> args = new ArrayList<>();
+
+        if(obligor.getReviewId() != null){
+            query.append("reviewId=? ,");
+            args.add(obligor.getReviewId());
+        }
+
+        if(obligor.getObligorName() != null){
+            query.append("obligorName=? ,");
+            args.add(obligor.getObligorName());
+        }
+
+        if(obligor.getObligorCifId() != null){
+            query.append("obligorCifId=? ,");
+            args.add(obligor.getObligorCifId());
+        }
+
+        if(obligor.getObligorPremId() != null){
+            query.append("obligorPremId=? ,");
+            args.add(obligor.getObligorPremId());
+        }
+        if(obligor.getGroupName() != null){
+            query.append("groupName=? ,");
+            args.add(obligor.getGroupName());
+        }
+        if(obligor.getCreatedBy() != null){
+            query.append("createdBy=? ,");
+            args.add(obligor.getCreatedBy());
+        }
+        if(obligor.getCreatedOn() != null){
+            query.append("createdOn=? ,");
+            args.add(obligor.getCreatedOn());
+        }
+        if(obligor.getReviewStatus() != null){
+            query.append("reviewStatus=? ,");
+            args.add(obligor.getReviewStatus());
+        }
+        if(obligor.getDivision() != null){
+            query.append("division=? ,");
+            args.add(obligor.getDivision());
+        }
+        if(obligor.getIsActive() != null){
+            query.append("isActive=? ,");
+            args.add(obligor.getIsActive());
+        }
+        if(obligor.getObservation() != null){
+            query.append("observation=? ,");
+            args.add(obligor.getObservation());
+        }
+        if(obligor.getTaskStatus() != null){
+            query.append("taskStatus=? ,");
+            args.add(obligor.getTaskStatus());
+        }
+        if(obligor.getActivityLevel() != null){
+            query.append("activityLevel=? ,");
+            args.add(obligor.getActivityLevel());
+        }
+        query.setLength(query.length() - 2);
+        query.append(" WHERE childReviewid = ?");
+        args.add(obligor.getChildReviewId());
+
+        int result = jdbcTemplate.update(query.toString(), args.toArray());
+        if (result > 0) {
+            return obligor;
+        } else {
+            throw new RuntimeException("Update failed for queryDetails");
+        }
+
     }
 
     @Override
@@ -83,5 +134,12 @@ public class JdbcObligorRepository implements ObligorRepository {
         obligorDocument.getUploadedBy(),
         obligorDocument.getFile()};
         jdbcTemplate.update(query,args);
+    }
+
+    @Override
+    public void deleteObligorDocument(String obligorDocId) {
+        String query = "DELETE FROM OBLIGORDOCUMENT WHERE obligorDocId = ?";
+        Object[] args = {obligorDocId};
+        jdbcTemplate.update(query,obligorDocId);
     }
 }

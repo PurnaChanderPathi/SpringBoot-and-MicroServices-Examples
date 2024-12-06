@@ -1,15 +1,15 @@
 package com.project.controller;
 
+import com.project.Dto.FileData;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
 import com.project.service.ObligorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,4 +58,51 @@ public class ObligorController {
         }
         return response;
     }
+
+    @GetMapping("/View/{obligorDocId}")
+    public ResponseEntity<byte[]> ViewPdf(@PathVariable String obligorDocId) {
+        log.info("Entered view Obligor Document with ObligorDocId : {}", obligorDocId);
+        ObligorDocument obligorDocument = obligorService.getObligorDocument(obligorDocId);
+
+        if (obligorDocument == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        log.info("Found document: {}", obligorDocument.getDocumentName());
+
+        String contentType = "application/octet-stream";
+        if (obligorDocument.getDocumentName().endsWith(".pdf")) {
+            contentType = "application/pdf";
+        } else if (obligorDocument.getDocumentName().endsWith(".jpg") || obligorDocument.getDocumentName().endsWith(".jpeg")) {
+            contentType = "image/jpeg";
+        } else if (obligorDocument.getDocumentName().endsWith(".png")) {
+            contentType = "image/png";
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + obligorDocument.getDocumentName() + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(obligorDocument.getFile());
+    }
+
+    @GetMapping("/findByChildReviewId/{childReviewId}")
+    public Map<String,Object> findByChildReviewId(@PathVariable String childReviewId){
+        log.info("Entered findByChildReviewId with childReviewId : {}",childReviewId);
+        Map<String,Object> response = new HashMap<>();
+
+        Obligor result = obligorService.getObligorByChildReviewId(childReviewId);
+
+        if(result!= null){
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Obligor Details Fetched Successfully with childReviewId");
+            response.put("result",result);
+            log.info("Obligor Details Fetched Successfully with childReviewId : {}",childReviewId);
+        }else {
+            response.put("status",HttpStatus.NOT_FOUND.value());
+            response.put("message","Failed to Fetch obligor Details with childReviewId"+childReviewId);
+            log.warn("Failed to Fetch obligor Details with childReviewId : {}",childReviewId);
+        }
+        return response;
+    }
+
 }

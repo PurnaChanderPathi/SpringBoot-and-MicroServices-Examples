@@ -83,5 +83,33 @@
     padding-top: 5px;
   }
 
+  .obligorsetone {
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .ObligorsetoneTF {
+    width: 45%;
+
+  }
+
+  .obligorsettwo {
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .obligorsettwoTF {
+    width: 45%;
+  }
+
+  .obligorSubmitBtnAdd {
+    display: flex;
+    justify-content: end;
+    padding-right: 30px;
+    padding-top: 30px;
+  }
+
 
   

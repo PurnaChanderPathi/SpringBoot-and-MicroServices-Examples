@@ -3,6 +3,8 @@ package com.project.controller;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
 import com.project.service.ObligorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.Map;
 @RequestMapping("api/ActionObligor")
 public class ObligorController {
 
+    private static final Logger log = LoggerFactory.getLogger(ObligorController.class);
     @Autowired
     private ObligorService obligorService;
 
@@ -33,6 +36,32 @@ public class ObligorController {
             throw new Exception("Obligor is Empty");
         }
     return response;
+    }
+
+    @PutMapping("/updateObligorByChildReviewId")
+    public Map<String,Object> updateObligorBychildReviewId(@RequestBody Obligor obligor ){
+        log.info("Enter updateObligorByChildReviewId with body : {}",obligor);
+        Map<String,Object> response = new HashMap<>();
+
+        try {
+            Obligor result = obligorService.updateObligor(obligor);
+            if(result.getChildReviewId() != null && !result.getChildReviewId().isEmpty()){
+                response.put("status",HttpStatus.OK.value());
+                response.put("message","Obligor Updated Successfully with childReviewId :"+obligor.getChildReviewId());
+                response.put("result",result);
+                log.info("Obligor Updated Successfully with childReviewId : {}",obligor.getChildReviewId());
+            }else{
+                response.put("status",HttpStatus.NOT_FOUND.value());
+                response.put("message","Failed to update Obligor with childReviewId :"+obligor.getChildReviewId());
+                log.warn("Failed to update Obligor with childReviewId : {}",obligor.getChildReviewId());
+            }
+        }catch (Exception e){
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.put("message", "An error occurred while updating Obligor: " + e.getMessage());
+            log.error("Error occurred while updating Obligor: ", e);
+        }
+
+      return response;
     }
 
     @DeleteMapping("/delete/{obligorId}")
@@ -80,6 +109,15 @@ public class ObligorController {
             response.put("message", "Error occurred while saving Obligor document: " + e.getMessage());
         }
 
+        return response;
+    }
+
+    @DeleteMapping("/deleteDoc/{obligorDocId}")
+    public Map<String,Object> deleteObligorDoc(@PathVariable String obligorDocId){
+        Map<String,Object> response = new HashMap<>();
+        obligorService.deleteObligorDoc(obligorDocId);
+        response.put("status",HttpStatus.OK.value());
+        response.put("message","ObligorDoc Deleted Successfully...!");
         return response;
     }
 }
