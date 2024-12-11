@@ -109,6 +109,7 @@ const FieldWorkStage = () => {
     };
     const ApiToken = localStorage.getItem("authToken");
     const reviewId = localStorage.getItem("reviewId");
+    const createdBy = localStorage.getItem('username');
     const [ObligorDetails, setObligorDetails] = useState(null);
     const [ObligorDocument, setObligorDocument] = useState(null);
  
@@ -252,6 +253,11 @@ const FieldWorkStage = () => {
         
            
     }
+
+    const handleObservationObligor = () => {
+
+        handleCloseObservation();
+    }
  
 
     const handleobligor = async () => {
@@ -261,7 +267,10 @@ const FieldWorkStage = () => {
             obligorName : input.Obligor,
             division : input.Division,
             obligorCifId : input.Cifid,
-            obligorPremId : input.PremId
+            obligorPremId : input.PremId,
+            createdBy : createdBy,
+            reviewStatus : 'in-Progress'
+
         }
         console.log("inputs for FWS",inputs);
         console.log("reviewId at FWS",reviewId);
@@ -855,7 +864,7 @@ const FieldWorkStage = () => {
                                                              
                                                             <Button
                                                             startIcon={<EditOffIcon />} variant='contained' sx={{ backgroundColor: '#093414' }}
-                                                            onClick={updateObligorWithChildId}
+                                                            onClick={handleObservationObligor}
                                                             >ADD</Button>
                                                         </div>
                                                         <div className='FieldWorkDocument'>

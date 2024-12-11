@@ -10,6 +10,7 @@ import AssignmentStage from './AssignmentStage';
 import { setState, toggle } from '../../redux/scoreSlice';
 import FieldWorkStage from './FieldWorkStage';
 import MashreqHeader from '../header/MashreqHeader';
+import ResponseAndRemediationStage from './ResponseAndRemediationStage';
 
 const CaseInformation = () => {
   const dispatch = useDispatch();
@@ -782,6 +783,9 @@ const CaseInformation = () => {
       <div className='planningTabsDiv'>
         <FieldWorkStage
         />
+      </div>
+      <div className='planningTabsDiv' >
+        <ResponseAndRemediationStage />
       </div>
       <Dialog open={isModelOpenSubmit} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
         <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width: '400px', height: '250' }}>Confirm Change</DialogTitle>

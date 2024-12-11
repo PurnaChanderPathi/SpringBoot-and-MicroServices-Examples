@@ -2,7 +2,9 @@ package com.project.controller;
 
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
+import com.project.entity.ResponseRemediation;
 import com.project.service.ObligorService;
+import com.project.service.ResponseRemediationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class ObligorController {
     private static final Logger log = LoggerFactory.getLogger(ObligorController.class);
     @Autowired
     private ObligorService obligorService;
+
+    @Autowired
+    private ResponseRemediationService responseRemediationService;
 
     @PostMapping("/save")
     public Map<String,Object> saveObligor(@RequestBody Obligor obligor) throws Exception {
@@ -119,6 +124,12 @@ public class ObligorController {
         response.put("status",HttpStatus.OK.value());
         response.put("message","ObligorDoc Deleted Successfully...!");
         return response;
+    }
+
+    @PostMapping("/saveResponseRemediation")
+    public Map<String,Object> saveResponseRemediation(@RequestBody ResponseRemediation responseRemediation){
+        log.info("Entered ResponseRemediation insert API with body : {}",responseRemediation);
+        return responseRemediationService.saveResponseRemediation(responseRemediation);
     }
 }
 

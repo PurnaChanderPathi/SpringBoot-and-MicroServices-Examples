@@ -3,7 +3,9 @@ package com.project.controller;
 import com.project.Dto.FileData;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
+import com.project.entity.ResponseRemediation;
 import com.project.service.ObligorService;
+import com.project.service.ResponseRemediationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,9 @@ public class ObligorController {
 
     @Autowired
     private ObligorService obligorService;
+
+    @Autowired
+    private ResponseRemediationService responseRemediationService;
 
     @GetMapping("/getObligorDetailsByReviewId")
     public Map<String,Object> getObligorDetailsByReviewId(@RequestParam String reviewId){
@@ -87,7 +92,7 @@ public class ObligorController {
 
     @GetMapping("/findByChildReviewId/{childReviewId}")
     public Map<String,Object> findByChildReviewId(@PathVariable String childReviewId){
-        log.info("Entered findByChildReviewId with childReviewId : {}",childReviewId);
+        log.info("Entered findByChildReviewId with childReviewId of Obligor : {}",childReviewId);
         Map<String,Object> response = new HashMap<>();
 
         Obligor result = obligorService.getObligorByChildReviewId(childReviewId);
@@ -101,6 +106,26 @@ public class ObligorController {
             response.put("status",HttpStatus.NOT_FOUND.value());
             response.put("message","Failed to Fetch obligor Details with childReviewId"+childReviewId);
             log.warn("Failed to Fetch obligor Details with childReviewId : {}",childReviewId);
+        }
+        return response;
+    }
+
+    @GetMapping("findByChildReviewIdOfResponse/{childReviewId}")
+    public Map<String,Object> findByChildReviewIdOfResponse(@PathVariable String childReviewId){
+        log.info("Entered findByChildReviewId with childReviewId of ResponseRemediation : {}",childReviewId);
+        Map<String,Object> response = new HashMap<>();
+
+        ResponseRemediation result = responseRemediationService.findByChildReviewId(childReviewId);
+
+        if(result != null){
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Response Remediation details Fetched Successfully with childReviewId"+childReviewId);
+            response.put("result",result);
+            log.info("Response Details fetched with childReviewId : {}",result);
+        }else {
+            response.put("status",HttpStatus.NOT_FOUND.value());
+            response.put("message"," Failed to Fetch Response Remediation details with childReviewId"+childReviewId);
+            log.info(" Failed to Fetch Response Remediation details with childReviewId : {}",childReviewId);
         }
         return response;
     }
