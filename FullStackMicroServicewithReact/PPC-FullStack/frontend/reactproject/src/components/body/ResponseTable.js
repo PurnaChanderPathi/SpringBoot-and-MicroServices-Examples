@@ -5,10 +5,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
-const ResponseTable = () => {
+const ResponseTable = ({rows,setTotalPages,totalPages}) => {
 
-    const [rows, setRows] = React.useState([]);
-    const [totalPages, setTotalPages] = React.useState(1);
+    // const [rows, setRows] = React.useState([]);
+    // const [totalPages, setTotalPages] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [currentPage, setCurrentPage] = React.useState(1);
 
@@ -93,7 +93,11 @@ const ResponseTable = () => {
                         {displayedRows.map((row) => (
                             <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
                                 <TableCell align='center' component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
-                                    <Radio />
+                                    <Radio sx={{color : '#FF5E00',
+                                        '&.Mui-checked' : {
+                                            color: '#FF5E00',
+                                        }
+                                    }} />
                                 </TableCell>
                                 <TableCell align='center' component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                                     {row.childReviewId}

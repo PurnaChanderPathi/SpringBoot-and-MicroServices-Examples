@@ -64,6 +64,24 @@ public class ObligorController {
         return response;
     }
 
+    @GetMapping("/getResponseByReviewId")
+    public Map<String,Object> getResponseByReviewId(@RequestParam String reviewId){
+        log.info("Enterted getResponseByReviewId with body : {}",reviewId);
+        Map<String,Object> response = new HashMap<>();
+        List<ResponseRemediation> result = obligorService.getResponseRemediation(reviewId);
+        if(result.isEmpty()){
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("message","Response Details not found with reviewId :"+reviewId);
+            log.warn("Response Details not found with reviewId : {}",reviewId);
+        }else {
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Response Details Fetched Successfully...!");
+            response.put("result",result);
+            log.info("Response Details Fetched Successfully with reviewId : {}",reviewId);
+        }
+        return response;
+    }
+
     @GetMapping("/View/{obligorDocId}")
     public ResponseEntity<byte[]> ViewPdf(@PathVariable String obligorDocId) {
         log.info("Entered view Obligor Document with ObligorDocId : {}", obligorDocId);

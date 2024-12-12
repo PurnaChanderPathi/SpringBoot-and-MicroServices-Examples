@@ -28,6 +28,7 @@ const scoreSlice = createSlice({
         state.userData = action.payload;
       },
     }
+    
 })
 
 export const {toggle, setState, incrementScore, setUserData} = scoreSlice.actions;

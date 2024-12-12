@@ -7,9 +7,9 @@
 .LoginScreenMainDiv {
     display: flex;
     /* align-items: center; */
-    padding-top: 30px;
+    padding-top: 85px;
     background-color: transparent;
-    height: 95.5vh;
+    height: 89vh;
     width: 100%;
     overflow: hidden;
     flex-direction: column;

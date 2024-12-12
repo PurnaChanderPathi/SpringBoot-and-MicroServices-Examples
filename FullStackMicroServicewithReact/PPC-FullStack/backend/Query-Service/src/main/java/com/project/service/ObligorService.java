@@ -3,6 +3,7 @@ package com.project.service;
 import com.project.Dto.FileData;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
+import com.project.entity.ResponseRemediation;
 import com.project.repository.ObligorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public class ObligorService {
 
     public List<ObligorDocument> getObligorDocumentDetails(String reviewId){
         return obligorRepository.getObligorDocumentByReviewId(reviewId);
+    }
+
+    public List<ResponseRemediation> getResponseRemediation(String reviewId){
+        return obligorRepository.getResponseRemediationByReviewId(reviewId);
     }
 
     public ObligorDocument getObligorDocument(String obligorDocId) {

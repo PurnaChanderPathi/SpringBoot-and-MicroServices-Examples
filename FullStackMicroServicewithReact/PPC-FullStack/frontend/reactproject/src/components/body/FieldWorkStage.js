@@ -94,7 +94,7 @@ const FieldWorkStage = () => {
         width: 1100,
         bgcolor: 'background.paper',
         boxShadow: 24,
-        height: 450,
+        height: 500,
     };
 
     const styleObligor = {

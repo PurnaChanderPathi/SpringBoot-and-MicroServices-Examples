@@ -3,6 +3,7 @@ package com.project.repository;
 import com.project.Dto.FileData;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
+import com.project.entity.ResponseRemediation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,6 +33,13 @@ public class JdbcObligorRepository implements ObligorRepository {
         String query = "SELECT * FROM OBLIGORDOCUMENT WHERE reviewId = ?";
         Object[] args = {reviewId};
         return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(ObligorDocument.class),args);
+    }
+
+    @Override
+    public List<ResponseRemediation> getResponseRemediationByReviewId(String reviewId) {
+        String query = "SELECT * FROM RESPONSEREMEDIATION WHERE reviewId = ?";
+        Object[] args = {reviewId};
+        return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(ResponseRemediation.class),args);
     }
 
     @Override

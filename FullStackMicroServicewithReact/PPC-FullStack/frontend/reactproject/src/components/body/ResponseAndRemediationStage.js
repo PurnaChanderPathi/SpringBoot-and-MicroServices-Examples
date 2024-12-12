@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './ResponseAndRemediationStage.css'
 import { ToastContainer } from 'react-toastify';
 import { Accordion, AccordionDetails, AccordionSummary, Box, MenuItem, Tab, Tabs, TextField, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ResponseTable from './ResponseTable';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { getResponseRemediationDetailsByReviewId } from '../../redux/ResponseRemedaitionSlice';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -32,10 +35,74 @@ function a11yProps(index) {
 
 const ResponseAndRemediationStage = () => {
     const [value, setValue] = useState(0);
+    const token = localStorage.getItem('authToken');
+    const [reviewId, setReviewId] = useState(null); 
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    // const [rows, setRows] = React.useState([]);
+    // const [totalPages, setTotalPages] = React.useState(1);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    useEffect(() => {
+        const storedReviewId = localStorage.getItem('reviewId');
+        console.log("reviewId in ResponseRemediation Stage", storedReviewId);
+
+        if (storedReviewId) {
+            setReviewId(storedReviewId);  
+        }
+
+    }, []); 
+    const dispatch = useDispatch();
+
+    const rows = useSelector((state) => state.Response.rows);
+    const totalPages = useSelector((state) => state.Response.totalPages);
+    const setTotalPages = useSelector((state) => state.Response.setTotalPages);
+
+    useEffect(() => {
+        if (reviewId) {
+            dispatch(getResponseRemediationDetailsByReviewId(reviewId,token));
+            console.log("ResponseRows", rows);
+            
+            // getResponseRemediationDetailsByReviewId(reviewId); 
+        }
+    }, [reviewId,token, dispatch]); 
+
+
+
+    // const getResponseRemediationDetailsByReviewId = async (reviewId) => {
+    //     let url = `http://localhost:9195/api/QueryObligor/getResponseByReviewId?reviewId=${reviewId}`;
+    //     try {
+
+    //         const response = await axios.get(url, {
+    //             headers : {
+    //                 'Authorization': `Bearer ${token}`,
+    //                 'Content-Type': 'application/json',
+    //             }
+    //         });
+
+    //         if(response.data.status === 200){
+    //             console.log(`Response Details fetched with reviewId : ${reviewId}`,response.data.message);  
+    //             const data = response.data.result;
+    //             console.log("Response Details Fetched By reviewId",data);
+    //             setRows(data);
+    //             setTotalPages(Math.ceil(data.length / rowsPerPage));
+            
+    //         }
+    //         else{
+    //             console.log(`Failed to Fetch Response Details with reviewId : ${reviewId}`,response.data.message);
+    //             setRows([]);
+    //             setTotalPages(0);
+    //             console.log("Rows after clearing:", rows);
+    //         }
+            
+    //     } catch (error) {
+    //         console.log("Error while process Execution",error.message);
+            
+    //     }
+    // }
 
     return (
         <div className="PlanningStage">
@@ -129,7 +196,10 @@ const ResponseAndRemediationStage = () => {
                                 </TextField>
                             </div>
                             <div>
-                                <ResponseTable />
+                                <ResponseTable
+                                rows={rows}
+                                  setTotalPages={setTotalPages} 
+                                  totalPages={totalPages} />
                             </div>
                         </CustomTabPanel>
                     </Box>

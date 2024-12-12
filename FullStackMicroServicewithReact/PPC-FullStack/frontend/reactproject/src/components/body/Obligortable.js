@@ -6,6 +6,9 @@ import OutboxIcon from '@mui/icons-material/Outbox';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { getResponseRemediationDetailsByReviewId } from '../../redux/ResponseRemedaitionSlice';
 
 const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsWithChildReviewId,handleOpenObservation}) => {
 
@@ -13,6 +16,7 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
     const [totalPages, setTotalPages] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [currentPage, setCurrentPage] = React.useState(1);
+    const Token = localStorage.getItem('authToken');
 
     useEffect(() => {
         console.log("Obligor Details at Obligor table ",ObligorDetails);
@@ -55,6 +59,41 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
         getObligorDetailsWithChildReviewId(childReviewId);
         handleOpen();
       }
+
+      const dispatch = useDispatch();
+
+      const getObligorByChildReviewId = async (childReviewId) => {
+        console.log("childReviewId:", childReviewId);
+        console.log("Token:", Token);
+    
+        if (!Token) {
+            console.log("Token is missing. Please provide a valid token.");
+            return;
+        }
+    
+        const url = `http://localhost:9195/api/ActionObligor/saveResponseRemediation`;
+    
+        try {
+            const response = await axios.post(url, { childReviewId }, { 
+                headers: {
+                    'Authorization': `Bearer ${Token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            if (response.data.status === 200) {
+                console.log("Obligor details fetched by childReviewId:", response.data.message);
+                const reviewId = localStorage.getItem("reviewId");
+                const token = localStorage.getItem("authToken");
+                dispatch(getResponseRemediationDetailsByReviewId(reviewId,token));
+            } else {
+                console.log("Failed to fetch Obligor details with childReviewId:", response.data.message);
+            }
+        } catch (error) {
+            console.log("Failed to fetch Obligor Details:", error.message);
+        }
+    };
+    
 
     return (
         <Box sx={{ padding: 2 }}>
@@ -125,7 +164,7 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorName}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorPremId}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorCifId}</TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><OutboxIcon sx={{color : '#FF5E00'}} /></TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => getObligorByChildReviewId(row.childReviewId)}><OutboxIcon sx={{color : '#FF5E00'}} /></Button></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleOpenObservation()}><AddTaskIcon sx={{color : '#FF5E00'}}/></Button></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><DeleteIcon sx={{color : '#FF5E00'}} onClick = {() => {handleDelete(row.obligorId)}}/></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleGetAndUpdateObligor(row.childReviewId)}><PreviewIcon sx={{color : '#FF5E00'}}/></Button></TableCell>
