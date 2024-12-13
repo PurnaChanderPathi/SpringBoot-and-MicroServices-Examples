@@ -39,8 +39,8 @@ const ResponseAndRemediationStage = () => {
     const [reviewId, setReviewId] = useState(null); 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = React.useState(1);
-    // const [rows, setRows] = React.useState([]);
-    // const [totalPages, setTotalPages] = React.useState(1);
+    const [rows, setRows] = React.useState([]);
+    const [totalPages, setTotalPages] = React.useState(1);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -55,20 +55,23 @@ const ResponseAndRemediationStage = () => {
         }
 
     }, []); 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
-    const rows = useSelector((state) => state.Response.rows);
-    const totalPages = useSelector((state) => state.Response.totalPages);
-    const setTotalPages = useSelector((state) => state.Response.setTotalPages);
+    // const rows = useSelector((state) => state.Response.rows);
+    // const totalPages = useSelector((state) => state.Response.totalPages);
+    // const setTotalPages = useSelector((state) => state.Response.setTotalPages);
 
-    useEffect(() => {
-        if (reviewId) {
-            dispatch(getResponseRemediationDetailsByReviewId(reviewId,token));
-            console.log("ResponseRows", rows);
+    // useEffect(() => {
+    //     if (reviewId) {
+    //         // dispatch(getResponseRemediationDetailsByReviewId(reviewId,token));
+    //         // console.log("ResponseRows", rows);
             
-            // getResponseRemediationDetailsByReviewId(reviewId); 
-        }
-    }, [reviewId,token, dispatch]); 
+    //          getResponseRemediationDetailsByReviewId(reviewId); 
+    //     }
+    // }, [reviewId,
+    //     // token,
+    //     //  dispatch
+    //     ]); 
 
 
 
@@ -197,9 +200,10 @@ const ResponseAndRemediationStage = () => {
                             </div>
                             <div>
                                 <ResponseTable
-                                rows={rows}
-                                  setTotalPages={setTotalPages} 
-                                  totalPages={totalPages} />
+                                // rows={rows}
+                                //   setTotalPages={setTotalPages} 
+                                //   totalPages={totalPages}
+                                   />
                             </div>
                         </CustomTabPanel>
                     </Box>

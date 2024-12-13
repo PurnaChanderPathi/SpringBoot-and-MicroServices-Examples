@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 import './CaseInformation.css'
 import { useParams } from 'react-router-dom';
 import PlanningTabs from './PlanningStage';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import AssignmentStage from './AssignmentStage';
-import { setState, toggle } from '../../redux/scoreSlice';
+import { setState } from '../../redux/scoreSlice';
 import FieldWorkStage from './FieldWorkStage';
 import MashreqHeader from '../header/MashreqHeader';
 import ResponseAndRemediationStage from './ResponseAndRemediationStage';
+import Swal from 'sweetalert2';
+
 
 const CaseInformation = () => {
   const dispatch = useDispatch();
@@ -190,6 +192,25 @@ const CaseInformation = () => {
     });
   };
 
+  const showToastDocument = (message) => {
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'white', 
+      color: '#FF5E00',   
+    });
+  };
+
+
   const showToastSuccess = (message) => {
     toast.success(message, {
       position: "top-right",
@@ -217,28 +238,24 @@ const CaseInformation = () => {
       showToast("Select Action before Submit");
     } else {
       console.log("documentPresent", documentPresent);
+
       if (!documentPresent) {
         setDocumentMessage("Please add a document");
-        showToast("Please add a document");
+        // alert("Please add a Document");
+        showToastDocument("Please add a document");
       } else {
+
         if (action === "AssigntoCreditReviewer") {
+
           if (selectedUser == null || selectedUser === "") {
             showToast("Select Credit Reviewer");
           } else {
             setDocumentMessage('');
             setIsModelOpenSubmit(true);
-            // UpdateDetails();
-            // setTimeout(() => {
-            //   window.close();
-            // }, 5000);
           }
         } else {
           setDocumentMessage('');
           setIsModelOpenSubmit(true);
-          // UpdateDetails();
-          // setTimeout(() => {
-          //   window.close();
-          // }, 5000);
         }
 
       }

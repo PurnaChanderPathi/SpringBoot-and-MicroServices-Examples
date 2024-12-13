@@ -1,5 +1,5 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
-import React, { useEffect } from 'react'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import OutboxIcon from '@mui/icons-material/Outbox';
@@ -9,26 +9,54 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { getResponseRemediationDetailsByReviewId } from '../../redux/ResponseRemedaitionSlice';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsWithChildReviewId,handleOpenObservation}) => {
+
+const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDetailsWithChildReviewId, handleOpenObservation }) => {
 
     const [rows, setRows] = React.useState([]);
     const [totalPages, setTotalPages] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [currentPage, setCurrentPage] = React.useState(1);
     const Token = localStorage.getItem('authToken');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedChildReviewId, setSelectedChildReviewId] = useState(null);
+    const [isObligorOpen, setIsObligorOpen] = useState(false);
+    const [obligorId, setObligorId] = useState(null);
+
+    const handleObligorCancel = () => {
+        setIsObligorOpen(false);
+    }
+
+    const handleObligorConfirm = () => {
+        if (obligorId) {
+            handleDelete(obligorId);
+        }
+        setIsObligorOpen(false);
+    }
+
+    const handleModalCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleModalConfirm = () => {
+        if (selectedChildReviewId) {
+            getObligorByChildReviewId(selectedChildReviewId);
+            setIsModalOpen(false);
+        }
+    };
 
     useEffect(() => {
-        console.log("Obligor Details at Obligor table ",ObligorDetails);
-        
-        if(Array.isArray(ObligorDetails) && ObligorDetails.length > 0){
+        console.log("Obligor Details at Obligor table ", ObligorDetails);
+
+        if (Array.isArray(ObligorDetails) && ObligorDetails.length > 0) {
             setRows(ObligorDetails);
             setTotalPages(Math.ceil(ObligorDetails.length / rowsPerPage));
-        }else{
+        } else {
             setRows([]);
             setTotalPages(1);
         }
-    },[ObligorDetails,rowsPerPage]);
+    }, [ObligorDetails, rowsPerPage]);
 
 
     const handleRowsPerPageChange = (event) => {
@@ -36,56 +64,56 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
         setRowsPerPage(value);
         setTotalPages(Math.ceil(rows.length / value));
         setCurrentPage(1);
-      };
+    };
 
-      const startIndex = (currentPage - 1) * rowsPerPage;
-      const displayedRows = Array.isArray(rows) ? rows.slice(startIndex, startIndex + rowsPerPage) : [];
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const displayedRows = Array.isArray(rows) ? rows.slice(startIndex, startIndex + rowsPerPage) : [];
 
-      const handleNextPage = () => {
+    const handleNextPage = () => {
         if (currentPage < totalPages) {
-          setCurrentPage((prev) => prev + 1);
+            setCurrentPage((prev) => prev + 1);
         }
-      };
-    
-      const handlePreviousPage = () => {
-        if (currentPage > 1) {
-          setCurrentPage((prev) => prev - 1);
-        }
-      };
+    };
 
-      const handleGetAndUpdateObligor = (childReviewId) => {
-        console.log("childReviewId in ObligorTable Page :",childReviewId);
-        localStorage.setItem("childReviewId",childReviewId);
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage((prev) => prev - 1);
+        }
+    };
+
+    const handleGetAndUpdateObligor = (childReviewId) => {
+        console.log("childReviewId in ObligorTable Page :", childReviewId);
+        localStorage.setItem("childReviewId", childReviewId);
         getObligorDetailsWithChildReviewId(childReviewId);
         handleOpen();
-      }
+    }
 
-      const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-      const getObligorByChildReviewId = async (childReviewId) => {
+    const getObligorByChildReviewId = async (childReviewId) => {
         console.log("childReviewId:", childReviewId);
         console.log("Token:", Token);
-    
+
         if (!Token) {
             console.log("Token is missing. Please provide a valid token.");
             return;
         }
-    
+
         const url = `http://localhost:9195/api/ActionObligor/saveResponseRemediation`;
-    
+
         try {
-            const response = await axios.post(url, { childReviewId }, { 
+            const response = await axios.post(url, { childReviewId }, {
                 headers: {
                     'Authorization': `Bearer ${Token}`,
                     'Content-Type': 'application/json',
                 }
             });
-    
+
             if (response.data.status === 200) {
                 console.log("Obligor details fetched by childReviewId:", response.data.message);
                 const reviewId = localStorage.getItem("reviewId");
                 const token = localStorage.getItem("authToken");
-                dispatch(getResponseRemediationDetailsByReviewId(reviewId,token));
+                dispatch(getResponseRemediationDetailsByReviewId(reviewId, token));
             } else {
                 console.log("Failed to fetch Obligor details with childReviewId:", response.data.message);
             }
@@ -93,7 +121,7 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
             console.log("Failed to fetch Obligor Details:", error.message);
         }
     };
-    
+
 
     return (
         <Box sx={{ padding: 2 }}>
@@ -164,10 +192,37 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorName}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorPremId}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorCifId}</TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => getObligorByChildReviewId(row.childReviewId)}><OutboxIcon sx={{color : '#FF5E00'}} /></Button></TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleOpenObservation()}><AddTaskIcon sx={{color : '#FF5E00'}}/></Button></TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><DeleteIcon sx={{color : '#FF5E00'}} onClick = {() => {handleDelete(row.obligorId)}}/></TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleGetAndUpdateObligor(row.childReviewId)}><PreviewIcon sx={{color : '#FF5E00'}}/></Button></TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>
+                                    <Button onClick={() => {
+                                        setSelectedChildReviewId(row.childReviewId);
+                                        setIsModalOpen(true);
+                                    }}>
+                                        <Tooltip title="Send For Clasification">
+                                        <OutboxIcon sx={{ color: '#FF5E00' }} />
+                                        </Tooltip>
+                                        </Button></TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleOpenObservation()}>
+                                    <Tooltip title="Add/View Observation">
+                                    <AddTaskIcon sx={{ color: '#FF5E00' }} />
+                                    </Tooltip>
+                                    </Button></TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>
+                                    <Button onClick={() => {
+                                        setObligorId(row.obligorId);
+                                        setIsObligorOpen(true);
+                                        // handleDelete(row.obligorId)
+                                    }}>
+                                        <Tooltip title="Delete">
+                                        <DeleteOutlineIcon sx={{ color: '#FF5E00' }} />
+                                        </Tooltip>                                        
+                                    </Button>
+                                </TableCell>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button 
+                                onClick={() => handleGetAndUpdateObligor(row.childReviewId)}>
+                                    <Tooltip title="View/Upload">
+                                    <PreviewIcon sx={{ color: '#FF5E00' }} />
+                                    </Tooltip>
+                                    </Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -204,6 +259,39 @@ const Obligortable = ({ObligorDetails,handleDelete,handleOpen,getObligorDetailsW
                     Next
                 </Button>
             </Box>
+            <Dialog open={isModalOpen} onClose={handleModalCancel} sx={{ marginBottom: '190px' }}>
+                <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+                        Do you want to Send for Clasification ?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                        No
+                    </Button>
+                    <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={isObligorOpen} onClose={handleObligorCancel} sx={{ marginBottom: '190px' }}>
+                <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+                        Do you want to Delete obligor ?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant='contained' onClick={handleObligorCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                        No
+                    </Button>
+                    <Button variant='contained' onClick={handleObligorConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }

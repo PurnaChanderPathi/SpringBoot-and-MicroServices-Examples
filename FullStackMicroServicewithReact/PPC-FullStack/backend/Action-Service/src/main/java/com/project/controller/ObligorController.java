@@ -119,6 +119,7 @@ public class ObligorController {
 
     @DeleteMapping("/deleteDoc/{obligorDocId}")
     public Map<String,Object> deleteObligorDoc(@PathVariable String obligorDocId){
+        log.info("Entered deleteDoc with obligorDocId : {}",obligorDocId);
         Map<String,Object> response = new HashMap<>();
         obligorService.deleteObligorDoc(obligorDocId);
         response.put("status",HttpStatus.OK.value());
@@ -130,6 +131,16 @@ public class ObligorController {
     public Map<String,Object> saveResponseRemediation(@RequestBody ResponseRemediation responseRemediation){
         log.info("Entered ResponseRemediation insert API with body : {}",responseRemediation);
         return responseRemediationService.saveResponseRemediation(responseRemediation);
+    }
+
+    @DeleteMapping("/deleteResponse/{childReviewId}")
+    public Map<String,Object> deleteResponse(@PathVariable String childReviewId){
+        log.info("Entered deleteResponse with childReviewId : {}",childReviewId);
+        Map<String,Object> response = new HashMap<>();
+        responseRemediationService.deleteResponse(childReviewId);
+        response.put("status",HttpStatus.OK.value());
+        response.put("message","ObligorDoc Deleted Successfully...!");
+        return response;
     }
 }
 

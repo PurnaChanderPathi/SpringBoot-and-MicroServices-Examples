@@ -4,6 +4,7 @@ import axios from "axios";
 const initialState = {
     rows: [],
     totalPages: 0,
+    rowsPerPage: 5,
     error: null,
     loading: false,
   };
@@ -18,6 +19,9 @@ const ResponseRemedaitionSlice = createSlice({
           setTotalPages: (state, action) => {
             state.totalPages = action.payload;
           },
+          setRowsPerPage: (state, action) => {
+            state.rowsPerPage = action.payload;
+        },
           setError: (state, action) => {
             state.error = action.payload;
           },
@@ -29,7 +33,7 @@ const ResponseRemedaitionSlice = createSlice({
 
       export const getResponseRemediationDetailsByReviewId = (reviewId, token) => async (dispatch) => {
         const url = `http://localhost:9195/api/QueryObligor/getResponseByReviewId?reviewId=${reviewId}`;
-        dispatch(setLoading(true)); // Start loading
+        dispatch(setLoading(true)); 
         
         try {
           const response = await axios.get(url, {
@@ -54,7 +58,7 @@ const ResponseRemedaitionSlice = createSlice({
       };
       
       // Export reducers to use in the store
-      export const { setRows, setTotalPages, setError, setLoading } = ResponseRemedaitionSlice.actions;
+      export const { setRows, setTotalPages, setRowsPerPage , setError, setLoading } = ResponseRemedaitionSlice.actions;
       
       // Export the reducer to be used in store configuration
       export default ResponseRemedaitionSlice.reducer;

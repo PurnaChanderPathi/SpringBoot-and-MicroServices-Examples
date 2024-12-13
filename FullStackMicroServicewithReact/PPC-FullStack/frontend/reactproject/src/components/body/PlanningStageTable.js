@@ -11,14 +11,37 @@ import {
   Box,
   Button,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 
 } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 
-export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
+export default function PlanningStageTable({ buttonClicked, setButtonClicked }) {
   const [rows, setRows] = React.useState([]);
   const token = localStorage.getItem('authToken');
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [viewComment, setViewComment] = React.useState(null);
+
+  const handleModalCancel = () => {
+    setIsModalOpen(false);
+  };
+
+
+  const handleModalConfirm = () => {
+    if (viewComment) {
+      handleDeleteComment(viewComment);
+      setIsModalOpen(false);
+    }
+    // if(selectedChildReviewId){
+    //     getObligorByChildReviewId(selectedChildReviewId);
+    //     setIsModalOpen(false);
+    // }
+  };
 
   const fetchComments = async () => {
     const reviewId = localStorage.getItem('reviewId');
@@ -31,7 +54,7 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
         },
       });
 
-      const availRow=Array.isArray(response?.data?.result)?response?.data?.result:[]
+      const availRow = Array.isArray(response?.data?.result) ? response?.data?.result : []
 
       setRows(availRow);
     } catch (error) {
@@ -44,15 +67,17 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
   }, []);
 
   React.useEffect(() => {
-      if (buttonClicked) {
-    fetchComments();
-    setButtonClicked(false);
-  }
-  }, [buttonClicked,setButtonClicked]);
+    if (buttonClicked) {
+      fetchComments();
+      setButtonClicked(false);
+    }
+  }, [buttonClicked, setButtonClicked]);
+
+
 
   const handleDeleteComment = async (viewComment) => {
     try {
-      console.log("viewCommentD",viewComment);
+      console.log("viewCommentD", viewComment);
       const response = await axios.delete(`http://localhost:9195/api/comment/delete/${viewComment}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -76,35 +101,40 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
         <Table sx={{ minWidth: 650, borderCollapse: 'collapse' }} aria-label="simple table">
           <TableHead sx={{ backgroundColor: 'transparent', color: 'white' }}>
             <TableRow>
-              <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Commented By</TableCell>
-              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Commented On</TableCell>
-              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>View Comment</TableCell>
-              <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' , fontWeight: 'bold' }}>Actions</TableCell> {/* Action column for delete */}
+              <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Review ID</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Commented By</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Commented On</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>View Comment</TableCell>
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Actions</TableCell> {/* Action column for delete */}
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
-                <TableCell component="th" scope="row" sx={{color: 'black', border: '1px solid #B2BEB5' }}>
+                <TableCell component="th" scope="row" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>
                   {row.reviewId}
                 </TableCell>
-                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5'  }}>{row.commentedBy}</TableCell>
-                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5'  }}>{new Date(row.commentedOn).toLocaleString()}</TableCell>
-                <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5' }}>{row.viewComment}</TableCell>
-                <TableCell align="right" sx={{color: 'black', border: '1px solid #B2BEB5'  }}>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.commentedBy}</TableCell>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{new Date(row.commentedOn).toLocaleString()}</TableCell>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.viewComment}</TableCell>
+                <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>
                   <Button
-                    onClick={() => handleDeleteComment(row.viewComment)}
-                    // variant="contained"
-                    // sx={{
-                    //   backgroundColor: 'red',
-                    //   textTransform: 'none',
-                    //   color: 'white',
-                    //   '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' },
-                    // }}
+                    onClick={() => {
+                      setViewComment(row.viewComment);
+                      setIsModalOpen(true);
+                    }
+                      // handleDeleteComment(row.viewComment)
+                    }
+                  // variant="contained"
+                  // sx={{
+                  //   backgroundColor: 'red',
+                  //   textTransform: 'none',
+                  //   color: 'white',
+                  //   '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' },
+                  // }}
                   >
                     <Tooltip title="Delete">
-                    <DeleteOutlineIcon sx={{color:'#FF5E00'}} />
+                      <DeleteOutlineIcon sx={{ color: '#FF5E00' }} />
                     </Tooltip>
                   </Button>
                 </TableCell>
@@ -113,6 +143,22 @@ export default function PlanningStageTable({buttonClicked, setButtonClicked}) {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={isModalOpen} onClose={handleModalCancel} sx={{ marginBottom: '190px' }}>
+        <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+            Do you want to Delete Comment ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+            No
+          </Button>
+          <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

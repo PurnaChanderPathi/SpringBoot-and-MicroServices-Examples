@@ -12,6 +12,7 @@ import axios from 'axios';
 import MashreqHeader from './components/header/MashreqHeader.js';
 import MashreqBody from './components/body/MashreqBody.js';
 import CircularIndeterminate from './components/loginScreen/loadingScreen.js';
+import { ToastContainer } from 'react-toastify';
 
 axios.interceptors.response.use(
   (response) => response, 
@@ -36,8 +37,10 @@ function App() {
                 frameBorder={0}
                 style={{ height: '100vh', width: '90vw' }}></iframe> */}
       {/* <Header/> */}
+      <ToastContainer />
           <Router>
             <Routes>
+            
               <Route path="/home" element={<Amlak/>} />
               <Route path="/PPCDetails" element={<PPCDetails/>}/>
               <Route path="/CaseInformation/:reviewId" element={<CaseInformation/>} />

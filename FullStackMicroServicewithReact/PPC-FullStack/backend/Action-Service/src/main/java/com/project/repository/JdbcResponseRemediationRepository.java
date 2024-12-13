@@ -37,4 +37,12 @@ public class JdbcResponseRemediationRepository implements ResponseRemediationRep
         };
          jdbcTemplate.update(query,args);
     }
+
+    @Override
+    public void deleteResponse(String childReviewId) {
+        String query = "DELETE FROM responseremediation where childReviewId = ? ";
+        Object[] args = {childReviewId};
+        jdbcTemplate.update(query,args);
+    }
+
 }

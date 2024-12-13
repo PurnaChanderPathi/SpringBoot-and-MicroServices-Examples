@@ -114,4 +114,8 @@ public class ResponseRemediationService {
         return response;
     }
 
+    public void deleteResponse(String childReviewId){
+        responseRemediationRepository.deleteResponse(childReviewId);
+    }
+
 }

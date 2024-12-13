@@ -48,7 +48,7 @@ public class ObligorController {
 
     @GetMapping("/getObligorDocumentByReviewId")
     public Map<String,Object> getObligorDocumentByReviewId(@RequestParam String reviewId){
-        log.info("Enterted getObligorDocumentByReviewId with body : {}",reviewId);
+        log.info("Entered getObligorDocumentByReviewId with body : {}",reviewId);
         Map<String,Object> response = new HashMap<>();
         List<ObligorDocument> result = obligorService.getObligorDocumentDetails(reviewId);
         if(result.isEmpty()){

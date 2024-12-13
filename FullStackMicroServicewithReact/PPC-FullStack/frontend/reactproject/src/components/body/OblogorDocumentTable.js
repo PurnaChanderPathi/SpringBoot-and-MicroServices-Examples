@@ -12,6 +12,12 @@ import {
     MenuItem,
     Typography,
     Modal,
+    Tooltip,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,6 +25,7 @@ import ViewInArIcon from "@mui/icons-material/ViewInAr";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import axios from "axios";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
     const [rows, setRows] = React.useState([]);
@@ -27,6 +34,24 @@ const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [pdfOpen, setPdfOpen] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
+    const [isObligorDocOpen, setIsObligorDocOpen] = React.useState(false);
+    const [obDocId, setObDocId] = React.useState(null);
+  
+    const handleObligorDocCancel = () => {
+        setIsObligorDocOpen(false);
+    };
+  
+  
+    const handleObligorDocConfirm = () => {
+      if (obDocId) {
+        handleDeleteDoc(obDocId);
+        setIsObligorDocOpen(false);
+      }
+      // if(selectedChildReviewId){
+      //     getObligorByChildReviewId(selectedChildReviewId);
+      //     setIsModalOpen(false);
+      // }
+    };
 
     useEffect(() => {
         console.log("Obligor Document at Obligor table ", ObligorDocument);
@@ -132,7 +157,12 @@ const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
                         {displayedRows.map((row) => (
                             <TableRow key={row.reviewId}>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    {row.documentName} <Button onClick={() => handlePdfOpen(row.obligorDocId)}><ViewInArIcon sx={{ blockSize: '20px', color: '#FF5E00', alignContent: 'center' }} /></Button>
+                                    {row.documentName} <Button
+                                     onClick={() => handlePdfOpen(row.obligorDocId)}>
+                                        <Tooltip title="View Document">
+                                        <ViewInArIcon sx={{ blockSize: '20px', color: '#FF5E00', alignContent: 'center' }} />
+                                        </Tooltip>                                        
+                                        </Button>
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '11px' }}>
                                     {new Date(row.uploadedOn).toLocaleString('en-US', {
@@ -150,7 +180,16 @@ const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
                                     {row.uploadedBy}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    <DeleteIcon sx={{ blockSize: '20px', color: '#FF5E00' }} onClick={() => { handleDeleteDoc(row.obligorDocId) }} />
+                                    <Button onClick={() => {
+                                        setObDocId(row.obligorDocId);
+                                        setIsObligorDocOpen(true);
+                                    }}>
+                                    <Tooltip title="Delete">
+                                    <DeleteOutlineIcon sx={{ blockSize: '20px', color: '#FF5E00' }} 
+                                    // onClick={() => { handleDeleteDoc(row.obligorDocId) }}
+                                     />
+                                    </Tooltip>
+                                    </Button>                                    
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -297,6 +336,22 @@ const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
                     )}
                 </Box>
             </Modal>
+            <Dialog open={isObligorDocOpen} onClose={handleObligorDocCancel} sx={{ marginBottom: '190px' }}>
+            <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
+            <DialogContent>
+              <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+                Do you want to Delete Obligor Document ?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant='contained' onClick={handleObligorDocCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                No
+              </Button>
+              <Button variant='contained' onClick={handleObligorDocConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
     );
 };

@@ -15,9 +15,9 @@ const scoreSlice = createSlice({
     name: "Score",
     initialState,
     reducers: {
-      toggle: (state) => {
-        state.isActive = !state.isActive;
-      },
+      // toggle: (state) => {
+      //   state.isActive = !state.isActive;
+      // },
       setState: (state, action) => {
         state.isActive = action.payload;
       },
@@ -31,7 +31,9 @@ const scoreSlice = createSlice({
     
 })
 
-export const {toggle, setState, incrementScore, setUserData} = scoreSlice.actions;
+export const {
+  // toggle,
+   setState, incrementScore, setUserData} = scoreSlice.actions;
 export default scoreSlice.reducer;
 
 
