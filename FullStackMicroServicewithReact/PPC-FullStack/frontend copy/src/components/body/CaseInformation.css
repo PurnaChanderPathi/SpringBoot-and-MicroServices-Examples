@@ -1,0 +1,165 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.CaseInfoMainDiv {
+    margin: 5px;
+}
+
+.CaseInfoScreen {
+    border: 1px solid #B2BEB5;
+    border-radius: 5px;
+}
+
+.CaseInfoScreen1{
+    margin: 5px;
+    border: 1px solid #B2BEB5;
+    border-radius: 5px;
+}
+
+.CaseInfoheading {
+    background-color: transparent;
+    color: black;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 20px;
+    font-size: 15px;
+    font-weight: 400;
+    font-size: 15px;
+    overflow: hidden;
+}
+
+.ReviewIdinfoCS {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+        align-items: center;
+    }
+
+    .CDCT {
+        display: flex;
+        flex-direction: row;
+    }
+
+.inputReviewCS {
+    border: none;
+    color: black;
+    font-size: medium;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    text-align: start;
+    transition: width 0.2s ease, font-size 0.2s ease;
+    min-width: 150px;
+    max-width: 500px;
+    width: auto;
+}
+
+
+.fetchCaseInformation {
+    display: flex;
+    padding-top: 20px;
+    padding-left: 20px;
+    justify-content: start;
+    text-align: center;
+    border: 1px  #FF5E00;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    width: 1300px;
+    flex-wrap: wrap;
+}
+
+.ReviewInputCS {
+padding-left: 15px;
+padding-top: 5px;
+}
+
+.ClassTimeLineDiv {
+    width: 550px;
+}
+
+
+
+.ReviewLabelCS {
+    font-weight: 600;
+    background-color: #FF5E00;
+    color: white;
+    padding: 5px;
+    font-size: medium;
+    border-radius: 20px;
+}
+
+.PlanningMainDivCI {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #B2BEB5;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.planningMainDiv {
+margin: 5px;
+border: 1px solid #B2BEB5;
+border-radius: 5px;
+}
+
+.PlanningStageCmptd {
+
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.TakeActionSubmitCS{
+    width: 220px;
+    height: 40px;
+    gap: 10px;
+}
+
+.submitTACI {
+    padding-right: 10px;
+
+}
+
+
+.planningTabsDiv {
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.planningEditScreen {
+    display: flex;
+    width: 550px;
+    height: 40px;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.SaveAndCloseButtonCI {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.custom-toast {
+    background-color: #FF5E00 !important;
+    color: white !important;    
+    border-radius: 8px !important;
+    font-size: 14px !important;            
+  }
+  
+.custom-toast .Toastify__progress-bar {
+    background: #ffffff !important;
+}
+  
+
+

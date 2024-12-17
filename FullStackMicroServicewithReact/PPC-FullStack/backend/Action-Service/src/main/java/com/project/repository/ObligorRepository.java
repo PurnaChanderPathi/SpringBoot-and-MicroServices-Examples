@@ -7,7 +7,7 @@ public interface ObligorRepository {
 
     void saveObligor(Obligor obligor);
     Obligor updateObligor(Obligor obligor);
-    void deleteobligor(String obligorId);
+    void deleteobligor(String childReviewId);
 
     void saveObligorDocument(ObligorDocument obligorDocument);
     void deleteObligorDocument(String obligorDocId);

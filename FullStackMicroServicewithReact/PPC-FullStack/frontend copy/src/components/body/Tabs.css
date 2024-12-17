@@ -1,0 +1,117 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.ReviewRow {
+    display: flex;
+    flex-direction: column;
+}
+
+.mainDivs {
+    display: flex;
+    gap: 5px;
+    margin-left: 15px;
+}
+.ReviewIdInput {
+    width: 200px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #FF5E00; 
+}
+.ReviewIdLabel{
+    font-weight: 600px;
+    width: 100px;
+    height: 25px;
+    display: flex;
+    justify-content: start;
+
+}
+.SearchButton {
+    width: 80px;
+    height: 30px;
+    margin-top: 28px;
+    border-radius: 5px;
+    background-color:  #FF5E00;
+    color: white;
+    font-size: 15px;
+    border: none;
+}
+
+.SearchMainDiv {
+    display: flex;
+    gap: 10px;
+}
+
+.GroupName {
+    display: flex;
+    flex-direction: column;
+}
+
+.GroupNameLabel {
+    display: flex;
+    justify-content: start;
+    font-weight: 500;
+    font-size: 15px;
+    border:  none;
+}
+
+.GroupNameText {
+    width: 270px;  
+    height: 35px;
+}
+.GroupNameText .MuiInputBase-root {
+    height: 35px; 
+    padding: 0;
+}
+.DivisionText {
+    width: 100px;
+    height: 35px;
+}
+.DivisionText .MuiInputBase-root {
+    height: 35px; 
+    padding: 0;
+}
+.borderDiv {
+    margin: 10px;
+    border: 1px solid #B2BEB5;
+    border-radius: 5px;
+}
+
+.ReviewText {
+    width: 270px;
+    height: 35px;
+}
+.ReviewText .MuiInputBase-root {
+    height: 35px; 
+    padding: 0;
+}
+.SearchButtons {
+    display: flex;
+    padding-top: 19px;
+
+}
+.CleanButton {
+    width: 90px;
+    height: 30px;
+    font-size: 15px;
+    background-color: #FF5E00;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+
+.DataExport {
+    display: flex;
+    padding-left: 1px;
+    margin-top: 10px;
+}
+
+/* .dataExportButton {
+    width: 160px;
+    height: 45px;
+    background-color: rgb(37, 74, 158);
+    border-radius: 5px;
+    color: white;
+    font-size: 5px;
+} */

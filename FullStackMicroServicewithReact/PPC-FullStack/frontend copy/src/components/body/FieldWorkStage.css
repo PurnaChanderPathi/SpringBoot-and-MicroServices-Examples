@@ -1,0 +1,115 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.MuiButton-root.obButton {
+    background-color: #FF5E00;
+    width: 180px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .FieldworkSectionModal {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .FieldWorkHeading {
+    border-bottom: 1px solid #B2BEB5;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .FieldWorkStageIP {
+    width: 450px;
+    height: 47vh;
+    border-right: 1px solid #B2BEB5;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    gap: 20px;
+  }
+
+  .Obligor {
+    height: 45px;
+  }
+
+  .FieldWorkObligor {
+    width: 97.5vw;
+    height: 56vh;
+    display: flex;
+  }
+
+  .FieldWorkDocument {
+    width: 590px;
+    height: 100%;
+  }
+
+  .Obligor .MuiOutlinedInput-root {
+    border-color: black; /* Black border color */
+  }
+  
+  .Obligor .MuiOutlinedInput-root:hover fieldset {
+    border-color: black; /* Black border on hover */
+  }
+  
+  .Obligor .MuiOutlinedInput-root.Mui-focused fieldset {
+    border-color: black; /* Black border when focused */
+  }
+  
+  .Obligor .MuiInputLabel-root {
+    color: black; /* Black text color for label */
+  }
+  
+  .Obligor .MuiInputBase-input {
+    color: black; /* Black text color for input field */
+  }
+
+  .DragAndDropImage {
+    padding: 10px;
+  }
+
+  .DragAndDropHeading {
+    font-size: bold;
+  }
+
+  .uploadButtonDAD {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-right: 10px;
+    padding-top: 5px;
+  }
+
+  .obligorsetone {
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .ObligorsetoneTF {
+    width: 45%;
+
+  }
+
+  .obligorsettwo {
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .obligorsettwoTF {
+    width: 45%;
+  }
+
+  .obligorSubmitBtnAdd {
+    display: flex;
+    justify-content: end;
+    padding-right: 30px;
+    padding-top: 30px;
+  }
+
+
+  

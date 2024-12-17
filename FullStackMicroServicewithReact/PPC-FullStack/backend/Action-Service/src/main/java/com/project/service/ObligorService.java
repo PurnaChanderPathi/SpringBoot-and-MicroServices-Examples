@@ -39,8 +39,8 @@ public class ObligorService {
         return obligorRepository.updateObligor(obligor);
     }
 
-    public void deleteObligor(String obligorId){
-        obligorRepository.deleteobligor(obligorId);
+    public void deleteObligor(String childReviewId){
+        obligorRepository.deleteobligor(childReviewId);
     }
 
     public ObligorDocument saveObligorDocument(ObligorDocument obligorDocument){

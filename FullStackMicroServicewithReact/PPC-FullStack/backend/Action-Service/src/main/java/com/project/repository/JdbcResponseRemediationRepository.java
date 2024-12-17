@@ -1,10 +1,13 @@
 package com.project.repository;
 
 import com.netflix.discovery.converters.Auto;
+import com.project.entity.ResponseQueryDetails;
 import com.project.entity.ResponseRemediation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.sql.Timestamp;
 
 @Repository
 public class JdbcResponseRemediationRepository implements ResponseRemediationRepository{
@@ -42,6 +45,29 @@ public class JdbcResponseRemediationRepository implements ResponseRemediationRep
     public void deleteResponse(String childReviewId) {
         String query = "DELETE FROM responseremediation where childReviewId = ? ";
         Object[] args = {childReviewId};
+        jdbcTemplate.update(query,args);
+    }
+
+    @Override
+    public void saveResponseQuery(ResponseQueryDetails responseQueryDetails) {
+        String query = "INSERT INTO RESPONSEQUERY (querySequence,query,createdOn,createdBy,response,responseBy,responseOn,reviewId,childReviewId)VALUES(?,?,?,?,?,?,?,?,?)";
+        Object[] args = {responseQueryDetails.getQuerySequence(),
+                         responseQueryDetails.getQuery(),
+                         responseQueryDetails.getCreatedOn(),
+                         responseQueryDetails.getCreatedBy(),
+                         responseQueryDetails.getResponse(),
+                         responseQueryDetails.getResponseBy(),
+                         responseQueryDetails.getResponseOn(),
+                         responseQueryDetails.getReviewId(),
+                         responseQueryDetails.getChildReviewId()
+        };
+        jdbcTemplate.update(query,args);
+    }
+
+    @Override
+    public void deleteResponseQuery(String querySequence) {
+        String query = "DELETE FROM responsequery where querySequence = ?";
+        Object[] args = {querySequence};
         jdbcTemplate.update(query,args);
     }
 

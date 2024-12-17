@@ -1,0 +1,96 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.PPCDetails{
+    display: flex;
+    justify-content: center;
+    padding-top: 35px;
+}
+
+.PPCInitial {
+    width: 600px;
+    height: 250px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.PPCheading {
+    background-color: #FF5E00;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    color: white;
+    justify-content: space-between;
+    border-bottom: 1px solid #B2BEB5;
+}
+
+.ExitIcon {
+    color: whitesmoke;
+    padding-right: 10px;
+}
+
+.PPCD {
+    display: flex;
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-right: 20px;
+}
+
+
+.GroupNameLabelPPC {    
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.ReviewText {
+width: 180px;
+}
+
+.GroupNameText {
+    width: 200px;
+}
+
+.DivisionText {
+    width: 130px;
+}
+
+.PPCButton {
+    display: flex;
+    justify-items: center;
+    margin-top: 40px;
+    padding-left: 30px;
+    gap: 7px;   
+    padding-right: 30px;
+}
+
+#createPPC {
+    width: 350px;
+    height: 40px;
+    background-color: #FF5E00;
+    color: white;
+    border-radius: 5px;
+    font-weight: 500px;
+    border: none;
+    font-size: 15px;
+}
+
+#closePPC {
+    width: 200px;
+    height: 40px;
+    background-color: #FF5E00;
+    color: white;
+    border-radius: 5px;
+    font-weight: 500px;
+    border: none;
+    font-size: 15px;
+}
+
+.ExitIconButton {
+    background-color: transparent;
+    border: none;
+}

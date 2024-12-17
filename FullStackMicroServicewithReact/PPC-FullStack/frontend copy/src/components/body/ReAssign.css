@@ -1,0 +1,55 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.ReAssignMain {
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+}
+
+.AssignHeading {
+    width: 600px;
+    height: 210px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.PPCheading{
+    background-color: transparent;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    color: black;
+    justify-content: space-between;
+}
+
+.AssignInput {
+    display: flex;
+    flex-direction: column;
+    margin: 15px;
+    font-weight: 600;
+    gap: 10px;
+}
+
+.ReAssignInput {
+    width: 560px;
+
+}
+.assignButtondiv {
+    margin-left: 18px;
+}
+
+.ExitIcon {
+    height: 2px;
+}
+
+
+
+
+
+

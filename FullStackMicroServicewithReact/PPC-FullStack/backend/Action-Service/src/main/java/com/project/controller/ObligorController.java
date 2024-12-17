@@ -2,6 +2,7 @@ package com.project.controller;
 
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
+import com.project.entity.ResponseQueryDetails;
 import com.project.entity.ResponseRemediation;
 import com.project.service.ObligorService;
 import com.project.service.ResponseRemediationService;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,12 +69,18 @@ public class ObligorController {
       return response;
     }
 
-    @DeleteMapping("/delete/{obligorId}")
-    public Map<String,Object> deleteObligor(@PathVariable String obligorId){
+    @DeleteMapping("/delete/{childReviewId}")
+    public Map<String,Object> deleteObligor(@PathVariable String childReviewId){
         Map<String,Object> response = new HashMap<>();
-        obligorService.deleteObligor(obligorId);
-        response.put("status",HttpStatus.OK.value());
-        response.put("message","Obligor Deleted Successfully...!");
+        if(!childReviewId.isEmpty()){
+            responseRemediationService.deleteResponse(childReviewId);
+            obligorService.deleteObligor(childReviewId);
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Obligor Deleted Successfully...!");
+
+        }else {
+            throw new RuntimeException("ChildReviewId is Empty");
+        }
         return response;
     }
 
@@ -139,8 +145,40 @@ public class ObligorController {
         Map<String,Object> response = new HashMap<>();
         responseRemediationService.deleteResponse(childReviewId);
         response.put("status",HttpStatus.OK.value());
-        response.put("message","ObligorDoc Deleted Successfully...!");
+        response.put("message","Response Details Deleted Successfully...!");
         return response;
     }
+
+    @PostMapping("/ResponseQuery/save")
+    public Map<String,Object> saveResponseQueryDetails(@RequestBody ResponseQueryDetails responseQueryDetails){
+        log.info("Entered ResponseQuery with body : {}",responseQueryDetails);
+        Map<String,Object> response = new HashMap<>();
+        if(responseQueryDetails.getQuery() != ""){
+            String generateResponseQueryChildReviewId = responseRemediationService.generateChildReviewIdForResponseQuery(responseQueryDetails.getChildReviewId());
+            log.info("generateResponseQueryChildReviewId : {}",generateResponseQueryChildReviewId);
+            responseQueryDetails.setQuerySequence(generateResponseQueryChildReviewId);
+            responseRemediationService.saveResponseQuery(responseQueryDetails);
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Response Query Saved Successfully...!");
+            log.info("Response Query Saved Successfully...!");
+        }else {
+            response.put("status",HttpStatus.NO_CONTENT.value());
+            response.put("message","Response Query Details are Empty");
+            log.warn("Response Details are Empty with body : {}",responseQueryDetails);
+
+        }
+        return response;
+    }
+
+    @DeleteMapping("/deleteResponseQuery/{querySequence}")
+    public Map<String,Object> deleteResponseQuery(@PathVariable String querySequence){
+        log.info("Entered deleteResponseQuery with querySequence : {}",querySequence);
+        Map<String,Object> response = new HashMap<>();
+        responseRemediationService.deleteResponseQuery(querySequence);
+        response.put("status",HttpStatus.OK.value());
+        response.put("message","deleteResponseQuery Deleted Successfully...!");
+        return response;
+    }
+
 }
 

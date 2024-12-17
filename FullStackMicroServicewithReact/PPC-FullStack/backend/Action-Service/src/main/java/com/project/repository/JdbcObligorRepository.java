@@ -118,10 +118,10 @@ public class JdbcObligorRepository implements ObligorRepository {
     }
 
     @Override
-    public void deleteobligor(String obligorId) {
-        String query = "DELETE FROM OBLIGOR WHERE obligorId = ?";
-        Object[] args = {obligorId};
-        jdbcTemplate.update(query,obligorId);
+    public void deleteobligor(String childReviewId) {
+        String query = "DELETE FROM OBLIGOR WHERE childReviewId = ?";
+        Object[] args = {childReviewId};
+        jdbcTemplate.update(query,childReviewId);
 
     }
 
