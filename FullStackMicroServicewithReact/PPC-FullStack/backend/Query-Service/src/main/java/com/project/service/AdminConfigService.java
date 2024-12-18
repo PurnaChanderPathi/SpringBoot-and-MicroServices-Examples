@@ -19,4 +19,8 @@ public class AdminConfigService {
     public List<String> getDivisions(String groupName){
         return adminConfigRepository.getDivisions(groupName);
     }
+
+    public List<String> getSpocs(String division){
+        return adminConfigRepository.getSpocs(division);
+    }
 }

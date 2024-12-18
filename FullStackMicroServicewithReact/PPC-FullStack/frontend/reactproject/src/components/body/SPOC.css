@@ -1,0 +1,44 @@
+
+
+.SPOCScreen {
+    display: flex;
+    justify-content: center;  
+}
+
+.SPOCGroupName {
+    width: 500px;
+    border: 1px solid  #B2BEB5;
+
+
+}
+
+.SPOCDivision{
+    width: 500px;
+    border: 1px solid  #B2BEB5;
+
+
+}
+
+.SPOCName {
+    width: 500px;
+    border: 1px solid  #B2BEB5;
+}
+
+.SPOCgroupNameTitle {
+    width: 490px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid  #B2BEB5;
+    
+}
+
+.RadioGroupName {
+    padding-left: 20px;
+}
+
+.SPOCNameStyle {
+    font-weight: bolder;
+}
+

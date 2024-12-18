@@ -26,4 +26,11 @@ public class JdbcAdminConfigRepository implements AdminConfigRepository {
         Object[] args = {groupName};
         return jdbcTemplate.query(query,args,(rs, rowNum) -> rs.getString("division") );
     }
+
+    @Override
+    public List<String> getSpocs(String division) {
+        String query = "SELECT Spoc FROM adminconfig WHERE division = ?";
+        Object[] args = {division};
+        return jdbcTemplate.query(query,args,(rs, rowNum) -> rs.getString("Spoc"));
+    }
 }

@@ -9,4 +9,6 @@ public interface AdminConfigRepository {
     List<String> getGroupNames();
 
     List<String> getDivisions(String groupName);
+
+    List<String> getSpocs(String division);
 }

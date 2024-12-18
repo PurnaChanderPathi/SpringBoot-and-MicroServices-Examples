@@ -12,6 +12,7 @@ import FieldWorkStage from './FieldWorkStage';
 import MashreqHeader from '../header/MashreqHeader';
 import ResponseAndRemediationStage from './ResponseAndRemediationStage';
 import Swal from 'sweetalert2';
+import SPOC from './SPOC';
 
 
 const CaseInformation = () => {
@@ -48,6 +49,11 @@ const CaseInformation = () => {
 
   const currentStatus = localStorage.getItem('currentStatus');
   console.log("currentStatus for readonly", currentStatus);
+
+  const DivisionToSpoc = caseData.division;
+  const GroupNameToSpoc = caseData.groupName;
+  console.log(` GroupName & Division in Caseinformation Stage ", ${GroupNameToSpoc} && ${DivisionToSpoc}`);
+
 
   useEffect(() => {
     console.log("selectedUdser", selectedUser);
@@ -205,8 +211,8 @@ const CaseInformation = () => {
       customClass: {
         popup: 'swal-toast-popup',
       },
-      background: 'white', 
-      color: '#FF5E00',   
+      background: 'white',
+      color: '#FF5E00',
     });
   };
 
@@ -574,114 +580,170 @@ const CaseInformation = () => {
       <ToastContainer />
       <div className='CaseInfoScreen'>
         <div className='CaseInfoScreen1'>
-        <div className='CaseInfoheading'>
-          <Typography sx={{ fontWeight: '550' }}>
-            <span style={{
-              textDecoration: 'underline',
-              textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
-              textUnderlineOffset: '4px'
-            }}
-              className='underlineText'>Case</span> Details
-          </Typography>
-      </div>
-      <div className='CDCT'>
-      <div className='fetchCaseInformation'>
-        <div className='ReviewIdinfoCS'>
-          <div className='ReviewLabelCS'>
-            ReviewId
+          <div className='CaseInfoheading'>
+            <Typography sx={{ fontWeight: '550' }}>
+              <span style={{
+                textDecoration: 'underline',
+                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                textUnderlineOffset: '4px'
+              }}
+                className='underlineText'>Case</span> Details
+            </Typography>
           </div>
-          <div className='ReviewInputCS'>
-            <input type='text' value={caseData.reviewId}
-              className='inputReviewCS'
-              disabled  
-              style={{ 
-                fontSize: calculateFontSize(caseData.reviewId),
-                width: calculateWidth(caseData.reviewId)}}
-              />
-              
-          </div>
+          <div className='CDCT'>
+            <div className='fetchCaseInformation'>
+              <div className='ReviewIdinfoCS'>
+                <div className='ReviewLabelCS'>
+                  ReviewId
+                </div>
+                <div className='ReviewInputCS'>
+                  <input type='text' value={caseData.reviewId}
+                    className='inputReviewCS'
+                    disabled
+                    style={{
+                      fontSize: calculateFontSize(caseData.reviewId),
+                      width: calculateWidth(caseData.reviewId)
+                    }}
+                  />
 
+                </div>
+
+              </div>
+              <div className='ReviewIdinfoCS'>
+                <div className='ReviewLabelCS'>
+                  GroupName
+                </div>
+                <div className='ReviewInputCS'>
+                  <input type='text'
+                    value={caseData.groupName}
+                    className='inputReviewCS'
+                    disabled
+                    style={{
+                      fontSize: calculateFontSize(caseData.groupName),
+                      width: calculateWidth(caseData.groupName)
+                    }} />
+                </div>
+              </div>
+              <div className='ReviewIdinfoCS'>
+                <div className='ReviewLabelCS'>
+                  Division
+                </div>
+                <div className='ReviewInputCS'>
+                  <input type='text'
+                    value={caseData.division}
+                    className='inputReviewCS'
+                    disabled
+                    style={{
+                      fontSize: calculateFontSize(caseData.division),
+                      width: calculateWidth(caseData.division)
+                    }} />
+                </div>
+              </div>
+              <div className='ReviewIdinfoCS'>
+                <div className='ReviewLabelCS'>
+                  Role
+                </div>
+                <div className='ReviewInputCS'>
+                  <input type='text'
+                    value={caseData.role}
+                    className='inputReviewCS' disabled
+                    style={{
+                      fontSize: calculateFontSize(caseData.role),
+                      width: calculateWidth(caseData.role)
+                    }} />
+                </div>
+              </div>
+              <div className='ReviewIdinfoCS'>
+                <div className='ReviewLabelCS'>
+                  PPC Initiator
+                </div>
+                <div className='ReviewInputCS'>
+                  <input type='text'
+                    value={caseData.assignedTo}
+                    className='inputReviewCS' disabled
+                    style={{
+                      fontSize: calculateFontSize(caseData.assignedTo),
+                      width: calculateWidth(caseData.assignedTo)
+                    }} />
+                </div>
+              </div>
+
+            </div>
+            <div className='ClassTimeLineDiv'>
+              {/* Hello */}
+            </div>
+          </div>
         </div>
-        <div className='ReviewIdinfoCS'>
-          <div className='ReviewLabelCS'>
-            GroupName
-          </div>
-          <div className='ReviewInputCS'>
-            <input type='text'
-              value={caseData.groupName}
-              className='inputReviewCS'
-              disabled
-              style={{ fontSize: calculateFontSize(caseData.groupName),
-                width: calculateWidth(caseData.groupName)
-              }} />
-          </div>
-        </div>
-        <div className='ReviewIdinfoCS'>
-          <div className='ReviewLabelCS'>
-            Division
-          </div>
-          <div className='ReviewInputCS'>
-            <input type='text'
-              value={caseData.division}
-              className='inputReviewCS'
-              disabled 
-              style={{ fontSize: calculateFontSize(caseData.division),
-                width: calculateWidth(caseData.division)
-              }}/>
-          </div>
-        </div>
-        <div className='ReviewIdinfoCS'>
-          <div className='ReviewLabelCS'>
-            Role
-          </div>
-          <div className='ReviewInputCS'>
-            <input type='text'
-              value={caseData.role}
-              className='inputReviewCS' disabled 
-              style={{ fontSize: calculateFontSize(caseData.role),
-                width: calculateWidth(caseData.role)
-              }}/>
-          </div>
-        </div>
-        <div className='ReviewIdinfoCS'>
-          <div className='ReviewLabelCS'>
-            PPC Initiator
-          </div>
-          <div className='ReviewInputCS'>
-            <input type='text'
-              value={caseData.assignedTo}
-              className='inputReviewCS' disabled 
-              style={{ fontSize: calculateFontSize(caseData.assignedTo),
-                width: calculateWidth(caseData.assignedTo)
-              }} />
-          </div>
-        </div>
-        
-      </div>
-      <div className='ClassTimeLineDiv'>
-        {/* Hello */}
-      </div>
-      </div>
-      </div>
       </div>
       <div className='PlanningMainDivCI'>
         <div className='planningMainDiv'>
 
 
-        <div className='PlanningStageCmptd'>
-          <div className='TakeActionSubmitCS'>
+          <div className='PlanningStageCmptd'>
+            <div className='TakeActionSubmitCS'>
+              <TextField
+                label="TakeAction"
+                className='GroupNameText'
+                id="GroupName"
+                select
+                value={action}
+                onChange={(e) => setAction(e.target.value)}
+                disabled={planning !== 'PlanningCompleted'}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#FF5E00',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#FF5E00',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#FF5E00',
+                    },
+                  },
+                }}
+              >
+                {/* <MenuItem value="">
+                <em>None</em>
+              </MenuItem> */}
+                {actionOptions.length > 0 ? (
+                  actionOptions.map((option, index) => (
+                    <MenuItem key={index} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="">No Option avaible</MenuItem>
+                )}
+                {/* <MenuItem value="SubmittedToHeadofPPC">Submit to Head of PPC</MenuItem> */}
+              </TextField>
+            </div>
+            <div className='submitTACI'>
+              <Button variant='contained' sx={{
+                backgroundColor: '#1B4D3E', height: '30px', paddingBottom: '10px',
+                backgroundColor: '#FF5E00', textAlign: 'center'
+              }}
+                onClick={handleSubmit}
+                disabled={planning !== 'PlanningCompleted'}
+              >Submit</Button>
+            </div>
+          </div>
+          <div className='planningEditScreen'>
             <TextField
-              label="TakeAction"
+              label="planning"
               className='GroupNameText'
               id="GroupName"
               select
-              value={action}
-              onChange={(e) => setAction(e.target.value)}
-              disabled={planning !== 'PlanningCompleted'}
+              value={planning}
+              onChange={handleValueChange}
+              disabled={isFieldDisabled && planning !== ""}
               sx={{
+                width: '300px',
+                textAlign: 'center',
+                paddingLeft: '10px',
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
-                    borderColor: '#FF5E00',
+                    borderColor: '#FF5E00;',
                   },
                   '&:hover fieldset': {
                     borderColor: '#FF5E00',
@@ -692,135 +754,144 @@ const CaseInformation = () => {
                 },
               }}
             >
-              {/* <MenuItem value="">
-                <em>None</em>
-              </MenuItem> */}
-              {actionOptions.length > 0 ? (
-                actionOptions.map((option, index) => (
-                  <MenuItem key={index} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem value="">No Option avaible</MenuItem>
-              )}
-              {/* <MenuItem value="SubmittedToHeadofPPC">Submit to Head of PPC</MenuItem> */}
+              <MenuItem value="PlanningCompleted">Planning Completed</MenuItem>
+              <MenuItem value="Planninginprogress">Planning inprogress</MenuItem>
             </TextField>
+            <Button className='BtnEditCI'
+              variant='contained'
+              sx={{ backgroundColor: '#FF5E00', height: '30px', width: '70px' }}
+              onClick={handleEditClick}
+            >
+              Edit
+            </Button>
+            {/* Confirmation Modal */}
+            <Dialog open={isModalOpen} onClose={handleModalCancel} sx={{ marginBottom: '190px' }}>
+              <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
+              <DialogContent>
+                <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
+                  Do you want to change the planning?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                  No
+                </Button>
+                <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
-          <div className='submitTACI'>
-            <Button variant='contained'sx={{ backgroundColor: '#1B4D3E', height: '30px', paddingBottom: '10px', 
-              backgroundColor: '#FF5E00', textAlign: 'center'
-            }}
-              onClick={handleSubmit}
-              disabled={planning !== 'PlanningCompleted'}
-            >Submit</Button>
+          <div className='SaveAndCloseButtonCI'>
+            <Button variant='contained'
+              sx={{ backgroundColor: '#FF5E00', width: '140px', height: '30px', fontSize: 'small' }}
+              onClick={handleSaveAndClose}
+            >Save & Close</Button>
           </div>
-        </div>
-        <div className='planningEditScreen'>
-          <TextField
-            label="planning"
-            className='GroupNameText'
-            id="GroupName"
-            select
-            value={planning}
-            onChange={handleValueChange}
-            disabled={isFieldDisabled && planning !== ""}
-            sx={{
-              width: '300px',
-              textAlign: 'center',
-              paddingLeft: '10px',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: '#FF5E00;',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#FF5E00',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#FF5E00',
-                },
-              },
-            }}
-          >
-            <MenuItem value="PlanningCompleted">Planning Completed</MenuItem>
-            <MenuItem value="Planninginprogress">Planning inprogress</MenuItem>
-          </TextField>
-          <Button className='BtnEditCI'
-            variant='contained'
-            sx={{ backgroundColor: '#FF5E00', height: '30px', width: '70px' }}
-            onClick={handleEditClick}
-          >
-            Edit
-          </Button>
-          {/* Confirmation Modal */}
-          <Dialog open={isModalOpen} onClose={handleModalCancel} sx={{ marginBottom: '190px' }}>
-            <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
+
+
+          {role === "SrCreditReviewer" && asmtAction === "Approve" && (
+            <div className='AssignmentStage'>
+              <AssignmentStage
+                data={data}
+                selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}
+              // readOnly={isReadonlyAS}
+              /></div>)}
+
+
+          {
+            (role === "SrCreditReviewer" && asmtAction === "Approve") || role === "CreditReviewer" ? (
+              <div className='planningTabsDiv'>
+                <FieldWorkStage GroupNameToSpoc={GroupNameToSpoc}
+                />
+              </div>
+            ) : null
+          }
+
+          {
+            (role === "SrCreditReviewer" && asmtAction === "Approve") || role === "CreditReviewer" ? (
+              <div className='planningTabsDiv'>
+                <ResponseAndRemediationStage />
+              </div>
+            ) : null
+          }
+
+{
+            (role === "CreditReviewer" ) ? (
+            <div className='planningTabsDiv' >
+              <SPOC GroupNameToSpoc={GroupNameToSpoc}
+                DivisionToSpoc={DivisionToSpoc} />
+            </div>
+            ) : null
+          }
+
+          {role === "SrCreditReviewer" && asmtAction === "Approve" && (
+            <div className='planningTabsDiv'>
+              <TextField
+                label="Field Work"
+                className='GroupNameText'
+                id="GroupName"
+                select
+                value={fieldwork}
+                onChange={(e) => setFieldwork(e.target.value)}
+                sx={{
+                  width: '300px',
+                  textAlign: 'center',
+                  paddingLeft: '10px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#FF5E00;',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#FF5E00',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#FF5E00',
+                    },
+                  },
+                }}
+              >
+                <MenuItem value="PlanningCompleted">FieldWork Completed</MenuItem>
+                <MenuItem value="Planninginprogress">FieldWork inprogress</MenuItem>
+              </TextField>
+            </div >
+          )}
+
+          <div className='planningTabsDiv'>
+            <PlanningTabs
+              documentMesage={documentMesage}
+              fetchData={fetchData}
+              rows={rows}
+              setRows={setRows}
+            // readOnly={isReadonlyPT}
+
+            />
+
+
+          </div>
+
+
+
+
+
+          <Dialog open={isModelOpenSubmit} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
+            <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width: '400px', height: '250' }}>Confirm Change</DialogTitle>
             <DialogContent>
               <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-                Do you want to change the planning?
+                Do you want to submit ?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+              <Button variant='contained' onClick={handleModalCancelSubmit} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
                 No
               </Button>
-              <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+              <Button variant='contained' onClick={handleModelConfirmSubmit} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
                 Yes
               </Button>
             </DialogActions>
           </Dialog>
         </div>
-        <div className='SaveAndCloseButtonCI'>
-          <Button variant='contained'
-            sx={{ backgroundColor: '#FF5E00', width: '140px', height: '30px' , fontSize: 'small'}}
-            onClick={handleSaveAndClose}
-          >Save & Close</Button>
-        </div>
-
-      <div className='AssignmentStage'>
-        {role === "SrCreditReviewer" && asmtAction === "Approve" && (
-          <AssignmentStage
-            data={data}
-            selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
-          // readOnly={isReadonlyAS}
-          />)}
-
-      </div>
-      <div className='planningTabsDiv'>
-        <PlanningTabs
-          documentMesage={documentMesage}
-          fetchData={fetchData}
-          rows={rows}
-          setRows={setRows}
-        // readOnly={isReadonlyPT}
-
-        />
-      </div>
-      <div className='planningTabsDiv'>
-        <FieldWorkStage
-        />
-      </div>
-      <div className='planningTabsDiv' >
-        <ResponseAndRemediationStage />
-      </div>
-      <Dialog open={isModelOpenSubmit} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
-        <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width: '400px', height: '250' }}>Confirm Change</DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-            Do you want to submit ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant='contained' onClick={handleModalCancelSubmit} sx={{backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-            No
-          </Button>
-          <Button variant='contained' onClick={handleModelConfirmSubmit} sx={{backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-      </div>
       </div>
     </div>
 

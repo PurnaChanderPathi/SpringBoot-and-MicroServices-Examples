@@ -11,4 +11,5 @@ public class AdminConfig {
     private String groupName;
     private String division;
         private Date createOn;
+        private String Spoc;
 }

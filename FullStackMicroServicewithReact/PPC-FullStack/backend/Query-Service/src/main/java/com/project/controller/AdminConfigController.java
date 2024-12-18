@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/adminConfig")
@@ -52,6 +50,26 @@ public class AdminConfigController {
             response.put("status",HttpStatus.NOT_FOUND.value());
             response.put("message","Failed To Fetch Divisions");
             log.error("Failed To Fetch Divisions");
+        }
+        return response;
+    }
+
+    @GetMapping("/getSpocs/{division}")
+    public Map<String,Object> getSpocs(@PathVariable String division){
+        log.info("Entered getSpocs");
+        Map<String,Object> response = new HashMap<>();
+        List<String> result = adminConfigService.getSpocs(division);
+        if(!result.isEmpty()){
+            List<String> spocList = Arrays.asList(result.get(0).split(","));
+            Collections.reverse(spocList);
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","Spocs Fetched Successfully...!");
+            log.info("Spocs Fetched Successfully...!");
+            response.put("result",spocList);
+        }else {
+            response.put("status",HttpStatus.NOT_FOUND.value());
+            response.put("message","Failed To Fetch Spocs");
+            log.error("Failed To Fetch Spocs");
         }
         return response;
     }

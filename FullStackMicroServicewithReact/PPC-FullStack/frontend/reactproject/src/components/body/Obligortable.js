@@ -22,15 +22,15 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedChildReviewId, setSelectedChildReviewId] = useState(null);
     const [isObligorOpen, setIsObligorOpen] = useState(false);
-    const [obligorId, setObligorId] = useState(null);
+    const [childReviewId, setChildReviewId] = useState(null);
 
     const handleObligorCancel = () => {
         setIsObligorOpen(false);
     }
 
     const handleObligorConfirm = () => {
-        if (obligorId) {
-            handleDelete(obligorId);
+        if (childReviewId) {
+            handleDelete(childReviewId);
         }
         setIsObligorOpen(false);
     }
@@ -208,7 +208,7 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                                     </Button></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>
                                     <Button onClick={() => {
-                                        setObligorId(row.obligorId);
+                                        setChildReviewId(row.childReviewId);
                                         setIsObligorOpen(true);
                                         // handleDelete(row.obligorId)
                                     }}>
