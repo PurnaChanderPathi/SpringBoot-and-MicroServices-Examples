@@ -12,8 +12,10 @@ import {
   Button,
   Typography,
 } from '@mui/material';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
-export default function MultiSearchTable({ searchMultiParams }) {
+export default function MultiSearchTable({ searchMultiParams,setRowData }) {
   console.log("searchMultiParams :", searchMultiParams);
   const [rows, setRows] = React.useState([]);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -21,7 +23,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
   const [totalPages, setTotalPages] = React.useState(1);
   const ApiToken = localStorage.getItem("authToken");
 
-  // Fetch data based on searchParams when the searchMultiParams changes
+
   React.useEffect(() => {
     if (Object.values(searchMultiParams).every(val => !val)) {
         setRows([]);
@@ -30,10 +32,30 @@ export default function MultiSearchTable({ searchMultiParams }) {
       return; 
     }
 
+      const showToast = (message) => {
+        Swal.fire({
+          icon: 'error',
+          // title: 'Oops...',
+          text: message,
+          position: 'bottom-left',
+          toast: true,
+          timer: 5000,
+          showConfirmButton: false,
+          didClose: () => Swal.close(),
+          customClass: {
+            popup: 'swal-toast-popup',
+          },
+          background: 'red',
+          color: 'white',
+          height: '10%'
+        });
+      };
+
+    
+
     const fetchData = async () => {
       let url = 'http://localhost:9195/api/query/search?'; 
 
-      // Build the query string based on the provided searchParams
       const { groupName, division, reviewId, fromDate, toDate } = searchMultiParams;
       const queryParams = [];
 
@@ -58,22 +80,39 @@ export default function MultiSearchTable({ searchMultiParams }) {
       }
 
       try {
-        const response = await fetch(url, {
-            method: "GET",
+        const response = await axios.get(url, {
             headers : {
                 'Authorization': `Bearer ${ApiToken}`,
                 'Content-Type': 'application/json',
             }
 
         });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+        if(response.data.status === 200){
+          const data = response.data.result || [];
+          console.log("Multi Search Response :",data);   
+          if(data.length === 0){
+            setRows([]);
+            setTotalPages(0);  
+            showToast("Empty Data");
+          }else{
+            setRows(data);
+            setTotalPages(Math.ceil(data.length / rowsPerPage));
+          }  
+          if(data.length > 0){
+            setRowData(true);
+          } else{
+            setRowData(false);
+          }
         }
-        const data = await response.json();
-        setRows(data);
-        setTotalPages(Math.ceil(data.length / rowsPerPage));
+        else if (response.data.status === 404){
+          setRows('');
+          setTotalPages(0);  
+          showToast("No Data Found");
+        }
+
       } catch (error) {
         console.error('Fetch error:', error);
+        
       }
     };
 
@@ -99,8 +138,11 @@ export default function MultiSearchTable({ searchMultiParams }) {
     }
   };
 
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const displayedRows = rows.slice(startIndex, startIndex + rowsPerPage);
+   const startIndex = (currentPage - 1) * rowsPerPage;
+   const displayedRows = rows.slice(startIndex, startIndex + rowsPerPage);
+  // Safely check that displayedRows is an array before calling .map()
+const rowsToDisplay = Array.isArray(displayedRows) ? displayedRows : [];
+
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -155,7 +197,7 @@ export default function MultiSearchTable({ searchMultiParams }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedRows.map((row) => (
+            {rowsToDisplay.map((row) => (
               <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
                 <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                   {row.reviewId}

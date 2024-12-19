@@ -48,6 +48,7 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [docFileId, setDocFileId] = React.useState(null);
   const [docReviewId, setDocReviewId] = useState(null);
+  const role = localStorage.getItem('role');
 
   const handleModalCancel = () => {
     setIsModalOpen(false);
@@ -156,17 +157,24 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
   };
 
   const showToast = (message) => {
-    toast.error(message, {
-      position: "bottom-left",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'red',
+      color: 'white',
+      height: '10%'
     });
   };
+
 
   // const handleDelete = () => {
   //     fetchData(reviewId);
@@ -551,24 +559,29 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
                           align="right"
                           sx={{ color: "black", border: "1px solid #B2BEB5" }}
                         >
-                          <Button
-                            onClick={
-                              () => {
-                                setDocFileId(row.fileId);
-                                setDocReviewId(row.reviewId);
-                                setIsModalOpen(true);
-                              }
-                              // deleteFile(row.fileId, row.reviewId)
-                            }
-                            disabled={readOnly}
-                          >
-                            <Tooltip title="Delete" disabled={readOnly}>
-                              <DeleteOutlineIcon
-                                sx={{ color: "#FF5E00" }}
+                          {
+                            (role === "SrCreditReviewer") ? (
+                              <Button
+                                onClick={
+                                  () => {
+                                    setDocFileId(row.fileId);
+                                    setDocReviewId(row.reviewId);
+                                    setIsModalOpen(true);
+                                  }
+                                  // deleteFile(row.fileId, row.reviewId)
+                                }
                                 disabled={readOnly}
-                              />
-                            </Tooltip>
-                          </Button>
+                              >
+                                <Tooltip title="Delete" disabled={readOnly}>
+                                  <DeleteOutlineIcon
+                                    sx={{ color: "#FF5E00" }}
+                                    disabled={readOnly}
+                                  />
+                                </Tooltip>
+                              </Button>
+                            ) : null
+                          }
+
                         </TableCell>
                       </TableRow>
                     ))}

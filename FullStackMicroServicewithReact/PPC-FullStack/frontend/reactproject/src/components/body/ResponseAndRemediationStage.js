@@ -36,11 +36,12 @@ function a11yProps(index) {
 const ResponseAndRemediationStage = () => {
     const [value, setValue] = useState(0);
     const token = localStorage.getItem('authToken');
-    const [reviewId, setReviewId] = useState(null); 
+    const [reviewId, setReviewId] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [rows, setRows] = React.useState([]);
     const [totalPages, setTotalPages] = React.useState(1);
+    const role = localStorage.getItem("role");
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -51,10 +52,10 @@ const ResponseAndRemediationStage = () => {
         console.log("reviewId in ResponseRemediation Stage", storedReviewId);
 
         if (storedReviewId) {
-            setReviewId(storedReviewId);  
+            setReviewId(storedReviewId);
         }
 
-    }, []); 
+    }, []);
     // const dispatch = useDispatch();
 
     // const rows = useSelector((state) => state.Response.rows);
@@ -65,7 +66,7 @@ const ResponseAndRemediationStage = () => {
     //     if (reviewId) {
     //         // dispatch(getResponseRemediationDetailsByReviewId(reviewId,token));
     //         // console.log("ResponseRows", rows);
-            
+
     //          getResponseRemediationDetailsByReviewId(reviewId); 
     //     }
     // }, [reviewId,
@@ -92,7 +93,7 @@ const ResponseAndRemediationStage = () => {
     //             console.log("Response Details Fetched By reviewId",data);
     //             setRows(data);
     //             setTotalPages(Math.ceil(data.length / rowsPerPage));
-            
+
     //         }
     //         else{
     //             console.log(`Failed to Fetch Response Details with reviewId : ${reviewId}`,response.data.message);
@@ -100,10 +101,10 @@ const ResponseAndRemediationStage = () => {
     //             setTotalPages(0);
     //             console.log("Rows after clearing:", rows);
     //         }
-            
+
     //     } catch (error) {
     //         console.log("Error while process Execution",error.message);
-            
+
     //     }
     // }
 
@@ -170,40 +171,45 @@ const ResponseAndRemediationStage = () => {
                             </Tabs>
                         </Box>
                         <CustomTabPanel value={value} index={0} className="CommentsScreenPS">
-                            <div className='DoYouWantToWorkOn'>
-                                <TextField
-                                    label="Do You Want To Work On"
-                                    className='GroupNameText'
-                                    id="GroupName"
-                                    select
+                            {
+                                (role === "CreditReviewer") ? (
+                                    <div className='DoYouWantToWorkOn'>
+                                        <TextField
+                                            label="Do You Want To Work On"
+                                            className='GroupNameText'
+                                            id="GroupName"
+                                            select
 
-                                    sx={{
-                                        width: '300px',
-                                        textAlign: 'center',
-                                        paddingLeft: '10px',
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': {
-                                                borderColor: '#FF5E00;',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: '#FF5E00',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: '#FF5E00',
-                                            },
-                                        },
-                                    }}
-                                >
-                                    <MenuItem value="PlanningCompleted">Work on child reviews</MenuItem>
-                                    <MenuItem value="Planninginprogress">Work on issues</MenuItem>
-                                </TextField>
-                            </div>
+                                            sx={{
+                                                width: '300px',
+                                                textAlign: 'center',
+                                                paddingLeft: '10px',
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': {
+                                                        borderColor: '#FF5E00;',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: '#FF5E00',
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: '#FF5E00',
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            <MenuItem value="PlanningCompleted">Work on child reviews</MenuItem>
+                                            <MenuItem value="Planninginprogress">Work on issues</MenuItem>
+                                        </TextField>
+                                    </div>
+                                ) : null
+                            }
+
                             <div>
                                 <ResponseTable
                                 // rows={rows}
                                 //   setTotalPages={setTotalPages} 
                                 //   totalPages={totalPages}
-                                   />
+                                />
                             </div>
                         </CustomTabPanel>
                     </Box>

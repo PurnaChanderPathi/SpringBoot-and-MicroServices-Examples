@@ -15,6 +15,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { useDispatch } from 'react-redux';
 import { getResponseRemediationDetailsByReviewId } from '../../redux/ResponseRemedaitionSlice';
+import Swal from 'sweetalert2';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -41,7 +42,7 @@ function a11yProps(index) {
     };
 }
 
-const FieldWorkStage = ({ GroupNameToSpoc }) => {
+const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
 
     const [value, setValue] = useState(0);
     const [open, setOpen] = React.useState(false);
@@ -128,22 +129,40 @@ const FieldWorkStage = ({ GroupNameToSpoc }) => {
 
     useEffect(() => {
         if (GroupNameToSpoc) {
+            
             setInput({ GroupNameToSpoc });
         }
     }, [GroupNameToSpoc])
 
-    const showToast = (message) => {
-        toast.error(message, {
-            position: "bottom-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    };
+    useEffect(() => {
+        if(DivisionToSpoc){ 
+            console.log("Division in FWS :",DivisionToSpoc);
+            
+            setInput(prevInput => ({
+                ...prevInput, Division: DivisionToSpoc
+            }))
+        }        
+    },[DivisionToSpoc])
+
+  const showToast = (message) => {
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'red',
+      color: 'white',
+      height: '10%'
+    });
+  };
+
 
     const handleUploadobligorDocument = () => {
         handleDocumentUpload();

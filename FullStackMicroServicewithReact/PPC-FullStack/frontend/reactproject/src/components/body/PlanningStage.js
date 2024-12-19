@@ -42,14 +42,16 @@ function a11yProps(index) {
     };
 }
 
-export default function PlanningStage({ documentMesage,fetchData,rows,setRows }) {
-    const [value, setValue] = useState(0); 
+export default function PlanningStage({ documentMesage, fetchData, rows, setRows }) {
+    const [value, setValue] = useState(0);
     const [comment, setComment] = useState('');
     const [theme, setTheme] = useState('snow');
     const [buttonClicked, setButtonClicked] = useState(false);
+    const role = localStorage.getItem('role');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        console.log("Current Tab Value: ", value);
     };
 
     const handleEditorChange = (value) => {
@@ -66,20 +68,20 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
         const plainTextComment = stripHtmlTags(comment);
         console.log("Plain text comment before saving:", plainTextComment);
 
-        if (!plainTextComment.trim()) { 
+        if (!plainTextComment.trim()) {
             alert("Please enter a comment before submitting.");
             return;
         }
 
         try {
             const reviewId = localStorage.getItem("reviewId");
-            console.log("LSreviewId",reviewId);
+            console.log("LSreviewId", reviewId);
 
             const username = localStorage.getItem("username");
-            console.log("LSusername",username);
+            console.log("LSusername", username);
 
             const ApiToken = localStorage.getItem('authToken');
-            console.log("ApiToken",ApiToken);
+            console.log("ApiToken", ApiToken);
 
             if (!ApiToken) {
                 alert('Authentication token not found');
@@ -88,12 +90,12 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
 
             const data = {
                 viewComment: plainTextComment,
-                reviewId : reviewId,
-                commentedBy : username
+                reviewId: reviewId,
+                commentedBy: username
             };
 
             const response = await axios.post('http://localhost:9195/api/comment/saveComment', data, {
-                headers : {
+                headers: {
                     'Authorization': `Bearer ${ApiToken}`,
                 }
             });
@@ -120,7 +122,7 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                         padding: '10px',
                         height: '20px',
                         fontSize: '18px',
-                        border: '1px solid #B2BEB5' ,
+                        border: '1px solid #B2BEB5',
                         borderRadius: '5px',
                         '& .MuiAccordionSummary-content': {
                             backgroundColor: 'transparent',
@@ -133,19 +135,55 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                     id="panel1-header"
                 >
                     <Typography
-                     sx={{fontWeight: 'bold'}}>
-                               <span style={{ textDecoration: 'underline',
-                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
-                               textUnderlineOffset: '4px'  }} 
-                               className='underlineText'>Addi</span>onal System Info
-                            </Typography>
+                        sx={{ fontWeight: 'bold' }}>
+                        <span style={{
+                            textDecoration: 'underline',
+                            textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                            textUnderlineOffset: '4px'
+                        }}
+                            className='underlineText'>Addi</span>onal System Info
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{ width: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" indicatorColor="none">
+                            <Tabs
+                                value={value}
+                                onChange={handleChange}
+                                aria-label="basic tabs example"
+                                indicatorColor="none">
+                                {
+                                    ((role !== "CreditReviewer") && (role !== "SPOC")) &&
+                                    (
+                                        <Tab
+                                            label="COMMENTS"
+                                            {...a11yProps(1)}
+                                            sx={{
+                                                bgcolor: value === 1 ? 'transparent' : 'transparent',
+                                                color: value === 1 ? 'black' : 'black',
+                                                borderTopLeftRadius: 5,
+                                                borderTopRightRadius: 5,
+                                                marginLeft: 1.5,
+                                                textTransform: 'none',
+                                                position: 'relative',
+                                                padding: '4px 12px',
+                                                fontSize: '14px',
+                                                '&:hover': {
+                                                    bgcolor: value === 1 ? 'transparent' : 'transparent',
+                                                    color: value === 1 ? 'black' : 'black',
+                                                },
+                                                '&.Mui-selected': {
+                                                    bgcolor: 'transparent',
+                                                    color: 'black',
+                                                    borderBottom: '2px solid #FF5E00',
+                                                },
+                                            }}
+                                        />
+                                    )
+                                }
+
                                 <Tab
-                                    label="COMMENTS"
+                                    label="AUDIT TRIAL"
                                     {...a11yProps(0)}
                                     sx={{
                                         bgcolor: value === 0 ? 'transparent' : 'transparent',
@@ -168,95 +206,89 @@ export default function PlanningStage({ documentMesage,fetchData,rows,setRows })
                                         },
                                     }}
                                 />
-                                <Tab
-                                    label="AUDIT TRIAL"
-                                    {...a11yProps(1)}
-                                    sx={{
-                                        bgcolor: value === 1 ? 'transparent' : 'transparent',
-                                        color: value === 1 ? 'black' : 'black',
-                                        borderTopLeftRadius: 5,
-                                        borderTopRightRadius: 5,
-                                        marginLeft: 1.5,
-                                        textTransform: 'none',
-                                        position: 'relative',
-                                        padding: '4px 12px',
-                                        fontSize: '14px', 
-                                        '&:hover': {
-                                            bgcolor: value === 1 ? 'transparent' : 'transparent',
-                                            color: value === 1 ? 'black' : 'black',
-                                        },
-                                        '&.Mui-selected': {
-                                            bgcolor: 'transparent',
-                                            color: 'black',
-                                            borderBottom: '2px solid #FF5E00',
-                                        },
-                                    }}
-                                />
-                                <Tab
-                                    label="DOCUMENTS"
-                                    {...a11yProps(2)}
-                                    sx={{
-                                        bgcolor: value === 2 ? 'transparent' : 'transparent',
-                                        color: value === 2 ? 'black' : 'black',
-                                        borderTopLeftRadius: 5,
-                                        borderTopRightRadius: 5,
-                                        marginLeft: 1.5,
-                                        textTransform: 'none',
-                                        position: 'relative',
-                                        padding: '4px 12px',
-                                        fontSize: '14px',
-                                        '&:hover': {
-                                            bgcolor: value === 2 ? 'transparent' : 'transparent',
-                                            color: value === 2 ? 'black' : 'black',
-                                        },
-                                        '&.Mui-selected': {
-                                            bgcolor: 'transparent',
-                                            color: 'black',
-                                            borderBottom: '2px solid #FF5E00',
-                                        },
-                                    }}
-                                />
+                                {
+                                    ((role !== "CreditReviewer") && (role !== "SPOC")) &&
+                                        (
+                                            <Tab
+                                                label="DOCUMENTS"
+                                                {...a11yProps(2)}
+                                                sx={{
+                                                    bgcolor: value === 2 ? 'transparent' : 'transparent',
+                                                    color: value === 2 ? 'black' : 'black',
+                                                    borderTopLeftRadius: 5,
+                                                    borderTopRightRadius: 5,
+                                                    marginLeft: 1.5,
+                                                    textTransform: 'none',
+                                                    position: 'relative',
+                                                    padding: '4px 12px',
+                                                    fontSize: '14px',
+                                                    '&:hover': {
+                                                        bgcolor: value === 2 ? 'transparent' : 'transparent',
+                                                        color: value === 2 ? 'black' : 'black',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        bgcolor: 'transparent',
+                                                        color: 'black',
+                                                        borderBottom: '2px solid #FF5E00',
+                                                    },
+                                                }}
+                                            />
+                                        )
+                                }
+
                             </Tabs>
                         </Box>
-                        <CustomTabPanel value={value} index={0} className="CommentsScreenPS">
-                            <div className="CommentsScreen">
-                                <div className='EnterCommentPS'>
-                                    Enter Comment
-                                </div>
-                                <div className='ReactQuillScreenPS'>
-                                    <ReactQuill
-                                        className='ReactQuillPS'
-                                        theme={theme}
-                                        onChange={handleEditorChange}
-                                        value={comment}
-                                        placeholder="Write your comment here..."
-                                    />
-                                    <button
-                                        className='ButtonAddPS'
-                                        onClick={handleSaveComment}
-                                    >
-                                        Add
-                                    </button>
-                                </div>
-                                <div className='AddButtonPS'>
-                                <PlanningStageTable buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} />
-                                </div>
-                            </div>
-                        </CustomTabPanel>
-                        <CustomTabPanel value={value} index={1} style={{ border: '1px solid #B2BEB5', borderRadius:'5px' }}>
-                           <AuditTrail />
-                        </CustomTabPanel>
-                        <CustomTabPanel value={value} index={2} style={{  border: '1px solid #B2BEB5', borderRadius:'5px' }}>
-                            <Document documentMesage={documentMesage}
-                             fetchData={fetchData }
-                             rows={rows}
-                             setRows={setRows} />
-                        </CustomTabPanel>
+                        {
+                            ((role !== "CreditReviewer") && (role !== "SPOC") &&
+                                (
+                                    <CustomTabPanel value={value} index={1} className="CommentsScreenPS">
+                                        <div className="CommentsScreen">
+                                            <div className='EnterCommentPS'>
+                                                Enter Comment
+                                            </div>
+                                            <div className='ReactQuillScreenPS'>
+                                                <ReactQuill
+                                                    className='ReactQuillPS'
+                                                    theme={theme}
+                                                    onChange={handleEditorChange}
+                                                    value={comment}
+                                                    placeholder="Write your comment here..."
+                                                />
+                                                <button
+                                                    className='ButtonAddPS'
+                                                    onClick={handleSaveComment}
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
+                                            <div className='AddButtonPS'>
+                                                <PlanningStageTable buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} />
+                                            </div>
+                                        </div>
+                                    </CustomTabPanel>
+                                ))}
+
+                        {value === 0 && (
+                            <CustomTabPanel value={value} index={0} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
+                                <AuditTrail />
+                            </CustomTabPanel>   
+                        )}
+
+                        {
+                            ((role !== "CreditReviewer") && (role !== "SPOC")) &&
+                                (
+                                    <CustomTabPanel value={value} index={2} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
+                                        <Document documentMesage={documentMesage}
+                                            fetchData={fetchData}
+                                            rows={rows}
+                                            setRows={setRows} />
+                                    </CustomTabPanel>
+                                )}
                     </Box>
                 </AccordionDetails>
             </Accordion>
             <div className='planningPS'>
-                    {/* <Label>Hello </Label> */}
+                {/* <Label>Hello </Label> */}
             </div>
         </div>
     );

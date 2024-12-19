@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import SPOC from './SPOC';
 
 
+
 const CaseInformation = () => {
   const dispatch = useDispatch();
   const { reviewId } = useParams();
@@ -37,8 +38,11 @@ const CaseInformation = () => {
   const [documentMesage, setDocumentMessage] = useState('');
   const [documentExist, setDocumentExist] = useState(false);
   const [actionOptions, setActionOptions] = useState([]);
-  const { isActive } = useSelector((state) => state.Score.isActive);
+  const isActive = useSelector((state) => state.Score.isActive);
   const [documentPresent, setDocumentPresent] = useState(false);
+  const isEmpty = useSelector((state) => state.Score.isEmpty);
+  const isChildReviewSelected = useSelector((state) => state.Score.isChildReviewSelected);
+
 
   // const [role, setRole] = useState('');
   const [isReadonlyPT, setIsReadOnlyPT] = useState(false);
@@ -56,8 +60,9 @@ const CaseInformation = () => {
 
 
   useEffect(() => {
-    console.log("selectedUdser", selectedUser);
-
+    console.log("isEmpty in CI",isEmpty);
+    console.log("isActive in CI",isActive);
+    console.log("isSelected Radio button",isChildReviewSelected);
   })
 
   useEffect(() => {
@@ -185,20 +190,20 @@ const CaseInformation = () => {
 
 
 
-  const showToast = (message) => {
-    toast.error(message, {
-      position: "bottom-left",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  };
+  // const showToast = (message) => {
+  //   toast.error(message, {
+  //     position: "bottom-left",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //     theme: "light",
+  //   });
+  // };
 
-  const showToastDocument = (message) => {
+  const showToast = (message) => {
     Swal.fire({
       icon: 'error',
       // title: 'Oops...',
@@ -211,25 +216,44 @@ const CaseInformation = () => {
       customClass: {
         popup: 'swal-toast-popup',
       },
-      background: 'white',
-      color: '#FF5E00',
+      background: 'red',
+      color: 'white',
+      height: '10%'
+    });
+  };
+
+    const showToastSuccess = (message) => {
+    Swal.fire({
+      icon: 'success',
+      // title: 'Oops...',
+      text: message,
+      position: 'top-right',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'Green',
+      color: 'white',
     });
   };
 
 
-  const showToastSuccess = (message) => {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      // className: "custom-toast",
-    })
-  }
+  // const showToastSuccess = (message) => {
+  //   toast.success(message, {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //     theme: "light",
+  //     // className: "custom-toast",
+  //   })
+  // }
 
 
 
@@ -247,8 +271,7 @@ const CaseInformation = () => {
 
       if (!documentPresent) {
         setDocumentMessage("Please add a document");
-        // alert("Please add a Document");
-        showToastDocument("Please add a document");
+        showToast("Please add a document");
       } else {
 
         if (action === "AssigntoCreditReviewer") {
@@ -259,7 +282,18 @@ const CaseInformation = () => {
             setDocumentMessage('');
             setIsModelOpenSubmit(true);
           }
-        } else {
+        }
+        else if(action === "SubmittoSPOC"){
+          console.log("isActive in CI",isActive);
+          
+          if(isActive === false || isEmpty === false || isChildReviewSelected === false ){
+            showToast("Add Qurty before Submit");
+          }else{
+            setDocumentMessage('');
+            setIsModelOpenSubmit(true);
+          }
+        }
+         else {
           setDocumentMessage('');
           setIsModelOpenSubmit(true);
         }
@@ -349,8 +383,8 @@ const CaseInformation = () => {
         }
       })
       if (response.status === 200) {
-        console.log("Data updated Successfully");
-        showToastSuccess(response.data.message);
+        console.log("Submited Successfully");
+        showToastSuccess("SuccessFully Submitted..!");
         dispatch(setState(true));
         localStorage.setItem('isActive', true);
 
@@ -543,6 +577,11 @@ const CaseInformation = () => {
 
           setActionOptions([
             { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
+          ]);
+        }else if(data.role === "CreditReviewer" && data.planning === "PlanningCompleted"){
+          setActionOptions([
+            {value: "SubmittoSPOC", label: "Submit to SPOC"},
+            {value: "SubmittoSrCreditReviewer", label : "Submit to SrCreditReviewer"}
           ]);
         }
 
@@ -801,16 +840,18 @@ const CaseInformation = () => {
 
 
           {
-            (role === "SrCreditReviewer" && asmtAction === "Approve") || role === "CreditReviewer" ? (
+            (role === "SrCreditReviewer" && planning === "PlanningCompleted") || role === "CreditReviewer" ? (
               <div className='planningTabsDiv'>
-                <FieldWorkStage GroupNameToSpoc={GroupNameToSpoc}
+                <FieldWorkStage 
+                DivisionToSpoc={DivisionToSpoc}
+                GroupNameToSpoc={GroupNameToSpoc}
                 />
               </div>
             ) : null
           }
 
           {
-            (role === "SrCreditReviewer" && asmtAction === "Approve") || role === "CreditReviewer" ? (
+            (role === "SrCreditReviewer" && planning === "PlanningCompleted") || role === "CreditReviewer" ? (
               <div className='planningTabsDiv'>
                 <ResponseAndRemediationStage />
               </div>
@@ -819,14 +860,16 @@ const CaseInformation = () => {
 
 {
             (role === "CreditReviewer" ) ? (
-            <div className='planningTabsDiv' >
+            <div>
               <SPOC GroupNameToSpoc={GroupNameToSpoc}
-                DivisionToSpoc={DivisionToSpoc} />
+                DivisionToSpoc={DivisionToSpoc} 
+                selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}/>
             </div>
             ) : null
           }
 
-          {role === "SrCreditReviewer" && asmtAction === "Approve" && (
+          {role === "SrCreditReviewer" && planning === "PlanningCompleted" && (
             <div className='planningTabsDiv'>
               <TextField
                 label="Field Work"

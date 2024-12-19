@@ -4,8 +4,9 @@ import { CircularProgress, MenuItem, TextField, Typography } from '@mui/material
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
+import Swal from 'sweetalert2';
 
-const PPCDetails = ({ handleClose, showToast }) => {
+const PPCDetails = ({ handleClose }) => {
   const [reviewId, setReviewId] = React.useState('');
   const [groupName, setGroupName] = React.useState('');
   const [division, setDivision] = React.useState('');
@@ -125,24 +126,31 @@ const PPCDetails = ({ handleClose, showToast }) => {
 
   };
 
-  const showToastmessage = (message) => {
-    toast.error(message, {
-      position: "bottom-left",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
+  const showToast = (message) => {
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'red',
+      color: 'white',
+      height: '10%'
     });
   };
+
 
   const insertData = async () => {
     console.log("createdBy", createdBy);
 
     if (inputs.groupName === "" || inputs.division === "") {
-      showToastmessage("select GroupName and Division")
+      showToast("select GroupName and Division");
     } else {
       try {
         const response = await axios.post('http://localhost:9195/api/action/save', inputs, {

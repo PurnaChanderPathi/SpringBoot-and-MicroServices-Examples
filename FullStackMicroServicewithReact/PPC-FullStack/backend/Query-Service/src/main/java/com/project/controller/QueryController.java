@@ -54,26 +54,74 @@ public class QueryController {
     }
 
 
+//    @GetMapping("/query-details")
+//    public ResponseEntity<List<QueryDetails>> getQueryDetails(
+//            @RequestParam(required = false) String reviewId) {
+//        List<QueryDetails> queryDetails = queryDetailsService.getQueryDetails( reviewId);
+//        return ResponseEntity.ok(queryDetails);
+//    }
+
     @GetMapping("/query-details")
-    public ResponseEntity<List<QueryDetails>> getQueryDetails(
-            @RequestParam(required = false) String reviewId) {
-        List<QueryDetails> queryDetails = queryDetailsService.getQueryDetails( reviewId);
-        return ResponseEntity.ok(queryDetails);
+    public Map<String,Object> getQueryDetails(
+            @RequestParam(value = "reviewId", required = false) String reviewId){
+        log.info("Enter search Service with reviewId :{}", reviewId);
+        Map<String,Object> response = new HashMap<>();
+        List<QueryDetails> result = queryDetailsService.getQueryDetails( reviewId);
+        if(result.isEmpty()){
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("message", "Query Details not found..!");
+            log.warn("Query Details not found in Search Service");
+        }else{
+            response.put("status", HttpStatus.OK.value() );
+            response.put("message", "Query Details Search Fetched Successfully...!");
+            response.put("result",result);
+            log.info("Query Details  Fetched Successfully...! : {}",result);
+        }
+        return response;
     }
 
+//    @GetMapping("/search")
+//    public List<QueryDetails> fetchQueryDetails(
+//            @RequestParam(value = "groupName", required = false) String groupName,
+//            @RequestParam(value = "division", required = false) String division,
+//            @RequestParam(value = "reviewId", required = false) String reviewId,
+//            @RequestParam(value = "fromDate", required = false) String fromDate,
+//            @RequestParam(value = "toDate", required = false) String toDate) {
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        LocalDate from = (fromDate != null) ? LocalDate.parse(fromDate, formatter) : null;
+//        LocalDate to = (toDate != null) ? LocalDate.parse(toDate, formatter) : null;
+//
+//        return queryDetailsService.fetchQueryDetails(groupName, division, reviewId, from, to);
+//    }
+
     @GetMapping("/search")
-    public List<QueryDetails> fetchQueryDetails(
+    public Map<String,Object> fetchQueryDetails(
             @RequestParam(value = "groupName", required = false) String groupName,
             @RequestParam(value = "division", required = false) String division,
             @RequestParam(value = "reviewId", required = false) String reviewId,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
+        log.info("Enter search Service with reviewId :{}groupName :{}division :{}froDate :{}toDate :{}", reviewId, groupName, division, fromDate, toDate);
+        Map<String,Object> response = new HashMap<>();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate from = (fromDate != null) ? LocalDate.parse(fromDate, formatter) : null;
         LocalDate to = (toDate != null) ? LocalDate.parse(toDate, formatter) : null;
 
-        return queryDetailsService.fetchQueryDetails(groupName, division, reviewId, from, to);
+        List<QueryDetails> result = queryDetailsService.fetchQueryDetails(groupName, division, reviewId, from, to);
+
+        if(result.isEmpty()){
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("message", "Query Details not found..!");
+            log.warn("Query Details Search not found in Search Service");
+        }else {
+            response.put("status", HttpStatus.OK.value() );
+            response.put("message", "Query Details Search Fetched Successfully...!");
+            response.put("result",result);
+            log.info("Query Details Search Fetched Successfully...! : {}",result);
+        }
+    return response;
     }
 
 //    @GetMapping("/getByRoleAndCreatedBy")

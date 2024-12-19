@@ -16,10 +16,11 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CircularIndeterminate from '../loginScreen/loadingScreen';
+import Swal from 'sweetalert2';
 
 
 
-export default function BasicTable({ searchParams, buttonClicked, setButtonClicked }) {
+export default function BasicTable({ searchParams, buttonClicked, setButtonClicked,isRows,setIsRows }) {
 
   console.log("searchParams12", searchParams);
 
@@ -30,6 +31,14 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
   const ApiToken = localStorage.getItem("authToken");
   const [isActive, setIsActive] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if(isRows === true){
+      setRows([]);
+      setTotalPages(0);
+    }
+    setIsRows(false);
+  })
 
 
   React.useEffect(() => {
@@ -76,6 +85,25 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
     fetchTableData();
   }, [])
 
+    const showToast = (message) => {
+      Swal.fire({
+        icon: 'error',
+        // title: 'Oops...',
+        text: message,
+        position: 'bottom-left',
+        toast: true,
+        timer: 5000,
+        showConfirmButton: false,
+        didClose: () => Swal.close(),
+        customClass: {
+          popup: 'swal-toast-popup',
+        },
+        background: 'red',
+        color: 'white',
+        height: '10%'
+      });
+    };
+
   const fetchTableData = async () => {
     let role = '';
     let createdBy = '';
@@ -118,6 +146,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
 
       setRows(reversedData);
       setTotalPages(Math.ceil(data.length / rowsPerPage));
+
     } catch (error) {
       console.error('Axios fetch error:', error);
 
@@ -138,7 +167,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
 
     const { reviewId } = searchParams;
     console.log("reviewId", reviewId);
-    // console.log("childReviewId",childReviewId);
+
 
     if (reviewId !== "") {
       url = 'http://localhost:9195/api/query/query-details';
@@ -161,13 +190,26 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
             'Content-Type': 'application/json',
           }
         });
-
-        const data = response.data;
-        setRows(data);
-        setTotalPages(Math.ceil(data.length / rowsPerPage));
-
+        if(response.data.status === 200){
+          const data = response.data.result || [];
+          console.log("Search Response:", data);
+          if (data.length === 0) {
+            setRows([]);
+            setTotalPages(0);  
+            showToast("Empty Data");
+          } else {
+            setRows(data);
+            setTotalPages(Math.ceil(data.length / rowsPerPage));
+          }
+        }
+        else if(response.data.status === 404){
+          setRows([]);
+          setTotalPages(0);
+          showToast("No data found");
+        }
       } catch (error) {
         console.error('Axios fetch error:', error);
+        showToast("An error occurred while fetching data");
       }
     } else {
       console.log("ReviewId and childReviewId Both are empty");

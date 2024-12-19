@@ -26,6 +26,7 @@ export default function PlanningStageTable({ buttonClicked, setButtonClicked }) 
   const token = localStorage.getItem('authToken');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [viewComment, setViewComment] = React.useState(null);
+  const role = localStorage.getItem('role');
 
   const handleModalCancel = () => {
     setIsModalOpen(false);
@@ -105,7 +106,7 @@ export default function PlanningStageTable({ buttonClicked, setButtonClicked }) 
               <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Commented By</TableCell>
               <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Commented On</TableCell>
               <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>View Comment</TableCell>
-              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Actions</TableCell> {/* Action column for delete */}
+              <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Actions</TableCell> 
             </TableRow>
           </TableHead>
           <TableBody>
@@ -118,25 +119,22 @@ export default function PlanningStageTable({ buttonClicked, setButtonClicked }) 
                 <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{new Date(row.commentedOn).toLocaleString()}</TableCell>
                 <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.viewComment}</TableCell>
                 <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>
-                  <Button
-                    onClick={() => {
-                      setViewComment(row.viewComment);
-                      setIsModalOpen(true);
-                    }
-                      // handleDeleteComment(row.viewComment)
-                    }
-                  // variant="contained"
-                  // sx={{
-                  //   backgroundColor: 'red',
-                  //   textTransform: 'none',
-                  //   color: 'white',
-                  //   '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' },
-                  // }}
-                  >
-                    <Tooltip title="Delete">
-                      <DeleteOutlineIcon sx={{ color: '#FF5E00' }} />
-                    </Tooltip>
-                  </Button>
+                  {
+                    (role === "SrCreditReviewer") ? (
+                      <Button
+                      onClick={() => {
+                        setViewComment(row.viewComment);
+                        setIsModalOpen(true);
+                      }
+                      }
+                    >
+                      <Tooltip title="Delete">
+                        <DeleteOutlineIcon sx={{ color: '#FF5E00' }} />
+                      </Tooltip>
+                    </Button>
+                    ) : null
+                  }
+
                 </TableCell>
               </TableRow>
             ))}

@@ -13,21 +13,19 @@ import CloseIcon from '@mui/icons-material/Close';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import ResponseQueryTable from './ResponseQueryTable';
 import { toast, ToastContainer } from 'react-toastify';
+import Swal from 'sweetalert2';
+import { getResponseQueryFetchDetails } from '../../redux/ResponseQueryFetchDetails';
+import { setSelectedChildReview } from '../../redux/scoreSlice';
 
-const ResponseTable = (
-    // {rows,setTotalPages,totalPages}
-) => {
+const ResponseTable = () => {
 
-    // const [rows, setRows] = React.useState([]);
-    // const [totalPages, setTotalPages] = React.useState(1);
-    // const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const dispatch = useDispatch();
     const { rows, totalPages, rowsPerPage, error, loading } = useSelector((state) => state.Response);
     const [currentPage, setCurrentPage] = React.useState(1);
     const reviewId = localStorage.getItem("reviewId");
     const token = localStorage.getItem("authToken");
-    const username = localStorage.getItem("username");
+    const createdBy = localStorage.getItem("username");
     const childReviewId = localStorage.getItem("childReviewId");
     const [selectedReviewId, setSelectedReviewId] = useState(null);
     const Token = localStorage.getItem('authToken');
@@ -36,7 +34,38 @@ const ResponseTable = (
     const [openResponseQuery, setOpenResponseQuery] = useState(false);
     const [isInserted,setIsInserted] = useState(false);
 
-    const handleOpenResponseQuery = () => setOpenResponseQuery(true);
+      const showToast = (message) => {
+        Swal.fire({
+          icon: 'error',
+          // title: 'Oops...',
+          text: message,
+          position: 'bottom-left',
+          toast: true,
+          timer: 5000,
+          showConfirmButton: false,
+          didClose: () => Swal.close(),
+          customClass: {
+            popup: 'swal-toast-popup',
+          },
+          background: 'red',
+          color: 'white'
+        });
+      };
+      const isActive = useSelector((state) => state.Score.isActive);
+      
+      
+
+    const handleOpenResponseQuery = () =>{
+        console.log("isActive in ResponseTable :",isActive);
+        console.log("selectedReviewId :",selectedReviewId);
+        
+        if(selectedReviewId !== null && isActive === true ){            
+            setOpenResponseQuery(true);
+        }else{
+            showToast("Select ChildReviewId & SPOC");
+        }
+
+    } 
     const handleCloseResponseQuery = () => {
         setOpenResponseQuery(false);
         setInput(prevInput => ({
@@ -56,11 +85,14 @@ const ResponseTable = (
             setIsModalOpen(false);
         }
     };
+        const isChildReviewSelected = useSelector((state) => state.Score.isChildReviewSelected);
 
     const handleRadioChange = (childReviewId) => {
         setSelectedReviewId(childReviewId);
         console.log("selectedReviewId", selectedReviewId);
-
+        dispatch(setSelectedChildReview(true));
+        console.log("Selected Child Radio button",isChildReviewSelected);
+        
     };
 
     const [input, setInput] = useState({
@@ -74,34 +106,32 @@ const ResponseTable = (
 
     const ResponseQueryDetailsInsertion = async () => {
 
-            const showToast = (message) => {
-                toast.error(message, {
-                  position: "bottom-left",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-              };
-
-        const ResponseReviewId = localStorage.getItem("reviewId");
-        console.log("ResponseReviewId",ResponseReviewId);
-
+  const showToast = (message) => {
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'red',
+      color: 'white',
+    });
+  };
         if(input.query === ""){
             console.log("Query in ResponseQuery", input.query);
-            // alert("Please Add Query");
+            console.log(`username :${createdBy} , reviewId : ${reviewId} , childReviewId: ${childReviewId}`);
             showToast("Please Add Query");
         }else{
-            setInput(prevInput => ({
-                ...prevInput,
-                reviewId: ResponseReviewId,
-                createdBy: username,
-                childReviewId: childReviewId
-               }));
-                console.log(`ReviewId & token & username & childReviewId at ResponseTanble Review : ${ResponseReviewId} & token : ${Token} & username : ${username} & childReviewId : ${childReviewId}`);
+            setInput(prevInput => ({...prevInput, reviewId : reviewId}));
+            setInput(prevInput => ({...prevInput, createdBy: createdBy}));
+            setInput(prevInput => ({...prevInput, childReviewId: childReviewId}));
+                console.log(`ReviewId & token & username & childReviewId at ResponseTanble Review : ${reviewId} & token : ${Token} & username : ${createdBy} & childReviewId : ${childReviewId}`);
                 console.log("input",input);
                 
                     let url = "http://localhost:9195/api/ActionObligor/ResponseQuery/save";
@@ -127,7 +157,9 @@ const ResponseTable = (
                                 ...prevInput,
                                 query: ''
                                }));
-                               setIsInserted(true);
+                            //    setIsInserted(true);
+                            dispatch(getResponseQueryFetchDetails(childReviewId,Token));
+                            
                         }else{
                             console.log(`Failed to insert Response Query Details with body : ${input}`);
                             setInput(prevInput => ({
@@ -157,9 +189,6 @@ const ResponseTable = (
     }, [dispatch, reviewId, token]);
 
     useEffect(() => {
-        // if(rows.length){
-        //     dispatch(setRowsPerPage(value));
-        // }
         dispatch(setTotalPages(Math.ceil(rows.length / rowsPerPage)));
 
     }, [rows, rowsPerPage, dispatch]);
@@ -195,14 +224,11 @@ const ResponseTable = (
 
     const handleRowsPerPageChange = (event) => {
         const value = Math.max(1, parseInt(event.target.value, 10));
-        // setRowsPerPage(value);
-        // setTotalPages(Math.ceil(rows.length / value));
         dispatch(setRowsPerPage(value));
         setCurrentPage(1);
     };
 
     const startIndex = (currentPage - 1) * rowsPerPage;
-    //   const displayedRows = Array.isArray(rows) ? rows.slice(startIndex, startIndex + rowsPerPage) : [];
     const displayedRows = rows.slice(startIndex, startIndex + rowsPerPage);
 
     const handleNextPage = () => {

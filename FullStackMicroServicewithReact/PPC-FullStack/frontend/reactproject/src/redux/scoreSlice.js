@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     isActive: false,
+    isEmpty: false,
+    isChildReviewSelected : false,
     score: 0,
     userData: {
       name: "",
@@ -27,13 +29,20 @@ const scoreSlice = createSlice({
       setUserData: (state, action) => {
         state.userData = action.payload;
       },
-    }
+      setEmptyState: (state,action) => {
+        state.isEmpty = action.payload;
+      },
+      setSelectedChildReview: (state,action) => {
+        state.isChildReviewSelected = action.payload;
+      }
+    },
+
     
 })
 
 export const {
   // toggle,
-   setState, incrementScore, setUserData} = scoreSlice.actions;
+   setState, incrementScore, setUserData, setEmptyState,setSelectedChildReview} = scoreSlice.actions;
 export default scoreSlice.reducer;
 
 

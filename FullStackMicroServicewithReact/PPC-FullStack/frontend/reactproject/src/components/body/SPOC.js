@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
 import './SPOC.css'
+import { useDispatch, useSelector } from 'react-redux';
+import { setState } from '../../redux/scoreSlice';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -29,7 +31,7 @@ function a11yProps(index) {
     };
 }
 
-const SPOC = ({ GroupNameToSpoc, DivisionToSpoc }) => {
+const SPOC = ({ GroupNameToSpoc, DivisionToSpoc,selectedUser,setSelectedUser }) => {
 
 
 
@@ -45,6 +47,27 @@ const SPOC = ({ GroupNameToSpoc, DivisionToSpoc }) => {
         setValue(newValue);
     };
 
+     const isActive = useSelector((state) => state.Score.isActive);
+     const dispatch = useDispatch();
+
+     useEffect(() => {
+            console.log("isAction in SPOC",isActive);   
+
+            if(selectedGroup !== "" && selectedDivision !== "" && selectedSpoc !== ""){
+                if(!isActive){
+                    dispatch(setState(true));
+                }                
+            }       
+     },[selectedGroup, selectedDivision, selectedSpoc, isActive, dispatch])
+
+     useEffect(() => {
+        if(selectedSpoc){
+            setSelectedUser(selectedSpoc);
+            console.log("SelectedUser in Spoc ",selectedUser);
+            
+        }
+     })
+ 
     useEffect(() => {
         if (GroupNameToSpoc && DivisionToSpoc) {
             setSelectedGroup(GroupNameToSpoc);
@@ -385,7 +408,6 @@ const SPOC = ({ GroupNameToSpoc, DivisionToSpoc }) => {
                 </AccordionDetails>
             </Accordion>
             <div className='planningPS'>
-                {/* <Label>Hello </Label> */}
             </div>
         </div>
     )

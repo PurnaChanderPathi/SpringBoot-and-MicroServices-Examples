@@ -9,6 +9,7 @@ import Header from '../header/Header';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReplayIcon from '@mui/icons-material/Replay';
+import Swal from 'sweetalert2';
 
 const HomePage = () => {
     const [open, setOpen] = React.useState(false);
@@ -24,19 +25,25 @@ const HomePage = () => {
     };
     const [buttonClicked,setButtonClicked] = useState(false);
 
-    const showToast = (message) => {
-        toast.success(message, {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-        setButtonClicked(true);
-    };
+  const showToast = (message) => {
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'red',
+      color: 'white',
+      height: '10%'
+    });
+  };
+
 
     return (
 

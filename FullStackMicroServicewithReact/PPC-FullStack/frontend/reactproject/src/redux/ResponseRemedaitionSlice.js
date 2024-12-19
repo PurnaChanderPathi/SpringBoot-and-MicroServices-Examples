@@ -35,6 +35,7 @@ const ResponseRemedaitionSlice = createSlice({
         const url = `http://localhost:9195/api/QueryObligor/getResponseByReviewId?reviewId=${reviewId}`;
         dispatch(setLoading(true)); 
         
+        
         try {
           const response = await axios.get(url, {
             headers: {

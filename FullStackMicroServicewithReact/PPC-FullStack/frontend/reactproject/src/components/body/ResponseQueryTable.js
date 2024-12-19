@@ -5,118 +5,130 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import axios from 'axios';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useDispatch, useSelector } from 'react-redux';
+import { getResponseQueryFetchDetails } from '../../redux/ResponseQueryFetchDetails';
+import { setRowsPerPage, setTotalPages } from '../../redux/ResponseRemedaitionSlice';
+import { setEmptyState } from '../../redux/scoreSlice';
 
-const ResponseQueryTable = ({isInserted, setIsInserted}) => {
+const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
-       const [rows, setRows] = React.useState([]);
-        const [totalPages, setTotalPages] = React.useState(1);
-        const [rowsPerPage, setRowsPerPage] = React.useState(5);
-        const [currentPage, setCurrentPage] = React.useState(1);
-        const Token = localStorage.getItem('authToken');
-        const childReviewId = localStorage.getItem('childReviewId');
-        const [isResponseQueryOpen, setIsResponseQueryOpen] = useState(false);
-        const [isQuerySequence,setIsQuerySequence] = useState(null);
+    //    const [rows, setRows] = React.useState([]);
+    //     const [totalPages, setTotalPages] = React.useState(1);
+    //     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const Token = localStorage.getItem('authToken');
+    const childReviewId = localStorage.getItem('childReviewId');
+    const [isResponseQueryOpen, setIsResponseQueryOpen] = useState(false);
+    const [isQuerySequence, setIsQuerySequence] = useState(null);
 
-        const handleResponseQueryCancel = () => {
-            setIsResponseQueryOpen(false);
+    const dispatch = useDispatch();
+    const { rows, totalPages, rowsPerPage, error, loading } = useSelector((state) => state.ResponseQuery);
+
+    // useEffect(() => {
+    //     console.log("isEmpty in ResponseQueryTable", isEmpty);
+    //     if(rows.length > 0){
+    //         dispatch(setEmptyState(true));
+    //         console.log("isEmpty in ResponseQueryTable :",isEmpty);
+            
+    //     }
+
+    // }, [isEmpty,rows,dispatch])
+
+    const handleResponseQueryCancel = () => {
+        setIsResponseQueryOpen(false);
+    }
+
+    const handleResponseQueryConfirm = () => {
+        if (isQuerySequence) {
+            handleResponseQueryDelete(isQuerySequence);
         }
+        setIsResponseQueryOpen(false);
+    }
 
-        const handleResponseQueryConfirm = () => {
-                if(isQuerySequence){
-                    handleResponseQueryDelete(isQuerySequence);
-                }
-            setIsResponseQueryOpen(false);
-        }
-
-        useEffect(() => {
-            if(isInserted === true){
-                ResponseQueryFetchDetails();
-            }
-            setIsInserted(false);           
-        },[isInserted])
+    // useEffect(() => {
+    //     if (isInserted === true) {
+    //         getResponseQueryFetchDetails(childReviewId, Token);
+    //     }
+    //     setIsInserted(false);
+    // }, [isInserted])
 
     const startIndex = (currentPage - 1) * rowsPerPage;
     const displayedRows = Array.isArray(rows)
         ? rows.slice(startIndex, startIndex + rowsPerPage)
         : [];
 
-        const handleRowsPerPageChange = (event) => {
-            const value = parseInt(event.target.value, 10);
-            setRowsPerPage(value);
-            setTotalPages(Math.ceil(rows.length / value));
-            setCurrentPage(1);
-        };
+    // const handleRowsPerPageChange = (event) => {
+    //     const value = parseInt(event.target.value, 10);
+    //     setRowsPerPage(value);
+    //     setTotalPages(Math.ceil(rows.length / value));
+    //     setCurrentPage(1);
+    // };
+    const handleRowsPerPageChange = (event) => {
+        const value = Math.max(1, parseInt(event.target.value, 10));
+        // setRowsPerPage(value);
+        // setTotalPages(Math.ceil(rows.length / value));
+        dispatch(setRowsPerPage(value));
+        setCurrentPage(1);
+    };
 
-        const handleNextPage = () => {
-            if (currentPage < totalPages) {
-                setCurrentPage((prev) => prev + 1);
-            }
-        };
-    
-    
-        const handlePreviousPage = () => {
-            if (currentPage > 1) {
-                setCurrentPage((prev) => prev - 1);
-            }
-        };
-
-        useEffect(() => {
-            if(childReviewId){
-                ResponseQueryFetchDetails();
-            }
-        },[childReviewId])
-
-        const ResponseQueryFetchDetails = async () => {
-            
-            console.log("childReviewid at ResponseQueryFetchDetails",childReviewId);
-            
-            let url = `http://localhost:9195/api/QueryObligor/findByChildReviewIdOfResponseQuery/${childReviewId}`;
-
-            try {
-                const response = await axios.get(url,{
-                    headers : {
-                        'Authorization' : `Bearer ${Token}`,
-                        "Content-Type" : 'application/json'
-                    }
-                });
-
-                if(response.data.status === 200){
-                    console.log("Response Query Details Fetched with childReviewId :",childReviewId);
-                    
-                    const data = response.data.result;
-                    setRows(data);
-                    setTotalPages(Math.ceil(data.length / rowsPerPage));
-                }
-            } catch (error) {
-                console.log("Error in Processing the Flow ",error.message);
-                                
-            }
-        } 
-
-        const handleResponseQueryDelete = (querySequence) => {
-ResponseQueryDeleteByQuerySequence(querySequence);
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage((prev) => prev + 1);
         }
+    };
 
-        const ResponseQueryDeleteByQuerySequence = async (querySequence) => {
 
-            let url = `http://localhost:9195/api/ActionObligor/deleteResponseQuery/${querySequence}`;
-
-            try {
-                const response = await axios.delete(url, {
-                    headers : {
-                        'Authorization' : `Bearer ${Token}`,
-                        'Content-Type' : 'application/json'
-                    }
-                });
-                if(response.data.status === 200){
-                    console.log("ResponseQuery Deleted Successfully :",response.data.message);  
-                    ResponseQueryFetchDetails();                 
-                }
-            } catch (error) {
-                console.log("Error in Process Flow",error.message);
-                
-            }
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage((prev) => prev - 1);
         }
+    };
+
+    // useEffect(() => {
+    //     if(childReviewId){
+    //         ResponseQueryFetchDetails();
+    //     }
+    // },[childReviewId])
+
+    useEffect(() => {
+        console.log("childReviewId in ResponseQueryTable", childReviewId);
+        console.log("Token in ResponseQueryTable", Token);
+
+
+        if (childReviewId && Token) {
+            dispatch(getResponseQueryFetchDetails(childReviewId, Token));
+        }
+    }, [dispatch, childReviewId, Token])
+
+    useEffect(() => {
+        dispatch(setTotalPages(Math.ceil(rows.length / rowsPerPage)));
+    }, [rows, rowsPerPage, dispatch]);
+
+    const handleResponseQueryDelete = (querySequence) => {
+        ResponseQueryDeleteByQuerySequence(querySequence);
+    }
+
+    const ResponseQueryDeleteByQuerySequence = async (querySequence) => {
+
+        let url = `http://localhost:9195/api/ActionObligor/deleteResponseQuery/${querySequence}`;
+
+        try {
+            const response = await axios.delete(url, {
+                headers: {
+                    'Authorization': `Bearer ${Token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.data.status === 200) {
+                console.log("ResponseQuery Deleted Successfully :", response.data.message);
+                // ResponseQueryFetchDetails();  
+                getResponseQueryFetchDetails(childReviewId, Token);
+            }
+        } catch (error) {
+            console.log("Error in Process Flow", error.message);
+
+        }
+    }
 
 
     return (
@@ -132,7 +144,7 @@ ResponseQueryDeleteByQuerySequence(querySequence);
                                 }}
                             >
                                 SL NO.
-                                <ArrowUpwardIcon sx={{alignItems: 'center'}} />
+                                <ArrowUpwardIcon sx={{ alignItems: 'center' }} />
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -144,7 +156,7 @@ ResponseQueryDeleteByQuerySequence(querySequence);
                                 align="center"
                                 sx={{ fontWeight: "bold", border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: "12px", color: "#0047AB" }}
                             >
-                               QUERY
+                                QUERY
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -188,13 +200,13 @@ ResponseQueryDeleteByQuerySequence(querySequence);
                         {displayedRows.map((row) => (
                             <TableRow key={row.reviewId}>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    {row.resQueryId} 
+                                    {row.resQueryId}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    {row.querySequence} 
+                                    {row.querySequence}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    {row.query} 
+                                    {row.query}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '11px' }}>
                                     {new Date(row.createdOn).toLocaleString('en-US', {
@@ -215,7 +227,7 @@ ResponseQueryDeleteByQuerySequence(querySequence);
                                     {row.response}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    {row.responseBy} 
+                                    {row.responseBy}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '11px' }}>
                                     {new Date(row.responseOn).toLocaleString('en-US', {
@@ -235,10 +247,10 @@ ResponseQueryDeleteByQuerySequence(querySequence);
                                         setIsResponseQueryOpen(true);
                                     }}>
                                         <Tooltip>
-                                        <DeleteOutlineIcon sx={{color : '#FF5E00',}} />
+                                            <DeleteOutlineIcon sx={{ color: '#FF5E00', }} />
                                         </Tooltip>
                                     </Button>
-                                     
+
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -365,7 +377,7 @@ ResponseQueryDeleteByQuerySequence(querySequence);
 
                 </Box>
             </div>
-            
+
             <Dialog open={isResponseQueryOpen} onClose={handleResponseQueryCancel} sx={{ marginBottom: '190px' }}>
                 <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
                 <DialogContent>

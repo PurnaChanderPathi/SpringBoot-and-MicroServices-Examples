@@ -12,6 +12,7 @@ import axios from 'axios';
 import MyQueueTable from './MyQueueTable';
 import { useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -55,6 +56,8 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     const [isDivisionDisabled, setIsDivisionDisabled] = React.useState(true);
     const [fromDate, setFromDate] = React.useState('');
     const [toDate, setToDate] = React.useState('');
+    const [rowData ,setRowData] = React.useState(false);
+    const [isRows,setIsRows] = React.useState(false);
     const {isActive} = useSelector((state) => state.Score);
 
     const token = localStorage.getItem('authToken');
@@ -81,11 +84,15 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     };
 
     const handleSearch = () => {
-        setSearchParams({
-            reviewId,
-            childReviewId,
-
-        });
+        if(reviewId === "" && childReviewId === ""){
+            showToast("Give Data To Search");
+        }else{
+            setSearchParams({
+                reviewId,
+                childReviewId,
+    
+            });
+        }
     };
 
     // const handleMultiSearch = () => {
@@ -98,18 +105,25 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     //     })
     // }
 
-    const showToast = (message) => {
-        toast.error(message, {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      };
+  const showToast = (message) => {
+    Swal.fire({
+      icon: 'error',
+      // title: 'Oops...',
+      text: message,
+      position: 'bottom-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'red',
+      color: 'white',
+      height: '10%'
+    });
+  };
+
 
     const handleClear = () => {
         setReviewId('');
@@ -118,11 +132,12 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
             reviewId: '',
             childReviewId: '',
         });
+
+        setIsRows(true);
     };
 
     const handleMultiClear = () => {
-        setReviewId('');
-   
+        setReviewId('');   
         setFromDate('');
         setToDate('');
         setSelectedDivision('');
@@ -140,6 +155,8 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
             fromDate: '',
             toDate: '',
         })
+
+        setRowData(false);
         
     }
 
@@ -176,10 +193,10 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     // Handle change in group selection
     const handleGroupChange = async (event) => {
         const selectedGroup = event.target.value;
-        setSelectedGroup(selectedGroup); // Only store the selected group
+        setSelectedGroup(selectedGroup); 
 
-        setSelectedDivision(''); // Reset division when group changes
-        setIsDivisionDisabled(false); // Enable division dropdown when group is selected
+        setSelectedDivision(''); 
+        setIsDivisionDisabled(false);
 
         if (selectedGroup) {
             setLoadingDivisions(true);
@@ -212,19 +229,20 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
     };
 
     const handleMultiSearch = () => {
-        if(reviewId !== "" || groupName !== "" || division !== ""){
+        if(reviewId === "" && selectedGroup === "" && selectedDivision === ""){
+            showToast("Please Select before Search");
+            }
+        else{            
             setSearchMultiParams({
                 reviewId,
                 groupName: selectedGroup,
                 division: selectedDivision,
                 fromDate,
                 toDate,
-            });
-        }else{
-            showToast("no data found with empty");
-        }
+        });
 
     }
+}
 
 
     const downloadExcel = async () => {
@@ -292,7 +310,6 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
             }
         } else {
             
-            // alert('Please fill at least one of the fields: Review ID, Division, with dates');
             showToast("Search data before Download");
         }
 
@@ -400,7 +417,12 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                         </div>
                     </div>
                     <div>
-                        <BasicTable searchParams={searchParams} buttonClicked={buttonClicked} setButtonClicked={setButtonClicked} />
+                        <BasicTable searchParams={searchParams} 
+                        buttonClicked={buttonClicked} 
+                        setButtonClicked={setButtonClicked} 
+                        isRows={isRows}
+                        setIsRows={setIsRows}
+                        />
                     </div>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
@@ -594,28 +616,32 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                         <div className='SearchButtons'>
                             <button className='CleanButton' onClick={handleMultiClear}>Clear</button></div>
                     </div>
-                    <div className='DataExport'>
-                        <Button
-                            className='dataExportButton'
-                            startIcon={<FileDownloadIcon />}
-                            sx={{
-                                backgroundColor: '#FF5E00',
-                                textTransform: 'none',
-                                color: 'white',
-                                width : '120px',
-                                height: '40px',
-                                fontSize: 'small',
-                                '&:hover': { backgroundColor: '#FF5E00'
-
-                                 }
-                            }}
-                            onClick={downloadExcel}
-                        >
-                            Data Export
-                        </Button>
-                    </div>
+                    {
+                        (rowData === true) ? (
+                            <div className='DataExport'>
+                            <Button
+                                className='dataExportButton'
+                                startIcon={<FileDownloadIcon />}
+                                sx={{
+                                    backgroundColor: '#FF5E00',
+                                    textTransform: 'none',
+                                    color: 'white',
+                                    width : '120px',
+                                    height: '40px',
+                                    fontSize: 'small',
+                                    '&:hover': { backgroundColor: '#FF5E00'
+    
+                                     }
+                                }}
+                                onClick={downloadExcel}
+                            >
+                                Data Export
+                            </Button>
+                        </div>
+                        ) : null
+                    }
                     <div>
-                        <MultiSearchTable searchMultiParams={searchMultiParams} />
+                        <MultiSearchTable searchMultiParams={searchMultiParams} setRowData={setRowData} />
                     </div>
                 </CustomTabPanel>
             </div>
