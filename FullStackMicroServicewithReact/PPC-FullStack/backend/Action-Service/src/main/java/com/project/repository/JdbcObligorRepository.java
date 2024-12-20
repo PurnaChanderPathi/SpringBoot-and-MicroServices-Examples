@@ -20,8 +20,8 @@ public class JdbcObligorRepository implements ObligorRepository {
     public void saveObligor(Obligor obligor) {
         String query = "INSERT INTO OBLIGOR" +
                 " (reviewId,obligorName,obligorCifId,obligorPremId,groupName,createdBy,createdOn," +
-                "reviewStatus,childReviewId,division,isActive,observation,taskStatus,activityLevel)" +
-                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "reviewStatus,childReviewId,division,isActive,observation,assignedTo,taskStatus,activityLevel)" +
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         Object[] args = {
                 obligor.getReviewId(),
                 obligor.getObligorName(),
@@ -35,6 +35,7 @@ public class JdbcObligorRepository implements ObligorRepository {
                 obligor.getDivision(),
                 obligor.getIsActive(),
                 obligor.getObservation(),
+                obligor.getAssignedTo(),
                 obligor.getTaskStatus(),
                 obligor.getActivityLevel()
         };
@@ -95,6 +96,10 @@ public class JdbcObligorRepository implements ObligorRepository {
         if(obligor.getObservation() != null){
             query.append("observation=? ,");
             args.add(obligor.getObservation());
+        }
+        if(obligor.getAssignedTo() != null){
+            query.append("assignedTo=? ,");
+            args.add(obligor.getAssignedTo());
         }
         if(obligor.getTaskStatus() != null){
             query.append("taskStatus=? ,");

@@ -21,6 +21,7 @@ public class Obligor {
     private String isActive;
     private String observation;
     private String taskStatus;
+    private String assignedTo;
     private String activityLevel;
 
 }

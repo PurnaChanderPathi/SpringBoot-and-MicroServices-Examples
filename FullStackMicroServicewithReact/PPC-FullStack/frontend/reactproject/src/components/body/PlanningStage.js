@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PlanningStage.css';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Tab, Tabs, TextField, Tooltip, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -48,6 +48,14 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
     const [theme, setTheme] = useState('snow');
     const [buttonClicked, setButtonClicked] = useState(false);
     const role = localStorage.getItem('role');
+
+    useEffect(() => {
+        if(role === "CreditReviewer"){
+            setValue(1);
+        }else{
+            setValue(0);
+        }
+    },[role])
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -241,7 +249,7 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                         {
                             ((role !== "CreditReviewer") && (role !== "SPOC") &&
                                 (
-                                    <CustomTabPanel value={value} index={1} className="CommentsScreenPS">
+                                    <CustomTabPanel value={value} index={0} className="CommentsScreenPS">
                                         <div className="CommentsScreen">
                                             <div className='EnterCommentPS'>
                                                 Enter Comment
@@ -268,8 +276,8 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                                     </CustomTabPanel>
                                 ))}
 
-                        {value === 0 && (
-                            <CustomTabPanel value={value} index={0} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
+                        {value === 1 && (
+                            <CustomTabPanel value={value} index={1} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
                                 <AuditTrail />
                             </CustomTabPanel>   
                         )}

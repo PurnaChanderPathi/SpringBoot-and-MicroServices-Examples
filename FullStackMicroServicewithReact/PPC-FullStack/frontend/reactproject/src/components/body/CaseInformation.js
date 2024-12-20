@@ -42,6 +42,8 @@ const CaseInformation = () => {
   const [documentPresent, setDocumentPresent] = useState(false);
   const isEmpty = useSelector((state) => state.Score.isEmpty);
   const isChildReviewSelected = useSelector((state) => state.Score.isChildReviewSelected);
+  const childReviewId = localStorage.getItem("childReviewId");
+  const token = localStorage.getItem('authToken');
 
 
   // const [role, setRole] = useState('');
@@ -274,7 +276,7 @@ const CaseInformation = () => {
         showToast("Please add a document");
       } else {
 
-        if (action === "AssigntoCreditReviewer") {
+        if (action === "AssigntoCreditReviewer" ) {
 
           if (selectedUser == null || selectedUser === "") {
             showToast("Select Credit Reviewer");
@@ -283,7 +285,7 @@ const CaseInformation = () => {
             setIsModelOpenSubmit(true);
           }
         }
-        else if(action === "SubmittoSPOC"){
+        else if(action === "SubmittoSPOC" || action === "SubmittoCreditReviewer"){
           console.log("isActive in CI",isActive);
           
           if(isActive === false || isEmpty === false || isChildReviewSelected === false ){
@@ -342,7 +344,12 @@ const CaseInformation = () => {
 
 
   const handleModelConfirmSubmit = () => {
-    UpdateDetails();
+    if(role === "CreditReviewer" || role === "SPOC"){
+      UpdateObligorSpoc();
+    }else{
+      UpdateDetails();
+    }
+
     setIsModelOpenSubmit(false);
     setTimeout(() => {
       window.close();
@@ -356,6 +363,41 @@ const CaseInformation = () => {
   // const handleDocumentsFetched = (exists) => {
   //   setDocumentExist(exists);
   // }
+const UpdateObligorSpoc = async () => {
+      let url = "http://localhost:9195/api/ActionObligor/update/Obligor";
+      console.log(`Body at UpdateObligorSpoc reviewId : ${reviewId}, childReviewId: ${childReviewId}, action : ${action}, role :${role}`);
+      let input = {
+        action : action,
+        reviewId : reviewId,
+        role : role,
+        childReviewId : childReviewId,
+        assignedTo : selectedUser
+      };
+      console.log("inputs in UpdateObligorSpoc",input);
+      
+      try {
+        const response = await axios.put(url,input,{
+          headers : {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type' : 'application/json',
+
+          }
+        });
+        if(response.data.status === 200){
+          const data = response.data.result;
+          console.log("Obligor Updated Successfully ",data);
+          showToastSuccess("SuccessFully Submitted..!");
+          
+        }else if(response.data.status === 404){
+            console.log("Failed to update obligor");
+            
+        }
+      } catch (error) {
+        console.log("Failed to Process Obligor Update");
+        
+      }
+}
+
   const UpdateDetails = async () => {
     const role = localStorage.getItem("role");
     const assignedTo = localStorage.getItem("assignedTo");
@@ -374,7 +416,7 @@ const CaseInformation = () => {
     console.log("action", action);
     console.log("inputs", inputs);
 
-    const token = localStorage.getItem('authToken');
+
     try {
       const response = await axios.put("http://localhost:9195/api/action/submitTask", inputs, {
         headers: {
@@ -759,7 +801,7 @@ const CaseInformation = () => {
             </div>
             <div className='submitTACI'>
               <Button variant='contained' sx={{
-                backgroundColor: '#1B4D3E', height: '30px', paddingBottom: '10px',
+                // backgroundColor: '#1B4D3E', height: '30px', paddingBottom: '10px',
                 backgroundColor: '#FF5E00', textAlign: 'center'
               }}
                 onClick={handleSubmit}

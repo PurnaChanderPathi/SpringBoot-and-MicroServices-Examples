@@ -1,9 +1,9 @@
 package com.project.controller;
 
-import com.project.entity.Obligor;
-import com.project.entity.ObligorDocument;
-import com.project.entity.ResponseQueryDetails;
-import com.project.entity.ResponseRemediation;
+import com.project.Dto.RolesData;
+import com.project.Dto.SpocData;
+import com.project.entity.*;
+import com.project.service.AuditTrailService;
 import com.project.service.ObligorService;
 import com.project.service.ResponseRemediationService;
 import org.slf4j.Logger;
@@ -28,6 +28,12 @@ public class ObligorController {
     @Autowired
     private ResponseRemediationService responseRemediationService;
 
+    @Autowired
+    private RolesData rolesData;
+
+    @Autowired
+    private AuditTrailService auditTrailService;
+
     @PostMapping("/save")
     public Map<String,Object> saveObligor(@RequestBody Obligor obligor) throws Exception {
         Map<String,Object> response = new HashMap<>();
@@ -41,6 +47,48 @@ public class ObligorController {
             throw new Exception("Obligor is Empty");
         }
     return response;
+    }
+
+    @PutMapping("/update/Obligor")
+    public Map<String,Object> updateObligorByActivityLevel(@RequestBody SpocData spocData){
+        log.info("Entered Update Obligor By ActivityLevel with body : {}",spocData);
+        String role = spocData.getRole().replaceAll("\\s+", "");
+        log.info("roleWithoutSpaces in Obligor : {}",role);
+        Map<String,Object> response = new HashMap<>();
+        if(spocData.getAction()!=null){
+            Map<String,String> flowMatrix = rolesData.getMatrix().get(role).get(spocData.getAction());
+            Obligor obligor = new Obligor();
+            obligor.setReviewId(spocData.getReviewId());
+            obligor.setChildReviewId(spocData.getChildReviewId());
+            obligor.setAssignedTo(spocData.getAssignedTo());
+            String roleSet = flowMatrix.get("activityLevel").replaceAll("\\s+", "");
+            log.info("roleSet: {}",roleSet);
+            obligor.setActivityLevel(roleSet);
+            obligor.setActivityLevel(flowMatrix.get("activityLevel"));
+            obligor.setTaskStatus(flowMatrix.get("caseStatus"));
+            log.info("ObligorUpdate with body : {}",obligor);
+            Obligor updateObligor = obligorService.updateObligor(obligor);
+            AuditTrail setAuditTrail = new AuditTrail();
+            setAuditTrail.setReviewId(obligor.getReviewId());
+            setAuditTrail.setActionedBy(flowMatrix.get("activityLevel"));
+            setAuditTrail.setCurrentAction(flowMatrix.get("auditText"));
+            auditTrailService.saveAuditTrial(setAuditTrail);
+            if(updateObligor != null){
+                response.put("status",HttpStatus.OK.value());
+                response.put("message","Obligor Successfully Updated...!");
+                response.put("result",updateObligor);
+                log.info("Obligor updated successfully : {}",updateObligor);
+            }else{
+                response.put("status",HttpStatus.NOT_FOUND.value());
+                response.put("message","Failed to Update Obligor");
+                log.warn("Failed to update Obligor with spocData: {} ",spocData);
+            }
+        }else {
+            response.put("status",HttpStatus.NOT_FOUND.value());
+            response.put("message","Action is empty in spocData");
+            log.warn("Action is Empty in SpocData : {}",spocData);
+        }
+        return response;
     }
 
     @PutMapping("/updateObligorByChildReviewId")

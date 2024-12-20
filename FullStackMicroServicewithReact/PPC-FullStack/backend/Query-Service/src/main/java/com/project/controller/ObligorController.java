@@ -1,6 +1,5 @@
 package com.project.controller;
 
-import com.project.Dto.FileData;
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
 import com.project.entity.ResponseQueryDetails;
@@ -165,6 +164,24 @@ public class ObligorController {
             response.put("status",HttpStatus.NOT_FOUND.value());
             response.put("message"," Failed to Fetch Response Query details with childReviewId"+childReviewId);
             log.info(" Failed to Fetch Response Query details with childReviewId : {}",childReviewId);
+        }
+        return response;
+    }
+
+    @GetMapping("findObligorByActivityLevel/{assignedTo}")
+    public Map<String,Object> getObligorByActivityLevel(@PathVariable String assignedTo){
+        log.info("Entered findObligorByActivityLevel");
+        Map<String,Object> response = new HashMap<>();
+        List<Obligor> result = obligorService.getObligorByActivityLevel(assignedTo);
+        if(result.isEmpty()){
+            response.put("Status",HttpStatus.NOT_FOUND.value());
+            response.put("message","Obligor Details Not Found with ActivityLevel is not null");
+            log.warn("Obligor Details Not Found with ActivityLevel is not null");
+        }else {
+            response.put("Status",HttpStatus.OK.value());
+            response.put("message","Obligor Details Found with ActivityLevel is not null");
+            response.put("result",result);
+            log.info("Obligor Details Found with ActivityLevel is not null");
         }
         return response;
     }

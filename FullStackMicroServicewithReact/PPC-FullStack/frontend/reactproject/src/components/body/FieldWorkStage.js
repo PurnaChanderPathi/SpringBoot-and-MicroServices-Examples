@@ -391,6 +391,7 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
         handleObligorDelete(childReviewId);
         setTimeout(() => {
             getObligorDetailsByReviewId();
+            dispatch(getResponseRemediationDetailsByReviewId(reviewId, ApiToken));
         }, 500)
     }
 
@@ -407,9 +408,8 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
             });
             if (response.data.status === 200) {
                 console.log("obligor Deleted Successfully...!");
-
                 console.log(`reviewId And Token in handleObligorDelete reviewId: ${reviewId} and token : ${ApiToken}`);
-                dispatch(getResponseRemediationDetailsByReviewId(reviewId, ApiToken));
+                
             } else {
                 console.log("File Deletion Failed");
 

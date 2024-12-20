@@ -208,7 +208,7 @@ public class QueryController {
             }else {
                 response.put("status",HttpStatus.NOT_FOUND.value());
                 response.put("message","Failed To Fetch Details with roles: "+roles + "assignedTo : "+assignedTo);
-                log.warn("Failed To Fetch Details with role: {} assignedTo: {}",roles,assignedTo);
+                log.warn("Failed To Fetch details with role: {} assignedTo: {}",roles,assignedTo);
             }
             return response;
         }catch (Exception e){

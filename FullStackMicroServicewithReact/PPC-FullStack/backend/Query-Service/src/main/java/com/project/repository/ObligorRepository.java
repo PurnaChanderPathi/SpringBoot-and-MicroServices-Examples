@@ -19,4 +19,6 @@ public interface ObligorRepository {
     ObligorDocument getObligorDocumentByobligorDocId(String obligorDocId);
 
     Obligor findByChildReviewId(String childReviewId);
+
+    List<Obligor> findByActivityLevel(String assignedTo);
 }

@@ -14,4 +14,8 @@ public class AuditTrailService {
     public String saveAuditTrial(AuditTrail auditTrail){
         return auditTrailRepository.saveAudit(auditTrail);
     }
+
+    public AuditTrail updateAuditTrail(AuditTrail auditTrail){
+        return auditTrailRepository.update(auditTrail);
+    }
 }

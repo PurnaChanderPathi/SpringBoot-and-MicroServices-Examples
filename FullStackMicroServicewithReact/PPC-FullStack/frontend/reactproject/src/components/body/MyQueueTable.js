@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import axios from 'axios';
 import CircularIndeterminate from '../loginScreen/loadingScreen';
+import { setError } from '../../redux/ResponseRemedaitionSlice';
 
 const MyQueueTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -11,6 +12,8 @@ const MyQueueTable = () => {
   const [totalPages, setTotalPages] = React.useState(1);
   const [isActive, setIsActive] = React.useState(false);
   const [loading, setLoading] = useState(false);
+  const [data1,setData1] = useState([]);
+  const [data2,setData2] = useState([]);
 
   const ApiToken = localStorage.getItem('authToken');
   const assignedTo = localStorage.getItem('username');
@@ -24,7 +27,7 @@ const MyQueueTable = () => {
       if (storedIsActive === 'true') {
         setIsActive(true);
         MyQueueDetails();
-
+        // fetchMyQueueTask();
         localStorage.setItem('isActive', 'false');
         setIsActive(false);
       }
@@ -36,6 +39,7 @@ const MyQueueTable = () => {
       if (event.key === 'isActive' && event.newValue === 'true') {
         setIsActive(true);
         MyQueueDetails();
+        // fetchMyQueueTask();
         localStorage.setItem('isActive', 'false');
         setIsActive(false);
         console.log("handleStorageChange");
@@ -51,7 +55,39 @@ const MyQueueTable = () => {
 
   React.useEffect(() => {
     MyQueueDetails();
+    MyTaskSPOC();
   }, [])
+
+ 
+  const username = localStorage.getItem('username');
+  const MyTaskSPOC = async () => {
+         console.log("username at MyTaskSpoc",username);
+         
+     const url1 = `http://localhost:9195/api/QueryObligor/findObligorByActivityLevel/${username}`;
+
+     try {
+      const response = await axios.get(url1,{
+        headers : {
+          'Authorization' : `Bearer ${ApiToken}`,
+          'Content-Type' : 'application/json'
+        }
+      });
+      let data = [];
+      if(response.data.status === 200){
+           data = response.data.result;
+           let reverse = data.reverse();
+           setRows(reverse);
+           setTotalPages(Math.ceil(data.length / rowsPerPage));
+        console.log("MyTaskSPOC Details",data);        
+      }else if(response.data.status === 404){
+          data = [];
+      }
+     } catch (error) {
+      console.log("Error Fetching MyTaskSPOC Details");
+      
+     }
+  }
+
 
   const MyQueueDetails = async () => {
     let role = '';

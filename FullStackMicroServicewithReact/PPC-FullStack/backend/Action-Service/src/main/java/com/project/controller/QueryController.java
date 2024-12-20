@@ -57,7 +57,7 @@ public class QueryController {
 
     @PutMapping("/update")
     public Map<String,Object> updateQuery(@RequestBody QueryDetails queryDetails){
-        log.info("QueryDetails : {}",queryDetails);
+        log.info("QueryDetails updated : {}",queryDetails);
         Map<String,Object> response = new HashMap<>();
         QueryDetails details = queryService.updateQuery(queryDetails);
         if(details != null){

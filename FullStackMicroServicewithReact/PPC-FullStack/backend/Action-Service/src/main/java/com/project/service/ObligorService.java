@@ -32,6 +32,8 @@ public class ObligorService {
     }
 
     public void saveObligor(Obligor obligor){
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        obligor.setCreatedOn(tm);
         obligorRepository.saveObligor(obligor);
     }
 

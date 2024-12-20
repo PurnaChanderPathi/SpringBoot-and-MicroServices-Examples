@@ -48,7 +48,11 @@ const ResponseRemedaitionSlice = createSlice({
             const data = response.data.result;
             dispatch(setRows(data));
             dispatch(setTotalPages(Math.ceil(data.length / 10))); 
-          } else {
+          }else if(response.data.status === 404){
+            dispatch(setRows([]));
+            dispatch(setTotalPages(0));
+          }
+           else {
             dispatch(setError('Failed to fetch response details.'));
           }
         } catch (error) {

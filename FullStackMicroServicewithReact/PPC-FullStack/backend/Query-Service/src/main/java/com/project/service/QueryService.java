@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.entity.Obligor;
 import com.project.entity.QueryDetails;
 import com.project.repository.QueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

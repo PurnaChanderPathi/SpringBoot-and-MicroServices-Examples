@@ -35,4 +35,8 @@ public class ObligorService {
     public Obligor getObligorByChildReviewId(String childReviewId){
         return obligorRepository.findByChildReviewId(childReviewId);
     }
+
+    public List<Obligor> getObligorByActivityLevel(String assignedTo){
+        return obligorRepository.findByActivityLevel(assignedTo);
+    }
 }
