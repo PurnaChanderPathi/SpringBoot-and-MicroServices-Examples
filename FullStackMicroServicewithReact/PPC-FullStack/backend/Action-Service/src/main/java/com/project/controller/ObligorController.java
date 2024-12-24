@@ -63,8 +63,8 @@ public class ObligorController {
             obligor.setAssignedTo(spocData.getAssignedTo());
             String roleSet = flowMatrix.get("activityLevel").replaceAll("\\s+", "");
             log.info("roleSet: {}",roleSet);
-            obligor.setActivityLevel(roleSet);
-            obligor.setActivityLevel(flowMatrix.get("activityLevel"));
+            obligor.setRole(roleSet);
+            obligor.setRole(flowMatrix.get("activityLevel"));
             obligor.setTaskStatus(flowMatrix.get("caseStatus"));
             log.info("ObligorUpdate with body : {}",obligor);
             Obligor updateObligor = obligorService.updateObligor(obligor);

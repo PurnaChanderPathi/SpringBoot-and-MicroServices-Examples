@@ -145,6 +145,25 @@ const PPCDetails = ({ handleClose }) => {
     });
   };
 
+  const showToastSuccess = (message) => {
+    Swal.fire({
+      icon: 'success',
+      // title: 'Oops...',
+      text: message,
+      position: 'top-left',
+      toast: true,
+      timer: 5000,
+      showConfirmButton: false,
+      didClose: () => Swal.close(),
+      customClass: {
+        popup: 'swal-toast-popup',
+      },
+      background: 'Green',
+      color: 'white',
+      height: '10%'
+    });
+  };
+
 
   const insertData = async () => {
     console.log("createdBy", createdBy);
@@ -165,7 +184,7 @@ const PPCDetails = ({ handleClose }) => {
           setReviewId('');
           setGroupName('');
           setDivision('');
-          showToast(response.data.message);
+          showToastSuccess(response.data.message);
           handleClose();
         } else {
           console.error('Failed to insert data', response.status);

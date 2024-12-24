@@ -92,7 +92,7 @@ const HomePage = () => {
 
             <Modal
                 open={open}
-                onClose={handleClose}
+                // onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -102,7 +102,7 @@ const HomePage = () => {
             </Modal>
             <Modal
                 open={assignOpen}
-                onClose={handleCloseAssign}
+                // onClose={handleCloseAssign}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './LoginScreen.css';
-import loginImage from './mash.png';
+import loginImage from '../header/raghukrishna-removebg-preview (1).png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Timer10 } from '@mui/icons-material';
@@ -107,7 +107,7 @@ const LoginScreen = () => {
       <div className='loginScreenMash'>
       <div className='HeaderPhotoLS'>
         <div className='HPhoto'>
-          <img src={loginImage} alt="IBM Logo" width="200" height="190" className='ImageRK' />
+          <img src={loginImage} alt="IBM Logo" width="200" height="190" className='ImageRK' style={{width : '400px'}} />
         </div>
         {/* <div className='HPhotoheading'>
          Login

@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, Paper, Select, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getResponseQueryFetchDetails } from '../../redux/ResponseQueryFetchDetails';
 import { setRowsPerPage, setTotalPages } from '../../redux/ResponseRemedaitionSlice';
 import { setEmptyState } from '../../redux/scoreSlice';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import ReplyIcon from '@mui/icons-material/Reply';
+import CloseIcon from '@mui/icons-material/Close';
 
 const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
@@ -20,16 +23,43 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
     const childReviewId = localStorage.getItem('childReviewId');
     const [isResponseQueryOpen, setIsResponseQueryOpen] = useState(false);
     const [isQuerySequence, setIsQuerySequence] = useState(null);
-
+    const [openToResponse, setOpenToResponse] = useState(false);
     const dispatch = useDispatch();
     const { rows, totalPages, rowsPerPage, error, loading } = useSelector((state) => state.ResponseQuery);
+    const role = localStorage.getItem('role');
+
+    const handleOpenResponse = () => {
+        setOpenToResponse(false);
+    }
+
+    const handleCloseResponse = () => {
+
+    }
+
+        const CustomTextArea = styled(TextareaAutosize)({
+            '::placeholder': {
+                color : 'Black',
+                fontSize : '18px'
+            }
+        })
+
+        const styleResponse = {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 800,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            // height: 450,
+        };
 
     // useEffect(() => {
     //     console.log("isEmpty in ResponseQueryTable", isEmpty);
     //     if(rows.length > 0){
     //         dispatch(setEmptyState(true));
     //         console.log("isEmpty in ResponseQueryTable :",isEmpty);
-            
+
     //     }
 
     // }, [isEmpty,rows,dispatch])
@@ -194,6 +224,11 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                             >
                                 DELETE
                             </TableCell>
+                            {
+                                (role === "SPOC") ? (
+                                    <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Response</TableCell>
+                                ) : null
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -252,6 +287,19 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                                     </Button>
 
                                 </TableCell>
+                                {
+                                    (role === "SPOC") ? (
+                                        <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>
+                                            <Button onClick={() => {
+                                                setOpenToResponse(true);
+                                            }}>
+                                                <Tooltip title="Response">
+                                                    <ReplyIcon sx={{ color: '#FF5E00' }} />
+                                                </Tooltip>
+                                            </Button>
+                                        </TableCell>
+                                    ) : null
+                                }
                             </TableRow>
                         ))}
                     </TableBody>
@@ -394,6 +442,73 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Modal
+                open={openToResponse}
+                onClose={handleCloseResponse}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={styleResponse}>
+                    <div className='FieldworkSectionModal'>
+                        <div className='FieldWorkHeading' style={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography
+                                sx={{ fontWeight: 'bold' }}>
+                                <span style={{
+                                    textDecoration: 'underline',
+                                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                    textUnderlineOffset: '4px',
+                                    borderBottom: "1px solid #B2BEB5"
+                                }}
+                                    className='underlineText'>ADD</span> RESPONSE
+                            </Typography>
+                            <Button onClick={handleOpenResponse}><CloseIcon sx={{ color: 'black' }} /></Button>
+                        </div>
+                        <div className='ResponseQueryScreen' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '45vw', height: '40vh', justifyContent: 'space-evenly', padding: '20px', gap: '20px' }}>
+
+                                <CustomTextArea minRows={15} placeholder='Response'
+                                    sx={{
+                                        '&::placeholder': {
+                                            padding: '10px',
+                                            fontSize: '26px',
+                                            color: '#black',
+                                            opacity: 1,
+                                        },
+                                    }}
+                                    style={{
+
+
+                                        border: '1px solid #FF5E00', borderRadius: '5px',
+                                        '& .MuiOutlinedInput-root': {
+                                            '& fieldset': {
+                                                borderColor: '#FF5E00',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: '#FF5E00',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#FF5E00',
+                                            },
+                                        }
+                                    }}
+                                />
+
+                                {/* <CustomTextArea 
+                                minRows={10}
+                                placeholder='Response' /> */}
+
+                                <Button
+                                    startIcon={<NoteAddIcon />} variant='contained' sx={{ backgroundColor: '#FF5E00' }}
+                                // onClick={handleObservationObligor}
+                                >ADD</Button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </Box>
+            </Modal>
         </Box>
     )
 }

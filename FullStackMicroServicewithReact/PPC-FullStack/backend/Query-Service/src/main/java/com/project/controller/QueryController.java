@@ -1,26 +1,23 @@
 package com.project.controller;
 
+import com.project.Dto.MultiTableSearch;
+import com.project.entity.Obligor;
 import com.project.entity.QueryDetails;
+import com.project.service.MultiTableSearchService;
+import com.project.service.ObligorService;
 import com.project.service.QueryDetailsService;
 import com.project.service.QueryService;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,14 +35,70 @@ public class QueryController {
     @Autowired
     private QueryDetailsService queryDetailsService;
 
+    @Autowired
+    private MultiTableSearchService multiTableSearchService;
+
+    @Autowired
+    private ObligorService obligorService;
+
     @GetMapping("/generateReviewId")
     public String generateReviewId() {
         return queryService.generateReviewId();
     }
 
-    @GetMapping("/{reviewId}")
-    public QueryDetails findByReviewId(@PathVariable String reviewId) {
+//    @GetMapping("/{reviewId}")
+//    public QueryDetails findByReviewId(@PathVariable String reviewId) {
+//        return queryService.findByReviewId(reviewId);
+//    }
+
+    @GetMapping("/getQueryDetailsByReviewId/{reviewId}")
+    public QueryDetails getQueryByReviewId(@PathVariable String reviewId){
         return queryService.findByReviewId(reviewId);
+    }
+
+    @GetMapping("/{reviewId}")
+    public Map<String, Object> findByReviewId(@PathVariable String reviewId, @RequestParam(required = false) String reviewType) {
+        Map<String, Object> response = new HashMap<>();
+        log.info("Entered findByReviewId with reviewId : {} && reviewType : {}", reviewId, reviewType);
+
+        if (reviewType == null) {
+            response.put("status", HttpStatus.BAD_REQUEST.value());
+            response.put("message", "Review type must be provided");
+            log.warn("Review type is missing.");
+            return response;
+        }
+
+        if ("reviewId".equals(reviewType)) {
+            QueryDetails result = queryService.findByReviewId(reviewId);
+            if (result != null) {
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Query Details Fetched Successfully...!");
+                response.put("result", result);
+                log.info("Query Details Fetched Successfully : {}", result);
+            } else {
+                response.put("status", HttpStatus.NOT_FOUND.value());
+                response.put("message", "Failed to Fetch Query Details with reviewId");
+                log.warn("Failed To Fetch Query Details with reviewId");
+            }
+        } else if ("childReviewId".equals(reviewType)) {
+            Obligor result = obligorService.getObligorByChildReviewId(reviewId);
+            if (result != null) {
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Obligor Details Fetched Successfully...!");
+                response.put("result", result);
+                log.info("Obligor Details Fetched Successfully : {}", result);
+            } else {
+                response.put("status", HttpStatus.NOT_FOUND.value());
+                response.put("message", "Failed to Fetch Obligor Details with childReviewId");
+                log.warn("Failed To Fetch Obligor Details with childReviewId");
+            }
+        } else {
+            response.put("status", HttpStatus.BAD_REQUEST.value());
+            response.put("message", "Invalid reviewType value");
+            log.warn("Invalid reviewType value: {}", reviewType);
+        }
+
+        return response;
     }
 
     @GetMapping("getAll")
@@ -299,12 +352,31 @@ public class QueryController {
         workbook.write(outputStream);
         workbook.close();
     }
+
+    @GetMapping("/multiTableSearch")
+    public Map<String,Object>  getCombinedData(@RequestParam String assignedTo)
+    {
+        log.info("Entered multiTableSearch with body : assignedTo : {} ",assignedTo);
+        Map<String,Object> response = new HashMap<>();
+        try {
+            List<MultiTableSearch> result = multiTableSearchService.getCombinedData(assignedTo);
+            if(result.isEmpty()){
+                response.put("status",HttpStatus.NOT_FOUND.value());
+                response.put("message","Empty Details Fetched ");
+                log.warn("Empty Details fetched with assignedTo : {}",assignedTo);
+            }else {
+                response.put("status",HttpStatus.OK.value());
+                response.put("message","MultiTableSearch Fetched Successfully");
+                response.put("result",result);
+                log.info("MultiTableSearch Fetched Successfully : {}",result);
+            }
+        }catch (RuntimeException e){
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return response;
+    }
 }
 
 
-//SELECT *
-//FROM querydetails
-//WHERE
-//        (ROLE IS NULL OR TRIM(ROLE) IN ('SrCreditReviewer', 'Head of PPC', 'CreditReviewer', 'SPOC'))
-//AND (createdBy IS NULL OR TRIM(createdBy) = 'Raghu')
-//AND (assignedTo IS NULL OR TRIM(assignedTo) = '');
+

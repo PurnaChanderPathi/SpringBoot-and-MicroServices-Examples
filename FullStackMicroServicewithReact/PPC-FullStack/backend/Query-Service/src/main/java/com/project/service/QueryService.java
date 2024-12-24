@@ -41,7 +41,6 @@ public class QueryService {
                 "WHERE " +
                 "    (ROLE IS NULL OR TRIM(ROLE) IN (");
 
-        // Add placeholders for each role
         for (int i = 0; i < roles.size(); i++) {
             query.append("?");
             if (i < roles.size() - 1) {

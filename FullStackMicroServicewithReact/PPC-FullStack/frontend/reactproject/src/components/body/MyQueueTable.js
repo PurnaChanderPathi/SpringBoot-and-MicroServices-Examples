@@ -17,6 +17,7 @@ const MyQueueTable = () => {
 
   const ApiToken = localStorage.getItem('authToken');
   const assignedTo = localStorage.getItem('username');
+  const role = localStorage.getItem('role');
 
   React.useEffect(() => {
     console.log("Component mounted or storage event triggered");
@@ -26,7 +27,8 @@ const MyQueueTable = () => {
       const storedIsActive = localStorage.getItem('isActive');
       if (storedIsActive === 'true') {
         setIsActive(true);
-        MyQueueDetails();
+        // MyQueueDetails();
+        MyTaskMultiTable();
         // fetchMyQueueTask();
         localStorage.setItem('isActive', 'false');
         setIsActive(false);
@@ -38,8 +40,9 @@ const MyQueueTable = () => {
     const handleStorageChange = (event) => {
       if (event.key === 'isActive' && event.newValue === 'true') {
         setIsActive(true);
-        MyQueueDetails();
+        // MyQueueDetails();
         // fetchMyQueueTask();
+        MyTaskMultiTable();
         localStorage.setItem('isActive', 'false');
         setIsActive(false);
         console.log("handleStorageChange");
@@ -54,92 +57,123 @@ const MyQueueTable = () => {
   }, []);
 
   React.useEffect(() => {
-    MyQueueDetails();
-    MyTaskSPOC();
+    // MyQueueDetails();
+    // MyTaskSPOC();
+    MyTaskMultiTable();
   }, [])
 
  
-  const username = localStorage.getItem('username');
-  const MyTaskSPOC = async () => {
-         console.log("username at MyTaskSpoc",username);
-         
-     const url1 = `http://localhost:9195/api/QueryObligor/findObligorByActivityLevel/${username}`;
 
-     try {
-      const response = await axios.get(url1,{
+  // const MyTaskSPOC = async () => {
+  //        console.log("username at MyTaskSpoc",username);
+         
+  //    const url1 = `http://localhost:9195/api/QueryObligor/findObligorByActivityLevel/${username}`;
+
+  //    try {
+  //     const response = await axios.get(url1,{
+  //       headers : {
+  //         'Authorization' : `Bearer ${ApiToken}`,
+  //         'Content-Type' : 'application/json'
+  //       }
+  //     });
+  //     let data = [];
+  //     if(response.data.status === 200){
+  //          data = response.data.result;
+  //          let reverse = data.reverse();
+  //          setRows(reverse);
+  //          setTotalPages(Math.ceil(data.length / rowsPerPage));
+  //       console.log("MyTaskSPOC Details",data);        
+  //     }else if(response.data.status === 404){
+  //         data = [];
+  //     }
+  //    } catch (error) {
+  //     console.log("Error Fetching MyTaskSPOC Details");
+      
+  //    }
+  // }
+
+
+  // const MyQueueDetails = async () => {
+  //   let role = '';
+  //   const rolesArray = JSON.parse(localStorage.getItem("userRoles"));
+  //   const rolesString = rolesArray.join(",");
+  //   console.log(rolesString)
+  //   role = rolesString;
+  //   console.log("role", role);
+  //   console.log("Token", ApiToken);
+  //   console.log("assignedTo", assignedTo);
+
+  //   let url = 'http://localhost:9195/api/query/getByRoleAndAssignedTo';
+  //   const queryParams = [];
+  //   if (role) {
+  //     queryParams.push(`role=${role}`);
+  //   }
+  //   if (assignedTo) {
+  //     queryParams.push(`assignedTo=${assignedTo}`)
+  //   }
+  //   if (queryParams.length > 0) {
+  //     url = `${url}?${queryParams.join('&')}`;
+  //     console.log("url", url);
+  //   } else {
+  //     console.error('Insufficient parameters for RoleAndAssignedTo');
+  //   }
+
+  //   try {
+  //     const response = await axios.get(url, {
+  //       headers: {
+  //         'Authorization': `Bearer ${ApiToken}`,
+  //         'Content-Type': 'application/json',
+  //       }
+  //     });
+  //     const data = response.data.result || [];
+  //     console.log("fetchDataTable :", response.data.result);
+
+  //     const reversedData = data.reverse();
+
+  //     setRows(reversedData);
+  //     setTotalPages(Math.ceil(data.length / rowsPerPage));
+  //   } catch (error) {
+  //     console.log('Axios fetch error: ', error);
+
+  //     if (error.response && error.response.status === 404) {
+  //       console.error('Data not found due to 404 error');
+  //       setRows([]);
+  //       setTotalPages(0);
+  //       console.log("Rows after clearing:", rows);
+  //     } else {
+  //       console.error('Other Axios error:', error);
+  //     }
+  //   }
+  // }
+
+  const MyTaskMultiTable = async () => {
+
+    let url = `http://localhost:9195/api/query/multiTableSearch?assignedTo=${assignedTo}`;
+    console.log("MyTaskMultiTable url : ",url);
+
+    try {
+      const response = await axios.get(url,{
         headers : {
           'Authorization' : `Bearer ${ApiToken}`,
           'Content-Type' : 'application/json'
         }
       });
-      let data = [];
       if(response.data.status === 200){
-           data = response.data.result;
-           let reverse = data.reverse();
-           setRows(reverse);
-           setTotalPages(Math.ceil(data.length / rowsPerPage));
-        console.log("MyTaskSPOC Details",data);        
+        const data = response.data.result;
+        console.log("MultiFetchTable : ",data);
+        const reverseData = data.reverse();
+        setRows(reverseData);
+        setTotalPages(Math.ceil(data.length / rowsPerPage));
       }else if(response.data.status === 404){
-          data = [];
-      }
-     } catch (error) {
-      console.log("Error Fetching MyTaskSPOC Details");
-      
-     }
-  }
-
-
-  const MyQueueDetails = async () => {
-    let role = '';
-    const rolesArray = JSON.parse(localStorage.getItem("userRoles"));
-    const rolesString = rolesArray.join(",");
-    console.log(rolesString)
-    role = rolesString;
-    console.log("role", role);
-    console.log("Token", ApiToken);
-    console.log("assignedTo", assignedTo);
-
-    let url = 'http://localhost:9195/api/query/getByRoleAndAssignedTo';
-    const queryParams = [];
-    if (role) {
-      queryParams.push(`role=${role}`);
-    }
-    if (assignedTo) {
-      queryParams.push(`assignedTo=${assignedTo}`)
-    }
-    if (queryParams.length > 0) {
-      url = `${url}?${queryParams.join('&')}`;
-      console.log("url", url);
-    } else {
-      console.error('Insufficient parameters for RoleAndAssignedTo');
-    }
-
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          'Authorization': `Bearer ${ApiToken}`,
-          'Content-Type': 'application/json',
-        }
-      });
-      const data = response.data.result || [];
-      console.log("fetchDataTable :", response.data.result);
-
-      const reversedData = data.reverse();
-
-      setRows(reversedData);
-      setTotalPages(Math.ceil(data.length / rowsPerPage));
-    } catch (error) {
-      console.log('Axios fetch error: ', error);
-
-      if (error.response && error.response.status === 404) {
-        console.error('Data not found due to 404 error');
         setRows([]);
         setTotalPages(0);
-        console.log("Rows after clearing:", rows);
-      } else {
-        console.error('Other Axios error:', error);
+        console.log("Empty Data Fetched in MultiTableFetch");
+        
       }
+    } catch (error) {
+      console.error('Other Axios error:', error);
     }
+    
   }
 
   const handleRowsPerPageChange = (event) => {
@@ -167,13 +201,24 @@ const MyQueueTable = () => {
   const handleStartCaseClick = (reviewId) => {
     setLoading(true);
     const url = `/CaseInformation/${reviewId}`;
+    console.log("reviewId hitted");
     setTimeout(() => {
       setLoading(false);
       window.open(url, '_blank');
     }, 1000);
 
   }
-
+  
+  const handleStartCaseChildReview = (childReviewId) => {
+    setLoading(true);
+    const url = `/CaseInformation/${childReviewId}`;
+    console.log("childReviewId hitted");
+    
+    setTimeout(() => {
+      setLoading(false);
+      window.open(url, '_blank');
+    }, 1000);
+  }
   return (
     <>
       { loading ? (
@@ -222,9 +267,7 @@ const MyQueueTable = () => {
               <TableRow>
                 <TableCell align='right' sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Start Case</TableCell>
                 <TableCell align='right' sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Review ID</TableCell>
-                {/* <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Child Review ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Issue ID</TableCell>
-              <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Track Issue ID</TableCell> */}
+                <TableCell align='right' sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>ChildReviewId</TableCell>
                 <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Division</TableCell>
                 <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Group Name</TableCell>
                 <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Current Status</TableCell>
@@ -237,14 +280,30 @@ const MyQueueTable = () => {
               {displayedRows.map((row) => (
                 <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
                   <TableCell align='center' sx={{ color: 'white', border: '1px solid #B2BEB5' }}
-                    onClick={() => handleStartCaseClick(row.reviewId)}
+                    onClick={() => {
+                      const childReviewId = row.childReviewId;
+                      console.log("childReviewid in MYQUEUE",childReviewId);
+                      localStorage.setItem('reviewId',row.reviewId);
+                      
+                      
+                      if(childReviewId === ""){
+                        handleStartCaseClick(row.reviewId);
+                        localStorage.setItem("reviewType","reviewId");
+                      }else{
+                        
+                        handleStartCaseChildReview(row.childReviewId);
+                        localStorage.setItem("reviewType","childReviewId");
+                        localStorage.setItem('childReviewId',row.childReviewId);
+                      }
+                      
+                    } }
                   ><PlayArrowIcon style={{ color: '#FF5E00' }} /></TableCell>
                   <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                     {row.reviewId}
                   </TableCell>
-                  {/* <TableCell align="right" sx={{ border: '1px solid black' }}>{row.childReviewId}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.issueId}</TableCell>
-                <TableCell align="right" sx={{ border: '1px solid black' }}>{row.trackIssueId}</TableCell> */}
+                  <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
+                    {row.childReviewId}
+                  </TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.division}</TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.groupName}</TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.currentStatus}</TableCell>

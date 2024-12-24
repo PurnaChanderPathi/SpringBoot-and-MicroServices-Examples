@@ -111,7 +111,7 @@ public class ResponseRemediationService {
             responseRemediation.setIsActive(fetchedDetailofObligor.getResult().getIsActive());
             responseRemediation.setObservation(fetchedDetailofObligor.getResult().getObservation());
             responseRemediation.setTaskStatus(fetchedDetailofObligor.getResult().getTaskStatus());
-            responseRemediation.setActivityLevel(fetchedDetailofObligor.getResult().getActivityLevel());
+            responseRemediation.setActivityLevel(fetchedDetailofObligor.getResult().getRole());
 
             responseRemediationRepository.saveResponse(responseRemediation);
             response.put("status", HttpStatus.OK.value());

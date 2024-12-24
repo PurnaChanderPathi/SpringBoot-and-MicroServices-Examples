@@ -7,7 +7,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import AssignmentStage from './AssignmentStage';
-import { setState } from '../../redux/scoreSlice';
+import { setEmptyState, setSelectedChildReview, setState } from '../../redux/scoreSlice';
 import FieldWorkStage from './FieldWorkStage';
 import MashreqHeader from '../header/MashreqHeader';
 import ResponseAndRemediationStage from './ResponseAndRemediationStage';
@@ -19,6 +19,7 @@ import SPOC from './SPOC';
 const CaseInformation = () => {
   const dispatch = useDispatch();
   const { reviewId } = useParams();
+  const reviewIds = localStorage.getItem('reviewId');
   const [caseData, setCaseData] = useState({
     reviewId: '',
     groupName: '',
@@ -59,7 +60,17 @@ const CaseInformation = () => {
   const DivisionToSpoc = caseData.division;
   const GroupNameToSpoc = caseData.groupName;
   console.log(` GroupName & Division in Caseinformation Stage ", ${GroupNameToSpoc} && ${DivisionToSpoc}`);
-
+const username = localStorage.getItem("username");
+  useEffect(() => {
+    if(role === "SPOC"){
+      setPlanning("PlanningCompleted");   
+      dispatch(setEmptyState(true));
+      dispatch(setState(true));
+      dispatch(setSelectedChildReview(true));
+      setDocumentPresent(true);
+      setSelectedUser(username);
+    }
+  })
 
   useEffect(() => {
     console.log("isEmpty in CI",isEmpty);
@@ -189,22 +200,6 @@ const CaseInformation = () => {
 
   /// End AssignementStage
 
-
-
-
-  // const showToast = (message) => {
-  //   toast.error(message, {
-  //     position: "bottom-left",
-  //     autoClose: 5000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "light",
-  //   });
-  // };
-
   const showToast = (message) => {
     Swal.fire({
       icon: 'error',
@@ -241,23 +236,6 @@ const CaseInformation = () => {
       color: 'white',
     });
   };
-
-
-  // const showToastSuccess = (message) => {
-  //   toast.success(message, {
-  //     position: "top-right",
-  //     autoClose: 5000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "light",
-  //     // className: "custom-toast",
-  //   })
-  // }
-
-
 
   const handleSubmit = () => {
     const role = localStorage.getItem('role');
@@ -302,44 +280,6 @@ const CaseInformation = () => {
 
       }
     }
-
-    // if (role === "SrCreditReviewer" && planning === "PlanningCompleted" && action === "Approve") {
-    //   if (selectedUser == null || selectedUser === "") {
-    //     showToast("Select Credit Reviewer");
-    //   } else {
-    //     if (action === "") {
-    //       showToast("Select Action before Submit");
-    //     } else {
-    //       if (!documentPresent) {
-    //         setDocumentMessage("Please add a document");
-    //         showToast("Please add a document");
-
-    //       } else {
-    //         setDocumentMessage('');
-    //         UpdateDetails();
-    //         setTimeout(() => {
-    //           window.close();
-    //         }, 5000);
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   if (action === "") {
-    //     showToast("Select Action before Submit");
-    //   } else {
-    //     if (!documentPresent) {
-    //       setDocumentMessage("Please add a document");
-    //       showToast("Please add a document");
-
-    //     } else {
-    //       setDocumentMessage('');
-    //       UpdateDetails();
-    //       setTimeout(() => {
-    //         window.close();
-    //       }, 5000);
-    //     }
-    //   }
-    // }
   }
 
 
@@ -365,10 +305,10 @@ const CaseInformation = () => {
   // }
 const UpdateObligorSpoc = async () => {
       let url = "http://localhost:9195/api/ActionObligor/update/Obligor";
-      console.log(`Body at UpdateObligorSpoc reviewId : ${reviewId}, childReviewId: ${childReviewId}, action : ${action}, role :${role}`);
+      console.log(`Body at UpdateObligorSpoc reviewId : ${reviewIds}, childReviewId: ${childReviewId}, action : ${action}, role :${role}, selectedUser : ${selectedUser}`);
       let input = {
         action : action,
-        reviewId : reviewId,
+        reviewId : reviewIds,
         role : role,
         childReviewId : childReviewId,
         assignedTo : selectedUser
@@ -560,32 +500,35 @@ const UpdateObligorSpoc = async () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:9195/api/query/${reviewId}`, {
-          method: "GET",
+        const reviewType = localStorage.getItem('reviewType');
+        const url = `http://localhost:9195/api/query/${reviewId}?reviewType=${reviewType}`;
+        console.log("url in fetchData ",url);
+        
+        const response = await axios.get(url, {
           headers: {
             'Authorization': `Bearer ${ApiToken}`,
             'Content-Type': 'application/json',
           }
         });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setCaseData({
-          reviewId: data.reviewId,
-          groupName: data.groupName,
-          division: data.division,
-          role: data.role,
-          assignedTo: data.assignedTo,
-          action: action
-        });
-        localStorage.setItem("reviewId", data.reviewId);
-        localStorage.setItem("role", data.role);
-        // localStorage.setItem("assignedTo", data.assignedTo);
-        localStorage.setItem("planning", data.planning);
-        setPlanning(data.planning);
-        console.log("setPlanning", data.planning);
-        localStorage.setItem('currentStatus', data.action);
+        if(response.data.status === 200){
+          const data = response.data.result;
+          console.log("data in fetchData ",data);
+          
+          setCaseData({
+            reviewId: data.reviewId,
+            groupName: data.groupName,
+            division: data.division,
+            role: data.role,
+            assignedTo: data.assignedTo,
+            action: action
+          });
+
+          localStorage.setItem("reviewId", data.reviewId);
+          localStorage.setItem("role", data.role);
+          localStorage.setItem("planning", data.planning);
+          setPlanning(data.planning);
+          console.log("setPlanning", data.planning);
+          localStorage.setItem('currentStatus', data.action);
 
 
         if (data.role === "SrCreditReviewer" && data.planning === null) {
@@ -626,7 +569,12 @@ const UpdateObligorSpoc = async () => {
             {value: "SubmittoSrCreditReviewer", label : "Submit to SrCreditReviewer"}
           ]);
         }
-
+        else if(data.role === "SPOC"){
+          setActionOptions([
+            {value: "SubmittoCreditReviewer", label : "Submit to CreditReviewer"}
+          ])
+        }
+      }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -641,18 +589,6 @@ const UpdateObligorSpoc = async () => {
     return <div>Loading...</div>;
   }
 
-  const calculateFontSize = (content) => {
-    const length = content.length;
-    if (length < 20) return 'medium';    // Small content
-    if (length < 50) return 'large';     // Medium content
-    return 'x-large';                    // Large content
-  };
-
-  const calculateWidth = (content) => {
-    const length = content.length;
-    const baseWidth = 10;
-    return `${baseWidth + length * 6}px`;
-  };
 
   const asmtAction = localStorage.getItem('currentStatus');
   return (
@@ -681,10 +617,6 @@ const UpdateObligorSpoc = async () => {
                   <input type='text' value={caseData.reviewId}
                     className='inputReviewCS'
                     disabled
-                    style={{
-                      fontSize: calculateFontSize(caseData.reviewId),
-                      width: calculateWidth(caseData.reviewId)
-                    }}
                   />
 
                 </div>
@@ -699,10 +631,7 @@ const UpdateObligorSpoc = async () => {
                     value={caseData.groupName}
                     className='inputReviewCS'
                     disabled
-                    style={{
-                      fontSize: calculateFontSize(caseData.groupName),
-                      width: calculateWidth(caseData.groupName)
-                    }} />
+                     />
                 </div>
               </div>
               <div className='ReviewIdinfoCS'>
@@ -714,10 +643,7 @@ const UpdateObligorSpoc = async () => {
                     value={caseData.division}
                     className='inputReviewCS'
                     disabled
-                    style={{
-                      fontSize: calculateFontSize(caseData.division),
-                      width: calculateWidth(caseData.division)
-                    }} />
+                     />
                 </div>
               </div>
               <div className='ReviewIdinfoCS'>
@@ -728,10 +654,7 @@ const UpdateObligorSpoc = async () => {
                   <input type='text'
                     value={caseData.role}
                     className='inputReviewCS' disabled
-                    style={{
-                      fontSize: calculateFontSize(caseData.role),
-                      width: calculateWidth(caseData.role)
-                    }} />
+                    />
                 </div>
               </div>
               <div className='ReviewIdinfoCS'>
@@ -742,10 +665,7 @@ const UpdateObligorSpoc = async () => {
                   <input type='text'
                     value={caseData.assignedTo}
                     className='inputReviewCS' disabled
-                    style={{
-                      fontSize: calculateFontSize(caseData.assignedTo),
-                      width: calculateWidth(caseData.assignedTo)
-                    }} />
+                    />
                 </div>
               </div>
 
@@ -764,6 +684,7 @@ const UpdateObligorSpoc = async () => {
             <div className='TakeActionSubmitCS'>
               <TextField
                 label="TakeAction"
+                // placeholder='TakeAction'
                 className='GroupNameText'
                 id="GroupName"
                 select
@@ -809,6 +730,8 @@ const UpdateObligorSpoc = async () => {
               >Submit</Button>
             </div>
           </div>
+          {
+            (role !== "SPOC" ) ? (
           <div className='planningEditScreen'>
             <TextField
               label="planning"
@@ -863,12 +786,18 @@ const UpdateObligorSpoc = async () => {
               </DialogActions>
             </Dialog>
           </div>
+            ) : null 
+          }
+                    {
+            (role !== "SPOC" ) ? (
           <div className='SaveAndCloseButtonCI'>
             <Button variant='contained'
               sx={{ backgroundColor: '#FF5E00', width: '140px', height: '30px', fontSize: 'small' }}
               onClick={handleSaveAndClose}
             >Save & Close</Button>
           </div>
+            ): null
+          }
 
 
           {role === "SrCreditReviewer" && asmtAction === "Approve" && (
@@ -893,7 +822,7 @@ const UpdateObligorSpoc = async () => {
           }
 
           {
-            (role === "SrCreditReviewer" && planning === "PlanningCompleted") || role === "CreditReviewer" ? (
+            (role === "SrCreditReviewer" && planning === "PlanningCompleted") || role === "CreditReviewer" || role === "SPOC" ? (
               <div className='planningTabsDiv'>
                 <ResponseAndRemediationStage />
               </div>
@@ -942,8 +871,10 @@ const UpdateObligorSpoc = async () => {
               </TextField>
             </div >
           )}
-
-          <div className='planningTabsDiv'>
+        
+        {
+          (role !== "SPOC") && (
+            <div className='planningTabsDiv'>
             <PlanningTabs
               documentMesage={documentMesage}
               fetchData={fetchData}
@@ -955,6 +886,9 @@ const UpdateObligorSpoc = async () => {
 
 
           </div>
+  )
+        }
+
 
 
 

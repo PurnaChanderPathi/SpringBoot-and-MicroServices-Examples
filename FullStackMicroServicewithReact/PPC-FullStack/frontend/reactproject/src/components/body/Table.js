@@ -284,7 +284,12 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
 
   const handleStartCaseClick = (reviewId) => {
     setLoading(true);
+    console.log("reviewId in table :",reviewId);
+    localStorage.setItem('reviewType','reviewId');
+    
+    
     localStorage.setItem('reviewId', reviewId);
+    localStorage.setItem('reviewType','reviewId');
     userLoad();
 
 
@@ -361,7 +366,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
                 {displayedRows.map((row) => (
                   <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
                     <TableCell align='center' sx={{ color: 'white', border: '1px solid #B2BEB5' }}
-                      onClick={() => handleStartCaseClick(row.reviewId)}
+                      onClick={() => handleStartCaseClick(row.reviewId)}  
                     ><PlayArrowIcon style={{ color: 'FF5E00' }} /></TableCell>
                     <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                       {row.reviewId}

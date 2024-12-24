@@ -117,6 +117,7 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
     const createdBy = localStorage.getItem('username');
     const [ObligorDetails, setObligorDetails] = useState(null);
     const [ObligorDocument, setObligorDocument] = useState(null);
+    const [groupName,setGroupName] = useState('');
 
 
     useEffect(() => {
@@ -127,22 +128,19 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
         }
     }, [reviewId]);
 
-    useEffect(() => {
-        if (GroupNameToSpoc) {
-            
-            setInput({ GroupNameToSpoc });
-        }
-    }, [GroupNameToSpoc])
 
     useEffect(() => {
-        if(DivisionToSpoc){ 
+        if(DivisionToSpoc && GroupNameToSpoc){ 
             console.log("Division in FWS :",DivisionToSpoc);
+            console.log("Groupname in FWS :",groupName);
+            
             
             setInput(prevInput => ({
                 ...prevInput, Division: DivisionToSpoc
             }))
+            setGroupName(GroupNameToSpoc);
         }        
-    },[DivisionToSpoc])
+    },[DivisionToSpoc,GroupNameToSpoc])
 
   const showToast = (message) => {
     Swal.fire({
@@ -298,7 +296,8 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
             obligorCifId: input.Cifid,
             obligorPremId: input.PremId,
             createdBy: createdBy,
-            reviewStatus: 'in-Progress'
+            reviewStatus: 'in-Progress',
+            groupName: groupName
 
         }
         console.log("inputs for FWS", inputs);

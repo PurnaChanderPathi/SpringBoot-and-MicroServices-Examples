@@ -50,12 +50,12 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
     const role = localStorage.getItem('role');
 
     useEffect(() => {
-        if(role === "CreditReviewer"){
+        if (role === "CreditReviewer" || role === "SPOC") {
             setValue(1);
-        }else{
+        } else {
             setValue(0);
         }
-    },[role])
+    }, [role])
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -190,58 +190,62 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                                     )
                                 }
 
-                                <Tab
-                                    label="AUDIT TRIAL"
-                                    {...a11yProps(0)}
-                                    sx={{
-                                        bgcolor: value === 0 ? 'transparent' : 'transparent',
-                                        color: value === 0 ? 'black' : 'black',
-                                        borderTopLeftRadius: 5,
-                                        borderTopRightRadius: 5,
-                                        marginLeft: 1.5,
-                                        textTransform: 'none',
-                                        position: 'relative',
-                                        padding: '4px 12px',
-                                        fontSize: '14px',
-                                        '&:hover': {
-                                            bgcolor: value === 0 ? 'transparent' : 'transparent',
-                                            color: value === 0 ? 'black' : 'black',
-                                        },
-                                        '&.Mui-selected': {
-                                            bgcolor: 'transparent',
-                                            color: 'black',
-                                            borderBottom: '2px solid #FF5E00',
-                                        },
-                                    }}
-                                />
                                 {
                                     ((role !== "CreditReviewer") && (role !== "SPOC")) &&
-                                        (
-                                            <Tab
-                                                label="DOCUMENTS"
-                                                {...a11yProps(2)}
-                                                sx={{
+                                    (
+                                        <Tab
+                                            label="AUDIT TRIAL"
+                                            {...a11yProps(0)}
+                                            sx={{
+                                                bgcolor: value === 0 ? 'transparent' : 'transparent',
+                                                color: value === 0 ? 'black' : 'black',
+                                                borderTopLeftRadius: 5,
+                                                borderTopRightRadius: 5,
+                                                marginLeft: 1.5,
+                                                textTransform: 'none',
+                                                position: 'relative',
+                                                padding: '4px 12px',
+                                                fontSize: '14px',
+                                                '&:hover': {
+                                                    bgcolor: value === 0 ? 'transparent' : 'transparent',
+                                                    color: value === 0 ? 'black' : 'black',
+                                                },
+                                                '&.Mui-selected': {
+                                                    bgcolor: 'transparent',
+                                                    color: 'black',
+                                                    borderBottom: '2px solid #FF5E00',
+                                                },
+                                            }}
+                                        />)
+                                }
+                                {
+                                    ((role !== "CreditReviewer") && (role !== "SPOC")) &&
+                                    (
+                                        <Tab
+                                            label="DOCUMENTS"
+                                            {...a11yProps(2)}
+                                            sx={{
+                                                bgcolor: value === 2 ? 'transparent' : 'transparent',
+                                                color: value === 2 ? 'black' : 'black',
+                                                borderTopLeftRadius: 5,
+                                                borderTopRightRadius: 5,
+                                                marginLeft: 1.5,
+                                                textTransform: 'none',
+                                                position: 'relative',
+                                                padding: '4px 12px',
+                                                fontSize: '14px',
+                                                '&:hover': {
                                                     bgcolor: value === 2 ? 'transparent' : 'transparent',
                                                     color: value === 2 ? 'black' : 'black',
-                                                    borderTopLeftRadius: 5,
-                                                    borderTopRightRadius: 5,
-                                                    marginLeft: 1.5,
-                                                    textTransform: 'none',
-                                                    position: 'relative',
-                                                    padding: '4px 12px',
-                                                    fontSize: '14px',
-                                                    '&:hover': {
-                                                        bgcolor: value === 2 ? 'transparent' : 'transparent',
-                                                        color: value === 2 ? 'black' : 'black',
-                                                    },
-                                                    '&.Mui-selected': {
-                                                        bgcolor: 'transparent',
-                                                        color: 'black',
-                                                        borderBottom: '2px solid #FF5E00',
-                                                    },
-                                                }}
-                                            />
-                                        )
+                                                },
+                                                '&.Mui-selected': {
+                                                    bgcolor: 'transparent',
+                                                    color: 'black',
+                                                    borderBottom: '2px solid #FF5E00',
+                                                },
+                                            }}
+                                        />
+                                    )
                                 }
 
                             </Tabs>
@@ -276,22 +280,24 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                                     </CustomTabPanel>
                                 ))}
 
-                        {value === 1 && (
-                            <CustomTabPanel value={value} index={1} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
-                                <AuditTrail />
-                            </CustomTabPanel>   
-                        )}
+                        {
+                            ((role !== "CreditReviewer") && (role !== "SPOC")) &&
+                            (
+                                <CustomTabPanel value={value} index={1} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
+                                    <AuditTrail />
+                                </CustomTabPanel>
+                            )}
 
                         {
                             ((role !== "CreditReviewer") && (role !== "SPOC")) &&
-                                (
-                                    <CustomTabPanel value={value} index={2} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
-                                        <Document documentMesage={documentMesage}
-                                            fetchData={fetchData}
-                                            rows={rows}
-                                            setRows={setRows} />
-                                    </CustomTabPanel>
-                                )}
+                            (
+                                <CustomTabPanel value={value} index={2} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
+                                    <Document documentMesage={documentMesage}
+                                        fetchData={fetchData}
+                                        rows={rows}
+                                        setRows={setRows} />
+                                </CustomTabPanel>
+                            )}
                     </Box>
                 </AccordionDetails>
             </Accordion>

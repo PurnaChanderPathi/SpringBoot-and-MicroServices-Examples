@@ -47,6 +47,8 @@ const ResponseAndRemediationStage = () => {
         setValue(newValue);
     };
 
+    
+
     useEffect(() => {
         const storedReviewId = localStorage.getItem('reviewId');
         console.log("reviewId in ResponseRemediation Stage", storedReviewId);

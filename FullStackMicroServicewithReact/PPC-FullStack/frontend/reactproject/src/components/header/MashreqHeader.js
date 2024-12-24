@@ -1,7 +1,7 @@
 import React from 'react'
-import logo from './MASQ.AE-b739716f.png';
+import logo from './dollar-removebg-preview.png';
 import './MashreqHeader.css'
-import logoM from './Mashreq_logo_2022.svg.png'
+import logoM from './raghukrishna-removebg-preview (1).png'
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Grid2, Tooltip, Typography } from '@mui/material';
@@ -20,10 +20,10 @@ const MashreqHeader = () => {
   return (
     <div className='MashreqMD'>
         <div className='MSHP'>
-        <img src={logo} alt="MASQ Logo"  className='MASQ' />
+        <img src={logo} alt="MASQ Logo"  className='MASQ' style={{width : '100px', height : '60px'}} />
         </div>
         <div className='MSHP1'>
-        <img src={logoM} alt="MASQ Logo"  className='MASQ1' />
+        <img src={logoM} alt="MASQ Logo"  className='MASQ1' style={{width: '250px', height: "120px"}} />
         </div>
         <div className='MSHP1'>
             <div className='MSHP1_1'>

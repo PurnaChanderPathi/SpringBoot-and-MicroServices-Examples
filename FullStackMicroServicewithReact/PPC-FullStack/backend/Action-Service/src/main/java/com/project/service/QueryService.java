@@ -5,7 +5,6 @@ import com.project.repository.QueryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -34,7 +33,7 @@ public class QueryService {
 
     public QueryDetails updateQuery(QueryDetails queryDetails){
         QueryDetails details = new QueryDetails();
-        String findByReviewId = "http://localhost:9193/api/query/"+queryDetails.getReviewId();
+        String findByReviewId = "http://localhost:9193/api/query/getQueryDetailsByReviewId/"+queryDetails.getReviewId();
         try {
              details = builder.build().get()
                     .uri(findByReviewId)

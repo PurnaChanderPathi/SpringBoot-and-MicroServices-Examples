@@ -109,7 +109,8 @@ public class ObligorController {
     }
 
     @GetMapping("/findByChildReviewId/{childReviewId}")
-    public Map<String,Object> findByChildReviewId(@PathVariable String childReviewId){
+    public Map<String,Object> findByChildReviewId(@PathVariable String childReviewId,@RequestParam(required = false) String reviewType){
+        if(reviewType=="childReview")
         log.info("Entered findByChildReviewId with childReviewId of Obligor : {}",childReviewId);
         Map<String,Object> response = new HashMap<>();
 

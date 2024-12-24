@@ -58,7 +58,7 @@ public class JdbcObligorRepository implements ObligorRepository {
 
     @Override
     public List<Obligor> findByActivityLevel(String assignedTo) {
-        String query = "SELECT * FROM OBLIGOR WHERE ACTIVITYLEVEL IS NOT NULL AND assignedTo = ?";
+        String query = "SELECT * FROM OBLIGOR WHERE ROLE IS NOT NULL AND assignedTo = ?";
         Object[] args = {assignedTo};
         return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(Obligor.class), args);
     }

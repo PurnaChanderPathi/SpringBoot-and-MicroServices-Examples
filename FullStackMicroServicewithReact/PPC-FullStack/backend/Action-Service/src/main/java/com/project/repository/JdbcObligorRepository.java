@@ -2,6 +2,8 @@ package com.project.repository;
 
 import com.project.entity.Obligor;
 import com.project.entity.ObligorDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,6 +14,7 @@ import java.util.List;
 @Repository
 public class JdbcObligorRepository implements ObligorRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(JdbcObligorRepository.class);
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -20,7 +23,7 @@ public class JdbcObligorRepository implements ObligorRepository {
     public void saveObligor(Obligor obligor) {
         String query = "INSERT INTO OBLIGOR" +
                 " (reviewId,obligorName,obligorCifId,obligorPremId,groupName,createdBy,createdOn," +
-                "reviewStatus,childReviewId,division,isActive,observation,assignedTo,taskStatus,activityLevel)" +
+                "reviewStatus,childReviewId,division,isActive,observation,assignedTo,taskStatus,role)" +
                 "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         Object[] args = {
                 obligor.getReviewId(),
@@ -37,7 +40,7 @@ public class JdbcObligorRepository implements ObligorRepository {
                 obligor.getObservation(),
                 obligor.getAssignedTo(),
                 obligor.getTaskStatus(),
-                obligor.getActivityLevel()
+                obligor.getRole()
         };
         jdbcTemplate.update(query,args);
 
@@ -105,15 +108,18 @@ public class JdbcObligorRepository implements ObligorRepository {
             query.append("taskStatus=? ,");
             args.add(obligor.getTaskStatus());
         }
-        if(obligor.getActivityLevel() != null){
-            query.append("activityLevel=? ,");
-            args.add(obligor.getActivityLevel());
+        if(obligor.getRole() != null){
+            query.append("role=? ,");
+            args.add(obligor.getRole());
         }
         query.setLength(query.length() - 2);
         query.append(" WHERE childReviewid = ?");
         args.add(obligor.getChildReviewId());
+        log.info("query in Obligor Update : {}",query);
+        log.info("args in Obligor Update : {}",args);
 
         int result = jdbcTemplate.update(query.toString(), args.toArray());
+        log.info("result in Obligor Update : {}",result);
         if (result > 0) {
             return obligor;
         } else {
