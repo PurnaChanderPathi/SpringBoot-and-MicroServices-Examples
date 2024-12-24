@@ -288,10 +288,9 @@ const ResponseTable = () => {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 1400,
-    bgcolor: "white",
-    maxHeight:550,
+    bgcolor: "background.paper",
     boxShadow: 24,
-    height: 'auto',
+    height: 550,
   };
 
   return (
