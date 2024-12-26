@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.Dto.ResponseQueryDto;
 import com.project.Dto.RolesData;
 import com.project.Dto.SpocData;
 import com.project.entity.*;
@@ -225,6 +226,24 @@ public class ObligorController {
         responseRemediationService.deleteResponseQuery(querySequence);
         response.put("status",HttpStatus.OK.value());
         response.put("message","deleteResponseQuery Deleted Successfully...!");
+        return response;
+    }
+
+    @PutMapping("/updateResponseQueryDetails")
+    public Map<String,Object> updateResponse(@RequestBody ResponseQueryDto responseQueryDto){
+        log.info("Enter Update ResponseQueryDetails with body : {}",responseQueryDto);
+        Map<String,Object> response = new HashMap<>();
+        ResponseQueryDto result = responseRemediationService.updateResponse(responseQueryDto);
+        if(result.getQuerySequence().isEmpty()){
+            response.put("status",HttpStatus.NO_CONTENT.value());
+            response.put("message","failed To update ResponseQueryDetails");
+            log.warn("failed to Update ResponseQueryDetails : {}",responseQueryDto);
+        }else {
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","ResponseQueryDetails updated Successfully");
+            response.put("result",result);
+            log.info("ResponseQueryDetails updated Successfully : {}",result);
+        }
         return response;
     }
 

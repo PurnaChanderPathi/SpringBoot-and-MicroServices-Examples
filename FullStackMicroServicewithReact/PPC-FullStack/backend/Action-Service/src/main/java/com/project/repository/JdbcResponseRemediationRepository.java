@@ -1,6 +1,7 @@
 package com.project.repository;
 
 import com.netflix.discovery.converters.Auto;
+import com.project.Dto.ResponseQueryDto;
 import com.project.entity.ResponseQueryDetails;
 import com.project.entity.ResponseRemediation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class JdbcResponseRemediationRepository implements ResponseRemediationRepository{
@@ -63,6 +66,66 @@ public class JdbcResponseRemediationRepository implements ResponseRemediationRep
         };
         jdbcTemplate.update(query,args);
     }
+
+    @Override
+    public ResponseQueryDto updateResponse(ResponseQueryDto responseQueryDto) {
+        Timestamp responseOn = new Timestamp(System.currentTimeMillis());
+        responseQueryDto.setResponseOn(responseOn);
+
+        StringBuilder query = new StringBuilder("UPDATE RESPONSEQUERY SET ");
+        List<Object> args = new ArrayList<>();
+
+        boolean isFirst = true;
+
+        if (responseQueryDto.getQuery() != null) {
+            if (!isFirst) {
+                query.append(", ");
+            }
+            query.append("query=?");
+            args.add(responseQueryDto.getQuery());
+            isFirst = false;
+        }
+
+        if (responseQueryDto.getResponse() != null) {
+            if (!isFirst) {
+                query.append(", ");
+            }
+            query.append("response=?");
+            args.add(responseQueryDto.getResponse());
+            isFirst = false;
+        }
+
+        if (responseQueryDto.getResponseBy() != null) {
+            if (!isFirst) {
+                query.append(", ");
+            }
+            query.append("responseBy=?");
+            args.add(responseQueryDto.getResponseBy());
+            isFirst = false;
+        }
+
+        if (responseQueryDto.getResponseOn() != null) {
+            if (!isFirst) {
+                query.append(", ");
+            }
+            query.append("responseOn=?");
+            args.add(responseQueryDto.getResponseOn());
+            isFirst = false;
+        }
+
+        query.append(" WHERE querySequence = ?");
+        args.add(responseQueryDto.getQuerySequence());
+
+        int result = jdbcTemplate.update(query.toString(), args.toArray());
+
+        if (result > 0) {
+            return responseQueryDto;
+        } else {
+            throw new RuntimeException("Update failed for responseQueryDetails");
+        }
+    }
+
+
 
     @Override
     public void deleteResponseQuery(String querySequence) {

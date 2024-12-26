@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Dto.ResponseQueryDto;
 import com.project.Dto.webRes;
 import com.project.Dto.webobligor;
 import com.project.entity.ResponseQueryDetails;
@@ -157,11 +158,14 @@ public class ResponseRemediationService {
     public void saveResponseQuery(ResponseQueryDetails responseQueryDetails) {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         responseQueryDetails.setCreatedOn(tm);
-
         responseRemediationRepository.saveResponseQuery(responseQueryDetails);
     }
 
     public void deleteResponseQuery(String querySequence){
         responseRemediationRepository.deleteResponseQuery(querySequence);
+    }
+
+    public ResponseQueryDto updateResponse(ResponseQueryDto responseQueryDto){
+        return responseRemediationRepository.updateResponse(responseQueryDto);
     }
 }

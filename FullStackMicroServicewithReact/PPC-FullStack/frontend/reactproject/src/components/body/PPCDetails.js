@@ -150,7 +150,7 @@ const PPCDetails = ({ handleClose }) => {
       icon: 'success',
       // title: 'Oops...',
       text: message,
-      position: 'top-left',
+      position: 'top-right',
       toast: true,
       timer: 5000,
       showConfirmButton: false,

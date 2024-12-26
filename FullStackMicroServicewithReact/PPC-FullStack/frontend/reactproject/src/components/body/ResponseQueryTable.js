@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, Paper, Select, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, Paper, Select, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -27,6 +27,10 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
     const dispatch = useDispatch();
     const { rows, totalPages, rowsPerPage, error, loading } = useSelector((state) => state.ResponseQuery);
     const role = localStorage.getItem('role');
+    const [response,setResponse] = useState('');
+    const username = localStorage.getItem('username');
+    const date = new Date();
+    const timeStamp = date.getTime();
 
     const handleOpenResponse = () => {
         setOpenToResponse(false);
@@ -36,23 +40,46 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
     }
 
-        const CustomTextArea = styled(TextareaAutosize)({
-            '::placeholder': {
-                color : 'Black',
-                fontSize : '18px'
-            }
-        })
+    const updateResponseQueryDetails = async () => {
+        const url = "http://localhost:9195/api/ActionObligor/updateResponseQueryDetails";
+        const inputs = {
+            response : response,
+            responseBy : username,
+            querySequence : isQuerySequence,
+            responseOn : timeStamp
+        }
+        console.log("inputs at updateResponseQueryDetails :",inputs);
+        
 
-        const styleResponse = {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 800,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            // height: 450,
-        };
+        try {
+            const response = await axios.put(url,inputs,{
+                headers : {
+                    'Authorization' : `Bearer ${Token}`,
+                    'Content-Type' : 'application/json'
+                }
+            });
+            if(response.data.status === 200){
+                console.log("QueryDetails Updated Successfully...!");                
+                const result = response.data.result;
+                console.log("Updated QueryDetails : ",result);     
+                dispatch(getResponseQueryFetchDetails(childReviewId, Token));       
+            }
+        } catch (error) {
+            console.log("Failed to update QueryDetails : ",error.message);
+            
+        }
+    }
+
+    const styleResponse = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 800,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        // height: 450,
+    };
 
     // useEffect(() => {
     //     console.log("isEmpty in ResponseQueryTable", isEmpty);
@@ -63,6 +90,8 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
     //     }
 
     // }, [isEmpty,rows,dispatch])
+
+    
 
     const handleResponseQueryCancel = () => {
         setIsResponseQueryOpen(false);
@@ -152,7 +181,7 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
             if (response.data.status === 200) {
                 console.log("ResponseQuery Deleted Successfully :", response.data.message);
                 // ResponseQueryFetchDetails();  
-                getResponseQueryFetchDetails(childReviewId, Token);
+               dispatch(getResponseQueryFetchDetails(childReviewId, Token));
             }
         } catch (error) {
             console.log("Error in Process Flow", error.message);
@@ -218,15 +247,21 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                             >
                                 RESPONSE ON
                             </TableCell>
-                            <TableCell
-                                align="center"
-                                sx={{ fontWeight: "bold", border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px', color: "#0047AB" }}
-                            >
-                                DELETE
-                            </TableCell>
+                            {
+                                (role !== "SPOC") ? (
+                                    <TableCell
+                                        align="center"
+                                        sx={{ fontWeight: "bold", border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px', color: "#0047AB" }}
+                                    >
+                                        DELETE
+                                    </TableCell>
+                                ) : null
+                            }
                             {
                                 (role === "SPOC") ? (
-                                    <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Response</TableCell>
+                                    <TableCell align="center"
+                                        sx={{ fontWeight: "bold", border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px', color: "#0047AB" }}
+                                    >Response</TableCell>
                                 ) : null
                             }
                         </TableRow>
@@ -251,7 +286,7 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                                         day: 'numeric',    // "14"
                                         hour: '2-digit',   // "03"
                                         minute: '2-digit', // "29"
-                                        // second: '2-digit', // "35"
+                                        second: '2-digit', // "35"
                                         hour12: true       // "AM/PM"
                                     })}
                                 </TableCell>
@@ -265,33 +300,43 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                                     {row.responseBy}
                                 </TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '11px' }}>
-                                    {new Date(row.responseOn).toLocaleString('en-US', {
-                                        weekday: 'long',   // "Monday"
-                                        year: 'numeric',   // "2024"
-                                        month: 'long',     // "November"
-                                        day: 'numeric',    // "14"
-                                        hour: '2-digit',   // "03"
-                                        minute: '2-digit', // "29"
-                                        // second: '2-digit', // "35"
-                                        hour12: true       // "AM/PM"
-                                    })}
+                                    {row.responseOn ? (
+                                        new Date(row.responseOn).toLocaleString('en-US', {
+                                            weekday: 'long',   // "Monday"
+                                            year: 'numeric',   // "2024"
+                                            month: 'long',     // "November"
+                                            day: 'numeric',    // "14"
+                                            hour: '2-digit',   // "03"
+                                            minute: '2-digit', // "29"
+                                            second: '2-digit', // "35"
+                                            hour12: true       // "AM/PM"
+                                        })
+                                    ) : (
+                                        "NaN"
+                                    )}
                                 </TableCell>
-                                <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
-                                    <Button onClick={() => {
-                                        setIsQuerySequence(row.querySequence);
-                                        setIsResponseQueryOpen(true);
-                                    }}>
-                                        <Tooltip>
-                                            <DeleteOutlineIcon sx={{ color: '#FF5E00', }} />
-                                        </Tooltip>
-                                    </Button>
+                                {
+                                    (role !== "SPOC") ? (
+                                        <TableCell align="center" sx={{ border: "1px solid #B2BEB5", padding: "4px 8px", fontSize: '12px' }}>
+                                            <Button onClick={() => {
+                                                setIsQuerySequence(row.querySequence);
+                                                setIsResponseQueryOpen(true);
+                                                // handleResponseQueryDelete(row.querySequence);
+                                            }}>
+                                                <Tooltip>
+                                                    <DeleteOutlineIcon sx={{ color: '#FF5E00', }} />
+                                                </Tooltip>
+                                            </Button>
 
-                                </TableCell>
+                                        </TableCell>
+                                    ) : null
+                                }
                                 {
                                     (role === "SPOC") ? (
                                         <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>
                                             <Button onClick={() => {
                                                 setOpenToResponse(true);
+                                                setIsQuerySequence(row.querySequence);
                                             }}>
                                                 <Tooltip title="Response">
                                                     <ReplyIcon sx={{ color: '#FF5E00' }} />
@@ -465,34 +510,48 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                         </div>
                         <div className='ResponseQueryScreen' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', width: '45vw', height: '40vh', justifyContent: 'space-evenly', padding: '20px', gap: '20px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '45vw', height: '40vh', justifyContent: 'space-evenly', }}>
 
-                                <CustomTextArea minRows={15} placeholder='Response'
-                                    sx={{
-                                        '&::placeholder': {
-                                            padding: '10px',
-                                            fontSize: '26px',
-                                            color: '#black',
-                                            opacity: 1,
-                                        },
-                                    }}
-                                    style={{
-
-
-                                        border: '1px solid #FF5E00', borderRadius: '5px',
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': {
-                                                borderColor: '#FF5E00',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: '#FF5E00',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: '#FF5E00',
-                                            },
-                                        }
-                                    }}
-                                />
+                                <div className="ResponseQuery" style={{ width: "100%" }}>
+                                                  <TextField
+                                                    label="Response"
+                                                    value={response}
+                                                    multiline
+                                                    minRows={6}
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    onChange={(e) =>
+                                                      setResponse(e.target.value)
+                                                    }
+                                                    style={{
+                                                      borderRadius: "5px",
+                                                    }}
+                                                    InputProps={{
+                                                      style: {
+                                                        // padding: "10px",
+                                                      },
+                                                    }}
+                                                    sx={{
+                                                      "& .MuiOutlinedInput-root": {
+                                                        "& fieldset": {
+                                                          borderColor: "#FF5E00",
+                                                        },
+                                                        "&:hover fieldset": {
+                                                          borderColor: "#FF5E00",
+                                                        },
+                                                        "&.Mui-focused fieldset": {
+                                                          borderColor: "#FF5E00",
+                                                        },
+                                                      },
+                                                      "& .MuiInputLabel-root": {
+                                                        color: "black",
+                                                      },
+                                                      "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: "black",
+                                                      },
+                                                    }}
+                                                  />
+                                                </div>
 
                                 {/* <CustomTextArea 
                                 minRows={10}
@@ -500,7 +559,12 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
                                 <Button
                                     startIcon={<NoteAddIcon />} variant='contained' sx={{ backgroundColor: '#FF5E00' }}
-                                // onClick={handleObservationObligor}
+                                onClick={() => {
+                                    updateResponseQueryDetails();
+                                    setOpenToResponse(false);
+                                    setResponse('');                                
+                                }
+                            }
                                 >ADD</Button>
                             </div>
 

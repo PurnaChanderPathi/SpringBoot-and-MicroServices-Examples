@@ -49,6 +49,7 @@ export const getResponseQueryFetchDetails = (childReviewId, token) => async (dis
             console.log("Response Query Details Fetched with childReviewId:", childReviewId);
             
             const data = response.data.result;
+            console.log("data at ResponseQueryFetchDetails : ",data);
             if(data.length>0){
                 dispatch(setEmptyState(true));
             }

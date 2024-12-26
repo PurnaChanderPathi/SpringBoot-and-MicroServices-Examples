@@ -131,8 +131,6 @@ const ResponseTable = () => {
   const [input, setInput] = useState({
     query: "",
     createdBy: "",
-    response: "",
-    responseBy: "",
     reviewId: "",
     childReviewId: "",
   });
@@ -196,7 +194,7 @@ const ResponseTable = () => {
             ...prevInput,
             query: "",
           }));
-          //    setIsInserted(true);
+            //   setIsInserted(true);
           dispatch(getResponseQueryFetchDetails(childReviewId, Token));
         } else {
           console.log(

@@ -491,16 +491,20 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
                       >
                         View Document
                       </TableCell>
-                      <TableCell
-                        align="right"
-                        sx={{
-                          color: "black",
-                          border: "1px solid #B2BEB5",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Delete
-                      </TableCell>
+                      {
+                        (role === "SrCreditReviewer") ? (
+                          <TableCell
+                            align="right"
+                            sx={{
+                              color: "black",
+                              border: "1px solid #B2BEB5",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Delete
+                          </TableCell>
+                        ) : null
+                      }
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -555,12 +559,13 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
                             </Tooltip>
                           </Button>
                         </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{ color: "black", border: "1px solid #B2BEB5" }}
-                        >
-                          {
-                            (role === "SrCreditReviewer") ? (
+
+                        {
+                          (role === "SrCreditReviewer") ? (
+                            <TableCell
+                              align="right"
+                              sx={{ color: "black", border: "1px solid #B2BEB5" }}
+                            >
                               <Button
                                 onClick={
                                   () => {
@@ -579,10 +584,11 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
                                   />
                                 </Tooltip>
                               </Button>
-                            ) : null
-                          }
+                            </TableCell>
+                          ) : null
+                        }
 
-                        </TableCell>
+
                       </TableRow>
                     ))}
                   </TableBody>

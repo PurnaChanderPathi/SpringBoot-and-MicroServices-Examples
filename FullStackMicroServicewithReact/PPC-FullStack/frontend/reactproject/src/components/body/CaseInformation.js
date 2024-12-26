@@ -61,7 +61,9 @@ const CaseInformation = () => {
   const GroupNameToSpoc = caseData.groupName;
   console.log(` GroupName & Division in Caseinformation Stage ", ${GroupNameToSpoc} && ${DivisionToSpoc}`);
 const username = localStorage.getItem("username");
-  useEffect(() => {
+const reviewStatus = localStorage.getItem('reviewStatus');  
+
+  useEffect(() => {    
     if(role === "SPOC"){
       setPlanning("PlanningCompleted");   
       dispatch(setEmptyState(true));
@@ -69,8 +71,27 @@ const username = localStorage.getItem("username");
       dispatch(setSelectedChildReview(true));
       setDocumentPresent(true);
       setSelectedUser(username);
+    }else if (role === "CreditReviewer" && reviewStatus === "in-Progress"){
+      setPlanning("PlanningCompleted");
+      setDocumentPresent(true);
+      setSelectedUser(username);
+    }else if (role === "SrCreditReviewer" && reviewStatus === "in-Progress"){
+      setDocumentPresent(true);
+      setPlanning("PlanningCompleted");
     }
   })
+
+  useEffect(() => {
+    if(fieldwork=== "FieldWorkCompleted"){
+      setActionOptions([
+        { value: "CompleteTask", label: "Complete Task" },
+      ]);
+    }else{
+      setActionOptions([
+        { value: "NoOptions", label: "No Options"},
+      ]);
+    }
+  },[fieldwork])
 
   useEffect(() => {
     console.log("isEmpty in CI",isEmpty);
@@ -513,15 +534,29 @@ const UpdateObligorSpoc = async () => {
         if(response.data.status === 200){
           const data = response.data.result;
           console.log("data in fetchData ",data);
+          if(reviewType === "childReviewId"){
+            setCaseData({
+              reviewId: data.childReviewId,
+              groupName: data.groupName,
+              division: data.division,
+              role: data.role,
+              assignedTo: data.assignedTo,
+              action: action
+            })
+           
+          }else{
+            setCaseData({
+              reviewId: data.reviewId,
+              groupName: data.groupName,
+              division: data.division,
+              role: data.role,
+              assignedTo: data.assignedTo,
+              action: action
+            });
+          }
           
-          setCaseData({
-            reviewId: data.reviewId,
-            groupName: data.groupName,
-            division: data.division,
-            role: data.role,
-            assignedTo: data.assignedTo,
-            action: action
-          });
+
+
 
           localStorage.setItem("reviewId", data.reviewId);
           localStorage.setItem("role", data.role);
@@ -529,6 +564,7 @@ const UpdateObligorSpoc = async () => {
           setPlanning(data.planning);
           console.log("setPlanning", data.planning);
           localStorage.setItem('currentStatus', data.action);
+          localStorage.setItem('reviewStatus',data.reviewStatus);
 
 
         if (data.role === "SrCreditReviewer" && data.planning === null) {
@@ -573,6 +609,14 @@ const UpdateObligorSpoc = async () => {
           setActionOptions([
             {value: "SubmittoCreditReviewer", label : "Submit to CreditReviewer"}
           ])
+        }else if(data.role === "CreditReviewer" && data.reviewStatus === "in-Progress"){
+          setPlanning("PlanningCompleted");
+          setActionOptions([
+            {value: "SubmittoSPOC", label: "Submit to SPOC"},
+            {value: "SubmittoSrCreditReviewer", label : "Submit to SrCreditReviewer"}
+          ])
+        }else if(data.role === "SrCreditReviewer" && data.reviewStatus === "in-Progress"){
+          setPlanning("PlanningCompleted");
         }
       }
       } catch (error) {
@@ -866,8 +910,8 @@ const UpdateObligorSpoc = async () => {
                   },
                 }}
               >
-                <MenuItem value="PlanningCompleted">FieldWork Completed</MenuItem>
-                <MenuItem value="Planninginprogress">FieldWork inprogress</MenuItem>
+                <MenuItem value="FieldWorkCompleted">FieldWork Completed</MenuItem>
+                <MenuItem value="FieldWorkinprogress">FieldWork inprogress</MenuItem>
               </TextField>
             </div >
           )}

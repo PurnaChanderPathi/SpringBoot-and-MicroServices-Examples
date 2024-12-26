@@ -190,9 +190,9 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                                     )
                                 }
 
-                                {
+                                {/* {
                                     ((role !== "CreditReviewer") && (role !== "SPOC")) &&
-                                    (
+                                    ( */}
                                         <Tab
                                             label="AUDIT TRIAL"
                                             {...a11yProps(0)}
@@ -216,8 +216,9 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                                                     borderBottom: '2px solid #FF5E00',
                                                 },
                                             }}
-                                        />)
-                                }
+                                        />
+                                        {/* )
+                                } */}
                                 {
                                     ((role !== "CreditReviewer") && (role !== "SPOC")) &&
                                     (
@@ -280,13 +281,13 @@ export default function PlanningStage({ documentMesage, fetchData, rows, setRows
                                     </CustomTabPanel>
                                 ))}
 
-                        {
+                        {/* {
                             ((role !== "CreditReviewer") && (role !== "SPOC")) &&
-                            (
+                            ( */}
                                 <CustomTabPanel value={value} index={1} style={{ border: '1px solid #B2BEB5', borderRadius: '5px' }}>
                                     <AuditTrail />
                                 </CustomTabPanel>
-                            )}
+                            {/* )} */}
 
                         {
                             ((role !== "CreditReviewer") && (role !== "SPOC")) &&
