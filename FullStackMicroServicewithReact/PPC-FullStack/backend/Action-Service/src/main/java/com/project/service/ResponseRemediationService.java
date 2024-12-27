@@ -122,6 +122,10 @@ public class ResponseRemediationService {
         return response;
     }
 
+    public ResponseRemediation UpdateResponseRemediation(ResponseRemediation responseRemediation){
+        return responseRemediationRepository.updateResponse(responseRemediation);
+    }
+
     public void deleteResponse(String childReviewId){
         responseRemediationRepository.deleteResponse(childReviewId);
     }

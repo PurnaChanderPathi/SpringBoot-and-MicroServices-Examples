@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("api/ActionObligor")
@@ -56,34 +57,44 @@ public class ObligorController {
         String role = spocData.getRole().replaceAll("\\s+", "");
         log.info("roleWithoutSpaces in Obligor : {}",role);
         Map<String,Object> response = new HashMap<>();
+        Obligor obligor = new Obligor();
         if(spocData.getAction()!=null){
-            Map<String,String> flowMatrix = rolesData.getMatrix().get(role).get(spocData.getAction());
-            Obligor obligor = new Obligor();
-            obligor.setReviewId(spocData.getReviewId());
-            obligor.setChildReviewId(spocData.getChildReviewId());
-            obligor.setAssignedTo(spocData.getAssignedTo());
-            String roleSet = flowMatrix.get("activityLevel").replaceAll("\\s+", "");
-            log.info("roleSet: {}",roleSet);
-            obligor.setRole(roleSet);
-            obligor.setRole(flowMatrix.get("activityLevel"));
-            obligor.setTaskStatus(flowMatrix.get("caseStatus"));
-            log.info("ObligorUpdate with body : {}",obligor);
-            Obligor updateObligor = obligorService.updateObligor(obligor);
-            AuditTrail setAuditTrail = new AuditTrail();
-            setAuditTrail.setReviewId(obligor.getReviewId());
-            setAuditTrail.setActionedBy(flowMatrix.get("activityLevel"));
-            setAuditTrail.setCurrentAction(flowMatrix.get("auditText"));
-            auditTrailService.saveAuditTrial(setAuditTrail);
-            if(updateObligor != null){
-                response.put("status",HttpStatus.OK.value());
-                response.put("message","Obligor Successfully Updated...!");
-                response.put("result",updateObligor);
-                log.info("Obligor updated successfully : {}",updateObligor);
-            }else{
-                response.put("status",HttpStatus.NOT_FOUND.value());
-                response.put("message","Failed to Update Obligor");
-                log.warn("Failed to update Obligor with spocData: {} ",spocData);
+            if( !spocData.getFieldwork().equals("FieldWorkCompleted")){
+                Map<String,String> flowMatrix = rolesData.getMatrix().get(role).get(spocData.getAction());
+                obligor.setReviewId(spocData.getReviewId());
+                obligor.setChildReviewId(spocData.getChildReviewId());
+                obligor.setAssignedTo(spocData.getAssignedTo());
+                String roleSet = flowMatrix.get("activityLevel").replaceAll("\\s+", "");
+                log.info("roleSet: {}",roleSet);
+                obligor.setRole(roleSet);
+                obligor.setRole(flowMatrix.get("activityLevel"));
+                obligor.setTaskStatus(flowMatrix.get("caseStatus"));
+                log.info("ObligorUpdate with body : {}",obligor);
+                Obligor updateObligor = obligorService.updateObligor(obligor);
+                AuditTrail setAuditTrail = new AuditTrail();
+                setAuditTrail.setReviewId(obligor.getReviewId());
+                setAuditTrail.setActionedBy(flowMatrix.get("activityLevel"));
+                setAuditTrail.setCurrentAction(flowMatrix.get("auditText"));
+                auditTrailService.saveAuditTrial(setAuditTrail);
+                if(updateObligor != null){
+                    response.put("status",HttpStatus.OK.value());
+                    response.put("message","Obligor Successfully Updated...!");
+                    response.put("result",updateObligor);
+                    log.info("Obligor updated successfully : {}",updateObligor);
+                }else{
+                    response.put("status",HttpStatus.NOT_FOUND.value());
+                    response.put("message","Failed to Update Obligor");
+                    log.warn("Failed to update Obligor with spocData: {} ",spocData);
+                }
+            }else {
+                obligor.setReviewStatus("Task Completed");
+                obligor.setCreatedBy(spocData.getRole());
+                obligor.setAssignedTo("");
+                obligor.setReviewId(spocData.getReviewId());
+                obligor.setChildReviewId(spocData.getChildReviewId());
+                Obligor updateObligor = obligorService.updateObligor(obligor);
             }
+
         }else {
             response.put("status",HttpStatus.NOT_FOUND.value());
             response.put("message","Action is empty in spocData");
@@ -117,6 +128,7 @@ public class ObligorController {
 
       return response;
     }
+
 
     @DeleteMapping("/delete/{childReviewId}")
     public Map<String,Object> deleteObligor(@PathVariable String childReviewId){
@@ -243,6 +255,25 @@ public class ObligorController {
             response.put("message","ResponseQueryDetails updated Successfully");
             response.put("result",result);
             log.info("ResponseQueryDetails updated Successfully : {}",result);
+        }
+        return response;
+    }
+
+    @PutMapping("/updateResponseRemediation")
+    public Map<String,Object> updateResponseRemediationByChildReviewId(@RequestBody ResponseRemediation responseRemediation){
+        log.info("Entered Update ResponseRemediation with ChildReviewId : {}",responseRemediation);
+        Map<String,Object> response = new HashMap<>();
+
+        ResponseRemediation result = responseRemediationService.UpdateResponseRemediation(responseRemediation);
+        if(result.getChildReviewId() != null){
+            response.put("status",HttpStatus.OK.value());
+            response.put("message","ResponseRemediation Updated Successfully...!");
+            response.put("result",result);
+            log.info("ResponseRemediation Updated Successfully : {}",result);
+        }else {
+            response.put("status",HttpStatus.NO_CONTENT.value());
+            response.put("message"," failed to updated Response Remediation ");
+            log.info("failed to updated Response Remediation");
         }
         return response;
     }

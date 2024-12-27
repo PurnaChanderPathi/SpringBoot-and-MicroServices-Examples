@@ -4,6 +4,8 @@ const initialState = {
     isActive: false,
     isEmpty: false,
     isChildReviewSelected : false,
+    isViewAndUpload : false,
+    isChildReviewId : "",
     score: 0,
     userData: {
       name: "",
@@ -34,6 +36,12 @@ const scoreSlice = createSlice({
       },
       setSelectedChildReview: (state,action) => {
         state.isChildReviewSelected = action.payload;
+      },
+      setViewAndUpload: (state,action) => {
+        state.isViewAndUpload = action.payload;
+      },
+      setChildReviewId: (state,action) => {
+        state.isChildReviewId = action.payload;
       }
     },
 
@@ -42,7 +50,7 @@ const scoreSlice = createSlice({
 
 export const {
   // toggle,
-   setState, incrementScore, setUserData, setEmptyState,setSelectedChildReview} = scoreSlice.actions;
+   setState, incrementScore, setUserData, setEmptyState,setSelectedChildReview,setViewAndUpload,setChildReviewId} = scoreSlice.actions;
 export default scoreSlice.reducer;
 
 

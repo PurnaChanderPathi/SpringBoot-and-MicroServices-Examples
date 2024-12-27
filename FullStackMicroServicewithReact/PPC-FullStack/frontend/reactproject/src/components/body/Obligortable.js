@@ -7,9 +7,10 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getResponseRemediationDetailsByReviewId } from '../../redux/ResponseRemedaitionSlice';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDetailsWithChildReviewId, handleOpenObservation }) => {
@@ -23,6 +24,8 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
     const [selectedChildReviewId, setSelectedChildReviewId] = useState(null);
     const [isObligorOpen, setIsObligorOpen] = useState(false);
     const [childReviewId, setChildReviewId] = useState(null);
+    const isViewAndUpload = useSelector((state) => state.Score.isViewAndUpload);
+    const isChildReviewId = useSelector((state) => state.Score.isChildReviewId);
 
     const handleObligorCancel = () => {
         setIsObligorOpen(false);
@@ -80,6 +83,13 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
             setCurrentPage((prev) => prev - 1);
         }
     };
+
+
+    useEffect(() => {
+        if (isViewAndUpload && isChildReviewId) {
+            handleGetAndUpdateObligor(isChildReviewId);
+        }
+    }, [isChildReviewId])
 
     const handleGetAndUpdateObligor = (childReviewId) => {
         console.log("childReviewId in ObligorTable Page :", childReviewId);
@@ -198,14 +208,14 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                                         setIsModalOpen(true);
                                     }}>
                                         <Tooltip title="Send For Clasification">
-                                        <OutboxIcon sx={{ color: '#FF5E00' }} />
+                                            <OutboxIcon sx={{ color: '#FF5E00' }} />
                                         </Tooltip>
-                                        </Button></TableCell>
+                                    </Button></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button onClick={() => handleOpenObservation()}>
                                     <Tooltip title="Add/View Observation">
-                                    <AddTaskIcon sx={{ color: '#FF5E00' }} />
+                                        <AddTaskIcon sx={{ color: '#FF5E00' }} />
                                     </Tooltip>
-                                    </Button></TableCell>
+                                </Button></TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>
                                     <Button onClick={() => {
                                         setChildReviewId(row.childReviewId);
@@ -213,16 +223,16 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                                         // handleDelete(row.obligorId)
                                     }}>
                                         <Tooltip title="Delete">
-                                        <DeleteOutlineIcon sx={{ color: '#FF5E00' }} />
-                                        </Tooltip>                                        
+                                            <DeleteOutlineIcon sx={{ color: '#FF5E00' }} />
+                                        </Tooltip>
                                     </Button>
                                 </TableCell>
-                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button 
-                                onClick={() => handleGetAndUpdateObligor(row.childReviewId)}>
+                                <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}><Button
+                                    onClick={() => handleGetAndUpdateObligor(row.childReviewId)}>
                                     <Tooltip title="View/Upload">
-                                    <PreviewIcon sx={{ color: '#FF5E00' }} />
+                                        <PreviewIcon sx={{ color: '#FF5E00' }} />
                                     </Tooltip>
-                                    </Button></TableCell>
+                                </Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -259,39 +269,84 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                     Next
                 </Button>
             </Box>
-            <Dialog open={isModalOpen} onClose={handleModalCancel} sx={{ marginBottom: '190px' }}>
-                <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-                        Do you want to Send for Clasification ?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                        No
-                    </Button>
-                    <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                        Yes
-                    </Button>
-                </DialogActions>
+            <Dialog open={isModalOpen} sx={{ marginBottom: '190px' }}>
+                <div className='loadingScreen' style={{
+                    width: '500px', height: '240px',
+                    display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+                }}>
+                    <div className='loadingHeader' style={{
+                        height: '20vh', display: 'flex',
+                        justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+                    }}>
+                        <Typography
+                            sx={{ fontWeight: 'bold' }}>
+                            <span style={{
+                                textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                textUnderlineOffset: '4px'
+                            }}
+                                className='underlineText'>Con</span>firm Change
+                        </Typography>
+                        <Button onClick={handleModalCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+                    </div>
+                    <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                        <Typography
+                            sx={{ fontWeight: 'bold' }}>
+                            <span style={{
+                                textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                textUnderlineOffset: '4px'
+                            }}
+                                className='underlineText'>Do</span> you want to Send for Clasification ?
+                        </Typography>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                        <Button onClick={handleModalConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                            Yes
+                        </Button>
+                    </div>
+                </div>
             </Dialog>
 
-            <Dialog open={isObligorOpen} onClose={handleObligorCancel} sx={{ marginBottom: '190px' }}>
-                <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-                        Do you want to Delete obligor ?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant='contained' onClick={handleObligorCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                        No
-                    </Button>
-                    <Button variant='contained' onClick={handleObligorConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                        Yes
-                    </Button>
-                </DialogActions>
+            <Dialog open={isObligorOpen} sx={{ marginBottom: '190px' }}>
+                <div className='loadingScreen' style={{
+                    width: '500px', height: '240px',
+                    display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+                }}>
+                    <div className='loadingHeader' style={{
+                        height: '20vh', display: 'flex',
+                        justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+                    }}>
+                        <Typography
+                            sx={{ fontWeight: 'bold' }}>
+                            <span style={{
+                                textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                textUnderlineOffset: '4px'
+                            }}
+                                className='underlineText'>Con</span>firm Change
+                        </Typography>
+                        <Button onClick={handleObligorCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+                    </div>
+                    <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                        <Typography
+                            sx={{ fontWeight: 'bold' }}>
+                            <span style={{
+                                textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                textUnderlineOffset: '4px'
+                            }}
+                                className='underlineText'>Do</span> you want to Delete obligor ?
+                        </Typography>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                        <Button onClick={handleObligorConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                            Yes
+                        </Button>
+                    </div>
+                </div>
             </Dialog>
+
         </Box>
     )
 }

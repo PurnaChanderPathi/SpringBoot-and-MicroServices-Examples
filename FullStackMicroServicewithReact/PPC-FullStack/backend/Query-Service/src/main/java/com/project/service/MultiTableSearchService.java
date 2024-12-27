@@ -25,8 +25,6 @@ public class MultiTableSearchService {
 
     public List<MultiTableSearch> getCombinedData (String assignedTo){
 
-//        String querydetailsSql = "SELECT * FROM querydetails WHERE assignedTo = ? AND role = ?";
-
         String querydetailsSql = "SELECT * FROM querydetails WHERE role is NOT NULL AND assignedTo = ?";
 
         String obligorSql = "SELECT * FROM OBLIGOR WHERE role IS NOT NULL AND assignedTo = ?";

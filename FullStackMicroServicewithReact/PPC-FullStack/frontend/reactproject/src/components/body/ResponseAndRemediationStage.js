@@ -173,7 +173,7 @@ const ResponseAndRemediationStage = () => {
                             </Tabs>
                         </Box>
                         <CustomTabPanel value={value} index={0} className="CommentsScreenPS">
-                            {
+                            {/* {
                                 (role === "CreditReviewer") ? (
                                     <div className='DoYouWantToWorkOn'>
                                         <TextField
@@ -204,7 +204,7 @@ const ResponseAndRemediationStage = () => {
                                         </TextField>
                                     </div>
                                 ) : null
-                            }
+                            } */}
 
                             <div>
                                 <ResponseTable

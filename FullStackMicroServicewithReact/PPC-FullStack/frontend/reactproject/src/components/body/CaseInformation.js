@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './CaseInformation.css'
 import { useParams } from 'react-router-dom';
 import PlanningTabs from './PlanningStage';
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,7 @@ import MashreqHeader from '../header/MashreqHeader';
 import ResponseAndRemediationStage from './ResponseAndRemediationStage';
 import Swal from 'sweetalert2';
 import SPOC from './SPOC';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 
@@ -45,6 +46,9 @@ const CaseInformation = () => {
   const isChildReviewSelected = useSelector((state) => state.Score.isChildReviewSelected);
   const childReviewId = localStorage.getItem("childReviewId");
   const token = localStorage.getItem('authToken');
+  const reviewType = localStorage.getItem('reviewType');
+  const ChildReviewIdName = "ChildReviewId";
+  const ReviewIdName = "ReviewId";
 
 
   // const [role, setRole] = useState('');
@@ -60,43 +64,43 @@ const CaseInformation = () => {
   const DivisionToSpoc = caseData.division;
   const GroupNameToSpoc = caseData.groupName;
   console.log(` GroupName & Division in Caseinformation Stage ", ${GroupNameToSpoc} && ${DivisionToSpoc}`);
-const username = localStorage.getItem("username");
-const reviewStatus = localStorage.getItem('reviewStatus');  
+  const username = localStorage.getItem("username");
+  const reviewStatus = localStorage.getItem('reviewStatus');
 
-  useEffect(() => {    
-    if(role === "SPOC"){
-      setPlanning("PlanningCompleted");   
+  useEffect(() => {
+    if (role === "SPOC") {
+      setPlanning("PlanningCompleted");
       dispatch(setEmptyState(true));
       dispatch(setState(true));
       dispatch(setSelectedChildReview(true));
       setDocumentPresent(true);
       setSelectedUser(username);
-    }else if (role === "CreditReviewer" && reviewStatus === "in-Progress"){
+    } else if (role === "CreditReviewer" && reviewStatus === "in-Progress") {
       setPlanning("PlanningCompleted");
       setDocumentPresent(true);
       setSelectedUser(username);
-    }else if (role === "SrCreditReviewer" && reviewStatus === "in-Progress"){
+    } else if (role === "SrCreditReviewer" && reviewStatus === "in-Progress") {
       setDocumentPresent(true);
       setPlanning("PlanningCompleted");
     }
   })
 
   useEffect(() => {
-    if(fieldwork=== "FieldWorkCompleted"){
+    if (fieldwork === "FieldWorkCompleted") {
       setActionOptions([
         { value: "CompleteTask", label: "Complete Task" },
       ]);
-    }else{
+    } else {
       setActionOptions([
-        { value: "NoOptions", label: "No Options"},
+        { value: "NoOptions", label: "No Options" },
       ]);
     }
-  },[fieldwork])
+  }, [fieldwork])
 
   useEffect(() => {
-    console.log("isEmpty in CI",isEmpty);
-    console.log("isActive in CI",isActive);
-    console.log("isSelected Radio button",isChildReviewSelected);
+    console.log("isEmpty in CI", isEmpty);
+    console.log("isActive in CI", isActive);
+    console.log("isSelected Radio button", isChildReviewSelected);
   })
 
   useEffect(() => {
@@ -240,7 +244,7 @@ const reviewStatus = localStorage.getItem('reviewStatus');
     });
   };
 
-    const showToastSuccess = (message) => {
+  const showToastSuccess = (message) => {
     Swal.fire({
       icon: 'success',
       // title: 'Oops...',
@@ -275,7 +279,7 @@ const reviewStatus = localStorage.getItem('reviewStatus');
         showToast("Please add a document");
       } else {
 
-        if (action === "AssigntoCreditReviewer" ) {
+        if (action === "AssigntoCreditReviewer") {
 
           if (selectedUser == null || selectedUser === "") {
             showToast("Select Credit Reviewer");
@@ -284,17 +288,17 @@ const reviewStatus = localStorage.getItem('reviewStatus');
             setIsModelOpenSubmit(true);
           }
         }
-        else if(action === "SubmittoSPOC" || action === "SubmittoCreditReviewer"){
-          console.log("isActive in CI",isActive);
-          
-          if(isActive === false || isEmpty === false || isChildReviewSelected === false ){
+        else if (action === "SubmittoSPOC" || action === "SubmittoCreditReviewer") {
+          console.log("isActive in CI", isActive);
+
+          if (isActive === false || isEmpty === false || isChildReviewSelected === false) {
             showToast("Add Qurty before Submit");
-          }else{
+          } else {
             setDocumentMessage('');
             setIsModelOpenSubmit(true);
           }
         }
-         else {
+        else {
           setDocumentMessage('');
           setIsModelOpenSubmit(true);
         }
@@ -305,9 +309,9 @@ const reviewStatus = localStorage.getItem('reviewStatus');
 
 
   const handleModelConfirmSubmit = () => {
-    if(role === "CreditReviewer" || role === "SPOC"){
+    if (role === "CreditReviewer" || role === "SPOC" || ((role === "SrCreditReviewer") && (fieldwork === "FieldWorkCompleted"))) {
       UpdateObligorSpoc();
-    }else{
+    } else {
       UpdateDetails();
     }
 
@@ -324,40 +328,41 @@ const reviewStatus = localStorage.getItem('reviewStatus');
   // const handleDocumentsFetched = (exists) => {
   //   setDocumentExist(exists);
   // }
-const UpdateObligorSpoc = async () => {
-      let url = "http://localhost:9195/api/ActionObligor/update/Obligor";
-      console.log(`Body at UpdateObligorSpoc reviewId : ${reviewIds}, childReviewId: ${childReviewId}, action : ${action}, role :${role}, selectedUser : ${selectedUser}`);
-      let input = {
-        action : action,
-        reviewId : reviewIds,
-        role : role,
-        childReviewId : childReviewId,
-        assignedTo : selectedUser
-      };
-      console.log("inputs in UpdateObligorSpoc",input);
-      
-      try {
-        const response = await axios.put(url,input,{
-          headers : {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type' : 'application/json',
+  const UpdateObligorSpoc = async () => {
+    let url = "http://localhost:9195/api/ActionObligor/update/Obligor";
+    console.log(`Body at UpdateObligorSpoc reviewId : ${reviewIds}, childReviewId: ${childReviewId}, action : ${action}, role :${role}, selectedUser : ${selectedUser}`);
+    let input = {
+      action: action,
+      reviewId: reviewIds,
+      role: role,
+      childReviewId: childReviewId,
+      assignedTo: selectedUser,
+      fieldwork: fieldwork
+    };
+    console.log("inputs in UpdateObligorSpoc", input);
 
-          }
-        });
-        if(response.data.status === 200){
-          const data = response.data.result;
-          console.log("Obligor Updated Successfully ",data);
-          showToastSuccess("SuccessFully Submitted..!");
-          
-        }else if(response.data.status === 404){
-            console.log("Failed to update obligor");
-            
+    try {
+      const response = await axios.put(url, input, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+
         }
-      } catch (error) {
-        console.log("Failed to Process Obligor Update");
-        
+      });
+      if (response.data.status === 200) {
+        const data = response.data.result;
+        console.log("Obligor Updated Successfully ", data);
+        showToastSuccess("SuccessFully Submitted..!");
+
+      } else if (response.data.status === 404) {
+        console.log("Failed to update obligor");
+
       }
-}
+    } catch (error) {
+      console.log("Failed to Process Obligor Update");
+
+    }
+  }
 
   const UpdateDetails = async () => {
     const role = localStorage.getItem("role");
@@ -521,20 +526,20 @@ const UpdateObligorSpoc = async () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const reviewType = localStorage.getItem('reviewType');
+
         const url = `http://localhost:9195/api/query/${reviewId}?reviewType=${reviewType}`;
-        console.log("url in fetchData ",url);
-        
+        console.log("url in fetchData ", url);
+
         const response = await axios.get(url, {
           headers: {
             'Authorization': `Bearer ${ApiToken}`,
             'Content-Type': 'application/json',
           }
         });
-        if(response.data.status === 200){
+        if (response.data.status === 200) {
           const data = response.data.result;
-          console.log("data in fetchData ",data);
-          if(reviewType === "childReviewId"){
+          console.log("data in fetchData ", data);
+          if (reviewType === "childReviewId") {
             setCaseData({
               reviewId: data.childReviewId,
               groupName: data.groupName,
@@ -543,8 +548,8 @@ const UpdateObligorSpoc = async () => {
               assignedTo: data.assignedTo,
               action: action
             })
-           
-          }else{
+
+          } else {
             setCaseData({
               reviewId: data.reviewId,
               groupName: data.groupName,
@@ -554,7 +559,7 @@ const UpdateObligorSpoc = async () => {
               action: action
             });
           }
-          
+
 
 
 
@@ -564,61 +569,61 @@ const UpdateObligorSpoc = async () => {
           setPlanning(data.planning);
           console.log("setPlanning", data.planning);
           localStorage.setItem('currentStatus', data.action);
-          localStorage.setItem('reviewStatus',data.reviewStatus);
+          localStorage.setItem('reviewStatus', data.reviewStatus);
 
 
-        if (data.role === "SrCreditReviewer" && data.planning === null) {
-          console.log("Setting options for Sr CreditReviewer and empty planning");
+          if (data.role === "SrCreditReviewer" && data.planning === null) {
+            console.log("Setting options for Sr CreditReviewer and empty planning");
 
-          setActionOptions([
-            { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
-          ]);
-        }
-        else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === null) {
-          console.log("Setting options for Sr CreditReviewer and empty planning");
-          setActionOptions([
-            { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
-          ]);
-        }
+            setActionOptions([
+              { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
+            ]);
+          }
+          else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === null) {
+            console.log("Setting options for Sr CreditReviewer and empty planning");
+            setActionOptions([
+              { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
+            ]);
+          }
 
-        else if (data.role === "HeadofPPC" && data.planning === "PlanningCompleted" && data.action === "SubmittedToHeadofPPC") {
-          console.log("Setting options for Head of PPC");
-          setActionOptions([
-            { value: "Approve", label: "Approve" },
-            { value: "Reject", label: "Reject" }
-          ]);
-        } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Approve") {
-          console.log("Setting options for Sr CreditReviewer and PlanningCompleted");
-          setActionOptions([
-            { value: "AssigntoCreditReviewer", label: "Submit to Credit Reviewer" }
-          ]);
-        }
-        else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Reject") {
-          console.log("After Reject");
+          else if (data.role === "HeadofPPC" && data.planning === "PlanningCompleted" && data.action === "SubmittedToHeadofPPC") {
+            console.log("Setting options for Head of PPC");
+            setActionOptions([
+              { value: "Approve", label: "Approve" },
+              { value: "Reject", label: "Reject" }
+            ]);
+          } else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Approve") {
+            console.log("Setting options for Sr CreditReviewer and PlanningCompleted");
+            setActionOptions([
+              { value: "AssigntoCreditReviewer", label: "Submit to Credit Reviewer" }
+            ]);
+          }
+          else if (data.role === "SrCreditReviewer" && data.planning === "PlanningCompleted" && data.action === "Reject") {
+            console.log("After Reject");
 
-          setActionOptions([
-            { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
-          ]);
-        }else if(data.role === "CreditReviewer" && data.planning === "PlanningCompleted"){
-          setActionOptions([
-            {value: "SubmittoSPOC", label: "Submit to SPOC"},
-            {value: "SubmittoSrCreditReviewer", label : "Submit to SrCreditReviewer"}
-          ]);
+            setActionOptions([
+              { value: "SubmittedToHeadofPPC", label: "Submit to Head of PPC" }
+            ]);
+          } else if (data.role === "CreditReviewer" && data.planning === "PlanningCompleted") {
+            setActionOptions([
+              { value: "SubmittoSPOC", label: "Submit to SPOC" },
+              { value: "SubmittoSrCreditReviewer", label: "Submit to SrCreditReviewer" }
+            ]);
+          }
+          else if (data.role === "SPOC") {
+            setActionOptions([
+              { value: "SubmittoCreditReviewer", label: "Submit to CreditReviewer" }
+            ])
+          } else if (data.role === "CreditReviewer" && data.reviewStatus === "in-Progress") {
+            setPlanning("PlanningCompleted");
+            setActionOptions([
+              { value: "SubmittoSPOC", label: "Submit to SPOC" },
+              { value: "SubmittoSrCreditReviewer", label: "Submit to SrCreditReviewer" }
+            ])
+          } else if (data.role === "SrCreditReviewer" && data.reviewStatus === "in-Progress") {
+            setPlanning("PlanningCompleted");
+          }
         }
-        else if(data.role === "SPOC"){
-          setActionOptions([
-            {value: "SubmittoCreditReviewer", label : "Submit to CreditReviewer"}
-          ])
-        }else if(data.role === "CreditReviewer" && data.reviewStatus === "in-Progress"){
-          setPlanning("PlanningCompleted");
-          setActionOptions([
-            {value: "SubmittoSPOC", label: "Submit to SPOC"},
-            {value: "SubmittoSrCreditReviewer", label : "Submit to SrCreditReviewer"}
-          ])
-        }else if(data.role === "SrCreditReviewer" && data.reviewStatus === "in-Progress"){
-          setPlanning("PlanningCompleted");
-        }
-      }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -655,7 +660,12 @@ const UpdateObligorSpoc = async () => {
             <div className='fetchCaseInformation'>
               <div className='ReviewIdinfoCS'>
                 <div className='ReviewLabelCS'>
-                  ReviewId
+                  {/* ReviewId */}
+                  {
+                    (
+                      reviewType === "childReviewId" ? ChildReviewIdName : ReviewIdName
+                    )
+                  }
                 </div>
                 <div className='ReviewInputCS'>
                   <input type='text' value={caseData.reviewId}
@@ -675,7 +685,7 @@ const UpdateObligorSpoc = async () => {
                     value={caseData.groupName}
                     className='inputReviewCS'
                     disabled
-                     />
+                  />
                 </div>
               </div>
               <div className='ReviewIdinfoCS'>
@@ -687,7 +697,7 @@ const UpdateObligorSpoc = async () => {
                     value={caseData.division}
                     className='inputReviewCS'
                     disabled
-                     />
+                  />
                 </div>
               </div>
               <div className='ReviewIdinfoCS'>
@@ -698,7 +708,7 @@ const UpdateObligorSpoc = async () => {
                   <input type='text'
                     value={caseData.role}
                     className='inputReviewCS' disabled
-                    />
+                  />
                 </div>
               </div>
               <div className='ReviewIdinfoCS'>
@@ -709,7 +719,7 @@ const UpdateObligorSpoc = async () => {
                   <input type='text'
                     value={caseData.assignedTo}
                     className='inputReviewCS' disabled
-                    />
+                  />
                 </div>
               </div>
 
@@ -775,72 +785,93 @@ const UpdateObligorSpoc = async () => {
             </div>
           </div>
           {
-            (role !== "SPOC" ) ? (
-          <div className='planningEditScreen'>
-            <TextField
-              label="planning"
-              className='GroupNameText'
-              id="GroupName"
-              select
-              value={planning}
-              onChange={handleValueChange}
-              disabled={isFieldDisabled && planning !== ""}
-              sx={{
-                width: '300px',
-                textAlign: 'center',
-                paddingLeft: '10px',
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: '#FF5E00;',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#FF5E00',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#FF5E00',
-                  },
-                },
-              }}
-            >
-              <MenuItem value="PlanningCompleted">Planning Completed</MenuItem>
-              <MenuItem value="Planninginprogress">Planning inprogress</MenuItem>
-            </TextField>
-            <Button className='BtnEditCI'
-              variant='contained'
-              sx={{ backgroundColor: '#FF5E00', height: '30px', width: '70px' }}
-              onClick={handleEditClick}
-            >
-              Edit
-            </Button>
-            {/* Confirmation Modal */}
-            <Dialog open={isModalOpen} onClose={handleModalCancel} sx={{ marginBottom: '190px' }}>
-              <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
-              <DialogContent>
-                <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-                  Do you want to change the planning?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button variant='contained' onClick={handleModalCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                  No
+            (role !== "SPOC") ? (
+              <div className='planningEditScreen'>
+                <TextField
+                  label="planning"
+                  className='GroupNameText'
+                  id="GroupName"
+                  select
+                  value={planning}
+                  onChange={handleValueChange}
+                  disabled={isFieldDisabled && planning !== ""}
+                  sx={{
+                    width: '300px',
+                    textAlign: 'center',
+                    paddingLeft: '10px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#FF5E00;',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#FF5E00',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#FF5E00',
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="PlanningCompleted">Planning Completed</MenuItem>
+                  <MenuItem value="Planninginprogress">Planning inprogress</MenuItem>
+                </TextField>
+                <Button className='BtnEditCI'
+                  variant='contained'
+                  sx={{ backgroundColor: '#FF5E00', height: '30px', width: '70px' }}
+                  onClick={handleEditClick}
+                >
+                  Edit
                 </Button>
-                <Button variant='contained' onClick={handleModalConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
+                <Dialog open={isModalOpen} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
+            <div className='loadingScreen' style={{
+              width: '500px', height: '240px',
+              display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+            }}>
+              <div className='loadingHeader' style={{
+                height: '20vh', display: 'flex',
+                justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+              }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Con</span>firm Change
+                </Typography>
+                <Button onClick={handleModalCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+              </div>
+              <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Do</span> you want to change the planning?
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                <Button onClick={handleModalConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
                   Yes
                 </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
-            ) : null 
+              </div>
+            </div>
+          </Dialog>
+              </div>
+            ) : null
           }
-                    {
-            (role !== "SPOC" ) ? (
-          <div className='SaveAndCloseButtonCI'>
-            <Button variant='contained'
-              sx={{ backgroundColor: '#FF5E00', width: '140px', height: '30px', fontSize: 'small' }}
-              onClick={handleSaveAndClose}
-            >Save & Close</Button>
-          </div>
-            ): null
+          {
+            (role !== "SPOC") ? (
+              <div className='SaveAndCloseButtonCI'>
+                <Button variant='contained'
+                  sx={{ backgroundColor: '#FF5E00', width: '140px', height: '30px', fontSize: 'small' }}
+                  onClick={handleSaveAndClose}
+                >Save & Close</Button>
+              </div>
+            ) : null
           }
 
 
@@ -857,9 +888,9 @@ const UpdateObligorSpoc = async () => {
           {
             (role === "SrCreditReviewer" && planning === "PlanningCompleted") || role === "CreditReviewer" ? (
               <div className='planningTabsDiv'>
-                <FieldWorkStage 
-                DivisionToSpoc={DivisionToSpoc}
-                GroupNameToSpoc={GroupNameToSpoc}
+                <FieldWorkStage
+                  DivisionToSpoc={DivisionToSpoc}
+                  GroupNameToSpoc={GroupNameToSpoc}
                 />
               </div>
             ) : null
@@ -873,14 +904,14 @@ const UpdateObligorSpoc = async () => {
             ) : null
           }
 
-{
-            (role === "CreditReviewer" ) ? (
-            <div>
-              <SPOC GroupNameToSpoc={GroupNameToSpoc}
-                DivisionToSpoc={DivisionToSpoc} 
-                selectedUser={selectedUser}
-                setSelectedUser={setSelectedUser}/>
-            </div>
+          {
+            (role === "CreditReviewer") ? (
+              <div>
+                <SPOC GroupNameToSpoc={GroupNameToSpoc}
+                  DivisionToSpoc={DivisionToSpoc}
+                  selectedUser={selectedUser}
+                  setSelectedUser={setSelectedUser} />
+              </div>
             ) : null
           }
 
@@ -915,44 +946,60 @@ const UpdateObligorSpoc = async () => {
               </TextField>
             </div >
           )}
-        
-        {
-          (role !== "SPOC") && (
-            <div className='planningTabsDiv'>
-            <PlanningTabs
-              documentMesage={documentMesage}
-              fetchData={fetchData}
-              rows={rows}
-              setRows={setRows}
-            // readOnly={isReadonlyPT}
 
-            />
+          {
+            (role !== "SPOC") && (
+              <div className='planningTabsDiv'>
+                <PlanningTabs
+                  documentMesage={documentMesage}
+                  fetchData={fetchData}
+                  rows={rows}
+                  setRows={setRows}
+                // readOnly={isReadonlyPT}
 
-
-          </div>
-  )
-        }
+                />
 
 
-
-
-
-
-          <Dialog open={isModelOpenSubmit} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
-            <DialogTitle sx={{ color: 'black', fontWeight: 'bold', width: '400px', height: '250' }}>Confirm Change</DialogTitle>
-            <DialogContent>
-              <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-                Do you want to submit ?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button variant='contained' onClick={handleModalCancelSubmit} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                No
-              </Button>
-              <Button variant='contained' onClick={handleModelConfirmSubmit} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                Yes
-              </Button>
-            </DialogActions>
+              </div>
+            )
+          }
+          <Dialog open={isModelOpenSubmit} sx={{ marginBottom: '190px' }}>
+            <div className='loadingScreen' style={{
+              width: '500px', height: '240px',
+              display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+            }}>
+              <div className='loadingHeader' style={{
+                height: '20vh', display: 'flex',
+                justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+              }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Con</span>firm Change
+                </Typography>
+                <Button onClick={handleModalCancelSubmit}><CloseIcon sx={{ color: 'black' }} /></Button>
+              </div>
+              <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Do</span> You Want To Submit ?
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                <Button onClick={handleModelConfirmSubmit} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                  Submit
+                </Button>
+              </div>
+            </div>
           </Dialog>
         </div>
       </div>

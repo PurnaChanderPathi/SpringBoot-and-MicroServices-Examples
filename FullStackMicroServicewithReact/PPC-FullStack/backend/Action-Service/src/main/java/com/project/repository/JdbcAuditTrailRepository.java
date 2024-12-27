@@ -31,7 +31,7 @@ public class JdbcAuditTrailRepository implements AuditTrailRepository {
 
     @Override
     public AuditTrail update(AuditTrail auditTrail) {
-    StringBuilder query = new StringBuilder("UPDATE AUDITTRAIL SET");
+    StringBuilder query = new StringBuilder("UPDATE AUDITTRAIL SET ");
         List<Object> args = new ArrayList<>();
 
         if(auditTrail.getCurrentAction() != null){
@@ -48,13 +48,13 @@ public class JdbcAuditTrailRepository implements AuditTrailRepository {
             query.append("outTime = ?, ");
             args.add(auditTrail.getOutTime());
         }
-        if(auditTrail.getActionedBy() != null){
-            query.append("actionedBy = ?, ");
+        if(auditTrail.getReviewId()!= null){
+            query.append("reviewId = ?, ");
             args.add(auditTrail.getActionedBy());
         }
         query.setLength(query.length() - 2); // Remove trailing ", "
 
-        query.append("Where reviewId = ?");
+        query.append(" Where actionedBy = ?");
         args.add(auditTrail.getReviewId());
 
         int result = jdbcTemplate.update(query.toString(),args.toArray());

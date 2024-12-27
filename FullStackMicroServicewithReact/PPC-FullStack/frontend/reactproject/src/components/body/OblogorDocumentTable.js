@@ -26,6 +26,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import axios from "axios";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CloseIcon from '@mui/icons-material/Close';
 
 const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
     const [rows, setRows] = React.useState([]);
@@ -312,31 +313,50 @@ const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
                     
                 </Box>
             </div>
-            <Modal open={pdfOpen} onClose={handlePdfClose}>
-                <Box
-                    sx={{
-                        width: "80%",
-                        height: "80%",
-                        backgroundColor: "white",
-                        margin: "auto",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    {pdfUrl && (
-                        <embed
-                            src={pdfUrl}
-                            width="100%"
-                            height="100%"
-                            type="application/pdf"
-                        />
-                    )}
-                </Box>
+            <Modal open={pdfOpen}>
+              <Box
+                sx={{
+                  width: "80%",
+                  height: "80%",
+                  backgroundColor: "white",
+                  margin: "auto",
+                  padding: "20px",
+                  marginTop: '25px',
+                  borderRadius: "8px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{width : '100%', height : '100%'}}>
+                <div style={{ display : 'flex', justifyContent : 'space-between', alignItems : 'center'}}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Do</span>cument
+                </Typography>
+                <Button onClick={handlePdfClose}><CloseIcon sx={{ color: 'black' }} /></Button>
+                </div>
+                <div style={{ width : '100%', height : '95%'}}>
+                {pdfUrl && (
+                  <embed
+                    src={pdfUrl}
+                    width="100%"
+                    height="100%"
+                    type="application/pdf"
+                  />
+                )}
+                </div>
+                </div>
+                
+
+              </Box>
             </Modal>
-            <Dialog open={isObligorDocOpen} onClose={handleObligorDocCancel} sx={{ marginBottom: '190px' }}>
+            {/* <Dialog open={isObligorDocOpen} onClose={handleObligorDocCancel} sx={{ marginBottom: '190px' }}>
             <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
             <DialogContent>
               <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
@@ -351,6 +371,44 @@ const OblogorDocumentTable = ({ ObligorDocument, handleDeleteDoc }) => {
                 Yes
               </Button>
             </DialogActions>
+          </Dialog> */}
+                    <Dialog open={isObligorDocOpen} sx={{ marginBottom: '190px' }}>
+            <div className='loadingScreen' style={{
+              width: '500px', height: '240px',
+              display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+            }}>
+              <div className='loadingHeader' style={{
+                height: '20vh', display: 'flex',
+                justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+              }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Con</span>firm Change
+                </Typography>
+                <Button onClick={handleObligorDocCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+              </div>
+              <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Do</span> you want to Delete Obligor Document ?
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                <Button onClick={handleObligorDocConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                  Yes
+                </Button>
+              </div>
+            </div>
           </Dialog>
         </Box>
     );

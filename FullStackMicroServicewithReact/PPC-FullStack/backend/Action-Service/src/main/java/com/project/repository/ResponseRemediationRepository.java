@@ -8,6 +8,8 @@ public interface ResponseRemediationRepository {
 
     void saveResponse(ResponseRemediation responseRemediation);
 
+    ResponseRemediation updateResponse(ResponseRemediation responseRemediation);
+
     void deleteResponse(String childReviewId);
 
     void saveResponseQuery(ResponseQueryDetails responseQueryDetails);

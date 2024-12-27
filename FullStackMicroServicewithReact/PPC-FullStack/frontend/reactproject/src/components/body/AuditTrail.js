@@ -59,28 +59,37 @@ export default function AuditTrail() {
                 </TableCell>
                 <TableCell align="center" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.currentAction}</TableCell>
                 <TableCell align="center" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>
-                  {new Date(row.inTime).toLocaleString('en-US',{
-                      weekday: 'long',   // "Monday"
-                      year: 'numeric',   // "2024"
-                      month: 'long',     // "November"
-                      day: 'numeric',    // "14"
-                      hour: '2-digit',   // "03"
-                      minute: '2-digit', // "29"
-                      second: '2-digit', // "35"
-                      hour12: true       // "AM/PM"
-                  })}
+                {row.inTime ? (
+                                        new Date(row.inTime).toLocaleString('en-US', {
+                                            weekday: 'long',   // "Monday"
+                                            year: 'numeric',   // "2024"
+                                            month: 'long',     // "November"
+                                            day: 'numeric',    // "14"
+                                            hour: '2-digit',   // "03"
+                                            minute: '2-digit', // "29"
+                                            second: '2-digit', // "35"
+                                            hour12: true       // "AM/PM"
+                                        })
+                                    ) : (
+                                        "NaN"
+                                    )}
                 </TableCell>
                 <TableCell align="center" sx={{color: 'black', border: '1px solid #B2BEB5' }}>
-                {new Date(row.outTime).toLocaleString('en-US', {
-                      weekday: 'long',   // "Monday"
-                      year: 'numeric',   // "2024"
-                      month: 'long',     // "November"
-                      day: 'numeric',    // "14"
-                      hour: '2-digit',   // "03"
-                      minute: '2-digit', // "29"
-                      second: '2-digit', // "35"
-                      hour12: true       // "AM/PM"
-                })}</TableCell>
+                {row.outTime ? (
+                                        new Date(row.outTime).toLocaleString('en-US', {
+                                            weekday: 'long',   // "Monday"
+                                            year: 'numeric',   // "2024"
+                                            month: 'long',     // "November"
+                                            day: 'numeric',    // "14"
+                                            hour: '2-digit',   // "03"
+                                            minute: '2-digit', // "29"
+                                            second: '2-digit', // "35"
+                                            hour12: true       // "AM/PM"
+                                        })
+                                    ) : (
+                                        "NaN"
+                                    )}
+                </TableCell>
                 <TableCell align="center" sx={{ color: 'black', border: '1px solid #B2BEB5' }}>{row.actionedBy}</TableCell>
               </TableRow>
             ))}

@@ -43,7 +43,7 @@ import ResponseQueryTable from "./ResponseQueryTable";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import { getResponseQueryFetchDetails } from "../../redux/ResponseQueryFetchDetails";
-import { setSelectedChildReview } from "../../redux/scoreSlice";
+import { setChildReviewId, setSelectedChildReview, setViewAndUpload } from "../../redux/scoreSlice";
 import ReplyIcon from "@mui/icons-material/Reply";
 
 const ResponseTable = () => {
@@ -63,6 +63,11 @@ const ResponseTable = () => {
   const [openResponseQuery, setOpenResponseQuery] = useState(false);
   const [isInserted, setIsInserted] = useState(false);
   const role = localStorage.getItem("role");
+  // const isViewAndUpload = useSelector((state) => state.scope.isViewAndUpload);
+
+  // const handleViewAndUpload = () => {
+  //         dispatch(setViewAndUpload(true));
+  // }
 
   useEffect(() => {
     if (role === "SPOC") {
@@ -173,7 +178,7 @@ const ResponseTable = () => {
       const requestData = {
         reviewId: input.reviewId,
         query: input.query,
-        createdBy: input.createdBy,
+        createdBy: createdBy,
         childReviewId: childReviewId,
       };
 
@@ -194,7 +199,7 @@ const ResponseTable = () => {
             ...prevInput,
             query: "",
           }));
-            //   setIsInserted(true);
+          //   setIsInserted(true);
           dispatch(getResponseQueryFetchDetails(childReviewId, Token));
         } else {
           console.log(
@@ -538,7 +543,10 @@ const ResponseTable = () => {
                   </TableCell>
                 ) : null}
                 <TableCell align="center" sx={{ border: "1px solid #B2BEB5" }}>
-                  <Button>
+                  <Button onClick={() => {
+                    dispatch(setViewAndUpload(true));
+                    dispatch(setChildReviewId(row.childReviewId));
+                  }}>
                     <Tooltip title="View/Upload">
                       <PreviewIcon sx={{ color: "#FF5E00" }} />
                     </Tooltip>
@@ -589,72 +597,51 @@ const ResponseTable = () => {
           Next
         </Button>
       </Box>
-      <Dialog
-        open={isModalOpen}
-        onClose={handleModalCancel}
-        sx={{ marginBottom: "190px" }}
-      >
-        <DialogTitle sx={{ color: "black", fontWeight: "bold" }}>
-          Confirm Change
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ color: "black", fontWeight: "600" }}>
-            Do you want to Delete Respone & Remediation ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={handleModalCancel}
-            sx={{ backgroundColor: "#FF5E00", width: "70px", height: "30px" }}
-          >
-            No
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleModalConfirm}
-            sx={{ backgroundColor: "#FF5E00", width: "70px", height: "30px" }}
-          >
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={isModalOpen}
-        onClose={handleModalCancel}
-        sx={{ marginBottom: "190px" }}
-      >
-        <DialogTitle sx={{ color: "black", fontWeight: "bold" }}>
-          Confirm Change
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ color: "black", fontWeight: "600" }}>
-            Do you want to Delete Respone & Remediation ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={handleModalCancel}
-            sx={{ backgroundColor: "#FF5E00", width: "70px", height: "30px" }}
-          >
-            No
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleModalConfirm}
-            sx={{ backgroundColor: "#FF5E00", width: "70px", height: "30px" }}
-          >
-            Yes
-          </Button>
-        </DialogActions>
+
+      <Dialog open={isModalOpen} sx={{ marginBottom: '190px' }}>
+        <div className='loadingScreen' style={{
+          width: '500px', height: '240px',
+          display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+        }}>
+          <div className='loadingHeader' style={{
+            height: '20vh', display: 'flex',
+            justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+          }}>
+            <Typography
+              sx={{ fontWeight: 'bold' }}>
+              <span style={{
+                textDecoration: 'underline',
+                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                textUnderlineOffset: '4px'
+              }}
+                className='underlineText'>Con</span>firm Change
+            </Typography>
+            <Button onClick={handleModalCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+          </div>
+          <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+            <Typography
+              sx={{ fontWeight: 'bold' }}>
+              <span style={{
+                textDecoration: 'underline',
+                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                textUnderlineOffset: '4px'
+              }}
+                className='underlineText'>Do</span> you want to Delete Respone & Remediation ?
+            </Typography>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+            <Button onClick={handleModalConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+              Yes
+            </Button>
+          </div>
+        </div>
       </Dialog>
       <Modal
         open={openResponseQuery}
         onClose={handleCloseResponseQuery}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      
+
       >
         <Box sx={style} >
           <div className="FieldworkSectionModal">
@@ -733,7 +720,7 @@ const ResponseTable = () => {
 
               {
                 (role !== "SPOC") ? (
-                    <div
+                  <div
                     className="ResponseQueryBtnAdd"
                     style={{ paddingLeft: "1220px" }}
                   >
@@ -749,7 +736,7 @@ const ResponseTable = () => {
                   </div>
                 ) : null
               }
-  
+
 
               <div
                 className="ResponseQueryTable"

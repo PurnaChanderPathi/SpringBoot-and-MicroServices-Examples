@@ -16,6 +16,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { useDispatch } from 'react-redux';
 import { getResponseRemediationDetailsByReviewId } from '../../redux/ResponseRemedaitionSlice';
 import Swal from 'sweetalert2';
+import { setChildReviewId, setViewAndUpload } from '../../redux/scoreSlice';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -53,9 +54,31 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
     };
 
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const handleOpenObligor = () => setOpenObligor(true);
-    const handleCloseObligor = () => setOpenObligor(false);
+    const handleClose = () => {
+        setOpen(false);
+        dispatch(setViewAndUpload(false));
+        dispatch(setChildReviewId(''));
+        setInput({
+            Obligor: '',
+            Division: '',
+            Cifid: '',
+            PremId: '',
+        });
+    } 
+    const handleOpenObligor = () => {
+        setOpenObligor(true);
+        setInput(prevInput => ({
+            ...prevInput, Division: DivisionToSpoc
+        }))
+    } 
+    const handleCloseObligor = () => {
+        setOpenObligor(false);
+        setInput({
+            Obligor: '',
+            Cifid: '',
+            PremId: '',
+        });
+    } 
     const handleOpenObservation = () => setOpenObservation(true);
     const handleCloseObservation = () => setOpenObservation(false);
     const [input, setInput] = useState({
@@ -222,6 +245,66 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
     }
     const childReviewId = localStorage.getItem('childReviewId');
 
+    const updateResponseRemediationWithChildReviewId = async () => {
+        if(input.Obligor !== null || input.Division !== null || input.Cifid !== null || input.PremId !== null){
+            const inputs = {
+                reviewId: reviewId,
+                obligorName: input.Obligor,
+                division: input.Division,
+                obligorCifId: input.Cifid,
+                obligorPremId: input.PremId,
+                childReviewId: childReviewId
+            }
+            console.log("inputs in updateResponseRemediationWithChildId", input);
+
+            let url = "http://localhost:9195/api/ActionObligor/updateResponseRemediation";
+            try {
+                const response = await axios.put(url, inputs, {
+                    headers : {
+                        'Authorization': `Bearer ${ApiToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (response.data.status === 200) {
+                    console.log("updated ResponseRemediation successfully...!");
+                    console.log("result on update ResponseRemediation", response.data.result);
+                    setInput({
+                        Obligor: '',
+                        Division: '',
+                        Cifid: '',
+                        PremId: '',
+                    });
+                    handleClose();
+                    dispatch(setViewAndUpload(false));
+                    dispatch(setChildReviewId(''));
+                    dispatch(getResponseRemediationDetailsByReviewId(ApiToken,reviewId));
+                } else if (response.data.status === 404) {
+                    console.log(" Failed to updated ResponseDemediation");
+                    setInput({
+                        Obligor: '',
+                        Division: '',
+                        Cifid: '',
+                        PremId: '',
+                    });
+                    dispatch(setViewAndUpload(false));
+                    dispatch(setChildReviewId(''));
+                }
+            }catch (error) {
+                console.log("Error while the processing update", error.message);
+                setInput({
+                    Obligor: '',
+                    Division: '',
+                    Cifid: '',
+                    PremId: '',
+                });
+                dispatch(setViewAndUpload(false));
+                dispatch(setChildReviewId(''));
+            }
+        }else {
+            showToast("Please Fill Details to Update");
+        }
+    }
+
     const updateObligorWithChildId = async () => {
 
         if (input.Obligor !== null || input.Division !== null || input.Cifid !== null || input.PremId !== null) {
@@ -256,6 +339,8 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                     });
                     getObligorDetailsByReviewId();
                     handleClose();
+                    dispatch(setViewAndUpload(false));
+                    dispatch(setChildReviewId(''));
                 } else if (response.data.status === 404) {
                     console.log(" Failed to updated ObligorDetails");
                     setInput({
@@ -264,6 +349,8 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                         Cifid: '',
                         PremId: '',
                     });
+                    dispatch(setViewAndUpload(false));
+                    dispatch(setChildReviewId(''));
                 }
             } catch (error) {
                 console.log("Error while the processing update", error.message);
@@ -273,6 +360,8 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                     Cifid: '',
                     PremId: '',
                 });
+                dispatch(setViewAndUpload(false));
+                dispatch(setChildReviewId(''));
             }
         } else {
             showToast("Please Fill Details to Update");
@@ -321,7 +410,6 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                     console.log("FWS inserted Successfully...!", response.data.message)
                     setInput({
                         Obligor: '',
-                        Division: '',
                         Cifid: '',
                         PremId: '',
                     });
@@ -331,7 +419,6 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                     console.log("Failed to insert FWS Details");
                     setInput({
                         Obligor: '',
-                        Division: '',
                         Cifid: '',
                         PremId: '',
                     });
@@ -341,7 +428,6 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                 console.log("Error while processing to insert FWS Details", error.message);
                 setInput({
                     Obligor: '',
-                    Division: '',
                     Cifid: '',
                     PremId: '',
                 });
@@ -609,7 +695,7 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                                             ) : null}
                                         <Modal
                                             open={openObligor}
-                                            onClose={handleCloseObligor}
+                                            // onClose={handleCloseObligor}
                                             aria-labelledby="modal-modal-title"
                                             aria-describedby="modal-modal-description"
                                         >
@@ -814,7 +900,10 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
 
                                                             <Button
                                                                 startIcon={<EditOffIcon />} variant='contained' sx={{ backgroundColor: '#093414' }}
-                                                                onClick={updateObligorWithChildId}
+                                                                onClick={() => {
+                                                                    updateObligorWithChildId();
+                                                                    updateResponseRemediationWithChildReviewId();
+                                                                }}
                                                             >UPDATE</Button>
                                                         </div>
                                                         <div className='FieldWorkDocument'>

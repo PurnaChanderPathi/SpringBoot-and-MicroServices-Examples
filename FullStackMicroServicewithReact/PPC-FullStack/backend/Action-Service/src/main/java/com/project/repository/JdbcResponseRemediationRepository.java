@@ -45,6 +45,65 @@ public class JdbcResponseRemediationRepository implements ResponseRemediationRep
     }
 
     @Override
+    public ResponseRemediation updateResponse(ResponseRemediation responseRemediation) {
+        StringBuilder query = new StringBuilder("UPDATE RESPONSEREMEDIATION SET ");
+        List<Object> args = new ArrayList<>();
+
+        if(responseRemediation.getReviewId() != null){
+            query.append("reviewId=?, ");
+            args.add(responseRemediation.getReviewId());
+        }
+        if(responseRemediation.getObligorName() != null){
+            query.append("obligorName=?, ");
+            args.add(responseRemediation.getObligorName());
+        }
+
+        if(responseRemediation.getObligorCifId() != null){
+            query.append("obligorCifId=?, ");
+            args.add(responseRemediation.getObligorCifId() );
+        }
+        if(responseRemediation.getObligorPremId() != null){
+            query.append("obligorPremId=?, ");
+            args.add(responseRemediation.getObligorPremId() );
+        }
+        if(responseRemediation.getGroupName() != null){
+            query.append("groupName=?, ");
+            args.add(responseRemediation.getGroupName() );
+        }
+        if(responseRemediation.getReviewStatus() != null){
+            query.append("reviewStatus=?, ");
+            args.add(responseRemediation.getReviewStatus() );
+        }
+        if(responseRemediation.getDivision() != null){
+            query.append("division=?, ");
+            args.add(responseRemediation.getDivision() );
+        }
+        if(responseRemediation.getObservation() != null){
+            query.append("observation=?, ");
+            args.add(responseRemediation.getObservation() );
+        }
+        if(responseRemediation.getTaskStatus() != null){
+            query.append("taskStatus=?, ");
+            args.add(responseRemediation.getTaskStatus() );
+        }
+        if(responseRemediation.getActivityLevel() != null){
+            query.append("activityLevel=?, ");
+            args.add(responseRemediation.getActivityLevel() );
+        }
+        query.setLength(query.length() - 2);
+
+        query.append(" WHERE childReviewId=?");
+        args.add(responseRemediation.getChildReviewId());
+
+        int result = jdbcTemplate.update(query.toString(),args.toArray());
+        if(result > 0){
+            return responseRemediation;
+        }else{
+            throw  new RuntimeException("Update failed to ResponseRemediation");
+        }
+    }
+
+    @Override
     public void deleteResponse(String childReviewId) {
         String query = "DELETE FROM responseremediation where childReviewId = ? ";
         Object[] args = {childReviewId};

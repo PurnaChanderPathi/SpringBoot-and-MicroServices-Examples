@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +61,10 @@ public class QueryController {
         log.info("QueryDetails updated : {}",queryDetails);
         Map<String,Object> response = new HashMap<>();
         QueryDetails details = queryService.updateQuery(queryDetails);
+        AuditTrail auditTrail = new AuditTrail();
+        auditTrail.setReviewId(queryDetails.getReviewId());
+        auditTrail.setActionedBy(queryDetails.getRole());
+         auditTrailService.saveAuditTrial(auditTrail);
         if(details != null){
             response.put("status",HttpStatus.OK.value());
             response.put("message","Successfully Updated...!");
@@ -93,15 +98,16 @@ public class QueryController {
             queryDetails.setFieldwork(requestData.getFieldwork());
             QueryDetails updatedData = queryService.updateQuery(queryDetails);
             log.info("updatedData");
-            AuditTrail setAuditTrail = new AuditTrail();
-            setAuditTrail.setReviewId(queryDetails.getReviewId());
-            setAuditTrail.setActionedBy(flowMatrix.get("activityLevel"));
-            setAuditTrail.setCurrentAction(flowMatrix.get("auditText"));
-            auditTrailService.saveAuditTrial(setAuditTrail);
+//            AuditTrail setAuditTrail = new AuditTrail();
+//            setAuditTrail.setReviewId(queryDetails.getReviewId());
+//            setAuditTrail.setActionedBy(flowMatrix.get("activityLevel"));
+//            setAuditTrail.setCurrentAction(flowMatrix.get("auditText"));
+//            AuditTrail updatedAudit = auditTrailService.updateAuditTrail(setAuditTrail);
             if(updatedData != null){
                 response.put("status",HttpStatus.OK.value());
                 response.put("message","Successfully Updated...!");
                 response.put("result",updatedData);
+//                response.put("Audit",updatedAudit);
             }else{
                 response.put("status",HttpStatus.NOT_FOUND.value());
                 response.put("message","Not Updated Successfully...!");

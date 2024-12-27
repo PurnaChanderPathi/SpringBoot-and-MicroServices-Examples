@@ -31,6 +31,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
   const [open, setOpen] = useState(false);
@@ -266,7 +267,6 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
             </button>
             <Modal
               open={open}
-              onClose={handleClose}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
               sx={{
@@ -383,7 +383,7 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
               </Box>
             </Modal>
 
-            <Modal open={pdfOpen} onClose={handlePdfClose}>
+            <Modal open={pdfOpen}>
               <Box
                 sx={{
                   width: "80%",
@@ -391,12 +391,27 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
                   backgroundColor: "white",
                   margin: "auto",
                   padding: "20px",
+                  marginTop: '25px',
                   borderRadius: "8px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                 }}
               >
+                <div style={{width : '100%', height : '100%'}}>
+                <div style={{ display : 'flex', justifyContent : 'space-between', alignItems : 'center'}}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Do</span>cument
+                </Typography>
+                <Button onClick={handlePdfClose}><CloseIcon sx={{ color: 'black' }} /></Button>
+                </div>
+                <div style={{ width : '100%', height : '95%'}}>
                 {pdfUrl && (
                   <embed
                     src={pdfUrl}
@@ -405,6 +420,10 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
                     type="application/pdf"
                   />
                 )}
+                </div>
+                </div>
+                
+
               </Box>
             </Modal>
 
@@ -598,56 +617,44 @@ const Document = ({ documentMesage, fetchData, rows, setRows, readOnly }) => {
           </div>
         </AccordionDetails>
       </Accordion>
-      {/* <div>
-                <TableBody>
-                    {displayedRows.length > 0 ? (
-                        displayedRows.map((row) => (
-                            <TableRow key={row.reviewId} sx={{ backgroundColor: "white" }}>
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={8} align="center">No documents found for this review ID.</TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
+                <Dialog open={isModalOpen} sx={{ marginBottom: '190px' }}>
+            <div className='loadingScreen' style={{
+              width: '500px', height: '240px',
+              display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+            }}>
+              <div className='loadingHeader' style={{
+                height: '20vh', display: 'flex',
+                justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+              }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Con</span>firm Change
+                </Typography>
+                <Button onClick={handleModalCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+              </div>
+              <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                <Typography
+                  sx={{ fontWeight: 'bold' }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                    textUnderlineOffset: '4px'
+                  }}
+                    className='underlineText'>Do</span> you want to Delete Document ?
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                <Button onClick={handleModalConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                  Yes
+                </Button>
+              </div>
             </div>
-            <div>
-            {rows.length > 0 && (
-                <div>
-                </div>
-            )}
-        </div> */}
-      <Dialog
-        open={isModalOpen}
-        onClose={handleModalCancel}
-        sx={{ marginBottom: "190px" }}
-      >
-        <DialogTitle sx={{ color: "black", fontWeight: "bold" }}>
-          Confirm Change
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ color: "black", fontWeight: "600" }}>
-            Do you want to Delete Document ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            onClick={handleModalCancel}
-            sx={{ backgroundColor: "#FF5E00", width: "70px", height: "30px" }}
-          >
-            No
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleModalConfirm}
-            sx={{ backgroundColor: "#FF5E00", width: "70px", height: "30px" }}
-          >
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </Dialog>
     </div>
   );
 };

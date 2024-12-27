@@ -27,7 +27,7 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
     const dispatch = useDispatch();
     const { rows, totalPages, rowsPerPage, error, loading } = useSelector((state) => state.ResponseQuery);
     const role = localStorage.getItem('role');
-    const [response,setResponse] = useState('');
+    const [response, setResponse] = useState('');
     const username = localStorage.getItem('username');
     const date = new Date();
     const timeStamp = date.getTime();
@@ -43,30 +43,30 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
     const updateResponseQueryDetails = async () => {
         const url = "http://localhost:9195/api/ActionObligor/updateResponseQueryDetails";
         const inputs = {
-            response : response,
-            responseBy : username,
-            querySequence : isQuerySequence,
-            responseOn : timeStamp
+            response: response,
+            responseBy: username,
+            querySequence: isQuerySequence,
+            responseOn: timeStamp
         }
-        console.log("inputs at updateResponseQueryDetails :",inputs);
-        
+        console.log("inputs at updateResponseQueryDetails :", inputs);
+
 
         try {
-            const response = await axios.put(url,inputs,{
-                headers : {
-                    'Authorization' : `Bearer ${Token}`,
-                    'Content-Type' : 'application/json'
+            const response = await axios.put(url, inputs, {
+                headers: {
+                    'Authorization': `Bearer ${Token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-            if(response.data.status === 200){
-                console.log("QueryDetails Updated Successfully...!");                
+            if (response.data.status === 200) {
+                console.log("QueryDetails Updated Successfully...!");
                 const result = response.data.result;
-                console.log("Updated QueryDetails : ",result);     
-                dispatch(getResponseQueryFetchDetails(childReviewId, Token));       
+                console.log("Updated QueryDetails : ", result);
+                dispatch(getResponseQueryFetchDetails(childReviewId, Token));
             }
         } catch (error) {
-            console.log("Failed to update QueryDetails : ",error.message);
-            
+            console.log("Failed to update QueryDetails : ", error.message);
+
         }
     }
 
@@ -91,7 +91,7 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
     // }, [isEmpty,rows,dispatch])
 
-    
+
 
     const handleResponseQueryCancel = () => {
         setIsResponseQueryOpen(false);
@@ -181,7 +181,7 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
             if (response.data.status === 200) {
                 console.log("ResponseQuery Deleted Successfully :", response.data.message);
                 // ResponseQueryFetchDetails();  
-               dispatch(getResponseQueryFetchDetails(childReviewId, Token));
+                dispatch(getResponseQueryFetchDetails(childReviewId, Token));
             }
         } catch (error) {
             console.log("Error in Process Flow", error.message);
@@ -466,26 +466,46 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
                         </Button>
                     </div>
-
-
                 </Box>
             </div>
-
-            <Dialog open={isResponseQueryOpen} onClose={handleResponseQueryCancel} sx={{ marginBottom: '190px' }}>
-                <DialogTitle sx={{ color: 'black', fontWeight: 'bold' }}>Confirm Change</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ color: 'black', fontWeight: '600' }}>
-                        Do you want to Delete Response Query ?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant='contained' onClick={handleResponseQueryCancel} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                        No
-                    </Button>
-                    <Button variant='contained' onClick={handleResponseQueryConfirm} sx={{ backgroundColor: '#FF5E00', width: '70px', height: '30px' }}>
-                        Yes
-                    </Button>
-                </DialogActions>
+            
+            <Dialog open={isResponseQueryOpen} sx={{ marginBottom: '190px' }}>
+                <div className='loadingScreen' style={{
+                    width: '500px', height: '240px',
+                    display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+                }}>
+                    <div className='loadingHeader' style={{
+                        height: '20vh', display: 'flex',
+                        justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+                    }}>
+                        <Typography
+                            sx={{ fontWeight: 'bold' }}>
+                            <span style={{
+                                textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                textUnderlineOffset: '4px'
+                            }}
+                                className='underlineText'>Con</span>firm Change
+                        </Typography>
+                        <Button onClick={handleResponseQueryCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+                    </div>
+                    <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                        <Typography
+                            sx={{ fontWeight: 'bold' }}>
+                            <span style={{
+                                textDecoration: 'underline',
+                                textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                                textUnderlineOffset: '4px'
+                            }}
+                                className='underlineText'>Do</span> you want to Delete Response Query ?
+                        </Typography>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                        <Button onClick={handleResponseQueryConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                            Yes
+                        </Button>
+                    </div>
+                </div>
             </Dialog>
             <Modal
                 open={openToResponse}
@@ -513,45 +533,45 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
                             <div style={{ display: 'flex', flexDirection: 'column', width: '45vw', height: '40vh', justifyContent: 'space-evenly', }}>
 
                                 <div className="ResponseQuery" style={{ width: "100%" }}>
-                                                  <TextField
-                                                    label="Response"
-                                                    value={response}
-                                                    multiline
-                                                    minRows={6}
-                                                    variant="outlined"
-                                                    fullWidth
-                                                    onChange={(e) =>
-                                                      setResponse(e.target.value)
-                                                    }
-                                                    style={{
-                                                      borderRadius: "5px",
-                                                    }}
-                                                    InputProps={{
-                                                      style: {
-                                                        // padding: "10px",
-                                                      },
-                                                    }}
-                                                    sx={{
-                                                      "& .MuiOutlinedInput-root": {
-                                                        "& fieldset": {
-                                                          borderColor: "#FF5E00",
-                                                        },
-                                                        "&:hover fieldset": {
-                                                          borderColor: "#FF5E00",
-                                                        },
-                                                        "&.Mui-focused fieldset": {
-                                                          borderColor: "#FF5E00",
-                                                        },
-                                                      },
-                                                      "& .MuiInputLabel-root": {
-                                                        color: "black",
-                                                      },
-                                                      "& .MuiInputLabel-root.Mui-focused": {
-                                                        color: "black",
-                                                      },
-                                                    }}
-                                                  />
-                                                </div>
+                                    <TextField
+                                        label="Response"
+                                        value={response}
+                                        multiline
+                                        minRows={6}
+                                        variant="outlined"
+                                        fullWidth
+                                        onChange={(e) =>
+                                            setResponse(e.target.value)
+                                        }
+                                        style={{
+                                            borderRadius: "5px",
+                                        }}
+                                        InputProps={{
+                                            style: {
+                                                // padding: "10px",
+                                            },
+                                        }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                "& fieldset": {
+                                                    borderColor: "#FF5E00",
+                                                },
+                                                "&:hover fieldset": {
+                                                    borderColor: "#FF5E00",
+                                                },
+                                                "&.Mui-focused fieldset": {
+                                                    borderColor: "#FF5E00",
+                                                },
+                                            },
+                                            "& .MuiInputLabel-root": {
+                                                color: "black",
+                                            },
+                                            "& .MuiInputLabel-root.Mui-focused": {
+                                                color: "black",
+                                            },
+                                        }}
+                                    />
+                                </div>
 
                                 {/* <CustomTextArea 
                                 minRows={10}
@@ -559,12 +579,12 @@ const ResponseQueryTable = ({ isInserted, setIsInserted }) => {
 
                                 <Button
                                     startIcon={<NoteAddIcon />} variant='contained' sx={{ backgroundColor: '#FF5E00' }}
-                                onClick={() => {
-                                    updateResponseQueryDetails();
-                                    setOpenToResponse(false);
-                                    setResponse('');                                
-                                }
-                            }
+                                    onClick={() => {
+                                        updateResponseQueryDetails();
+                                        setOpenToResponse(false);
+                                        setResponse('');
+                                    }
+                                    }
                                 >ADD</Button>
                             </div>
 
