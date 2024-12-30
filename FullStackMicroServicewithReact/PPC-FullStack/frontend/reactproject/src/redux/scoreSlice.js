@@ -6,6 +6,7 @@ const initialState = {
     isChildReviewSelected : false,
     isViewAndUpload : false,
     isChildReviewId : "",
+    isReloadMyTaskTable : false,
     score: 0,
     userData: {
       name: "",
@@ -42,6 +43,9 @@ const scoreSlice = createSlice({
       },
       setChildReviewId: (state,action) => {
         state.isChildReviewId = action.payload;
+      },
+      setMyReloadPage: (state,action) => {
+        state.isReloadMyTaskTable = action.payload;
       }
     },
 
@@ -50,7 +54,7 @@ const scoreSlice = createSlice({
 
 export const {
   // toggle,
-   setState, incrementScore, setUserData, setEmptyState,setSelectedChildReview,setViewAndUpload,setChildReviewId} = scoreSlice.actions;
+   setState, incrementScore, setUserData, setEmptyState,setSelectedChildReview,setViewAndUpload,setChildReviewId,setMyReloadPage} = scoreSlice.actions;
 export default scoreSlice.reducer;
 
 

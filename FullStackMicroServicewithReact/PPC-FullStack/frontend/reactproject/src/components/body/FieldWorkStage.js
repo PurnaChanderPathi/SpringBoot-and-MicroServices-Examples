@@ -277,7 +277,7 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                     handleClose();
                     dispatch(setViewAndUpload(false));
                     dispatch(setChildReviewId(''));
-                    dispatch(getResponseRemediationDetailsByReviewId(ApiToken,reviewId));
+                    dispatch(getResponseRemediationDetailsByReviewId(reviewId,ApiToken));
                 } else if (response.data.status === 404) {
                     console.log(" Failed to updated ResponseDemediation");
                     setInput({

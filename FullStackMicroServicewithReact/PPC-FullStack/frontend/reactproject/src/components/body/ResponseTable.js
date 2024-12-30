@@ -63,6 +63,8 @@ const ResponseTable = () => {
   const [openResponseQuery, setOpenResponseQuery] = useState(false);
   const [isInserted, setIsInserted] = useState(false);
   const role = localStorage.getItem("role");
+  const [isQueryRendered, setIsQueryRendered] = useState(role !== "SPOC");
+const [isTableRendered, setIsTableRendered] = useState(true);
   // const isViewAndUpload = useSelector((state) => state.scope.isViewAndUpload);
 
   // const handleViewAndUpload = () => {
@@ -293,8 +295,19 @@ const ResponseTable = () => {
     width: 1400,
     bgcolor: "background.paper",
     boxShadow: 24,
-    height: 550,
+    height: "auto"
   };
+
+  const getModalHeight = () => {
+    let height = 20; 
+    if (role !== "SPOC") {
+      height += 210; 
+    }
+    if (isTableRendered) {
+      height += 300;
+    }
+    return height;
+  }
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -638,12 +651,12 @@ const ResponseTable = () => {
       </Dialog>
       <Modal
         open={openResponseQuery}
-        onClose={handleCloseResponseQuery}
+        // onClose={handleCloseResponseQuery}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
 
       >
-        <Box sx={style} >
+        <Box sx={{ ...style,height: getModalHeight()}} >
           <div className="FieldworkSectionModal">
             <div className="FieldWorkHeading">
               <Typography sx={{ fontWeight: "bold" }}>
@@ -674,7 +687,7 @@ const ResponseTable = () => {
                 flexDirection: "column",
               }}
             >
-              {role !== "SPOC" ? (
+              {role !== "SPOC" && (
                 <div className="ResponseQuery" style={{ width: "100%" }}>
                   <TextField
                     label="Query"
@@ -716,10 +729,10 @@ const ResponseTable = () => {
                     }}
                   />
                 </div>
-              ) : null}
+              )}
 
               {
-                (role !== "SPOC") ? (
+                (role !== "SPOC") && (
                   <div
                     className="ResponseQueryBtnAdd"
                     style={{ paddingLeft: "1220px" }}
@@ -734,19 +747,22 @@ const ResponseTable = () => {
                       Add
                     </Button>
                   </div>
-                ) : null
+                ) 
               }
 
-
-              <div
-                className="ResponseQueryTable"
-                style={{ width: "1370px", paddingLeft: "20px" }}
-              >
-                <ResponseQueryTable
-                  isInserted={isInserted}
-                  setIsInserted={setIsInserted}
-                />
-              </div>
+              {
+                isTableRendered && (
+                  <div
+                  className="ResponseQueryTable"
+                  style={{ width: "1370px", paddingLeft: "20px" }}
+                >
+                  <ResponseQueryTable
+                    isInserted={isInserted}
+                    setIsInserted={setIsInserted}
+                  />
+                </div>
+                )
+              }
             </div>
           </div>
         </Box>

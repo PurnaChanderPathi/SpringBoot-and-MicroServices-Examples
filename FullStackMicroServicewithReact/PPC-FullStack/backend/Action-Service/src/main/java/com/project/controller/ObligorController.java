@@ -64,6 +64,7 @@ public class ObligorController {
                 obligor.setReviewId(spocData.getReviewId());
                 obligor.setChildReviewId(spocData.getChildReviewId());
                 obligor.setAssignedTo(spocData.getAssignedTo());
+                obligor.setReviewStatus("in-Progress");
                 String roleSet = flowMatrix.get("activityLevel").replaceAll("\\s+", "");
                 log.info("roleSet: {}",roleSet);
                 obligor.setRole(roleSet);
@@ -87,7 +88,7 @@ public class ObligorController {
                     log.warn("Failed to update Obligor with spocData: {} ",spocData);
                 }
             }else {
-                obligor.setReviewStatus("Task Completed");
+                obligor.setReviewStatus("FieldWorkCompleted");
                 obligor.setCreatedBy(spocData.getRole());
                 obligor.setAssignedTo("");
                 obligor.setReviewId(spocData.getReviewId());

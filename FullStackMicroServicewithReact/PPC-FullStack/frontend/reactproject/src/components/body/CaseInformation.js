@@ -7,13 +7,14 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import AssignmentStage from './AssignmentStage';
-import { setEmptyState, setSelectedChildReview, setState } from '../../redux/scoreSlice';
+import { setEmptyState, setMyReloadPage, setSelectedChildReview, setState } from '../../redux/scoreSlice';
 import FieldWorkStage from './FieldWorkStage';
 import MashreqHeader from '../header/MashreqHeader';
 import ResponseAndRemediationStage from './ResponseAndRemediationStage';
 import Swal from 'sweetalert2';
 import SPOC from './SPOC';
 import CloseIcon from '@mui/icons-material/Close';
+import { getMyTaskTableFetchDetails } from '../../redux/MyTaskMultiTableSearch';
 
 
 
@@ -67,6 +68,7 @@ const CaseInformation = () => {
   const username = localStorage.getItem("username");
   const reviewStatus = localStorage.getItem('reviewStatus');
 
+
   useEffect(() => {
     if (role === "SPOC") {
       setPlanning("PlanningCompleted");
@@ -88,7 +90,7 @@ const CaseInformation = () => {
   useEffect(() => {
     if (fieldwork === "FieldWorkCompleted") {
       setActionOptions([
-        { value: "CompleteTask", label: "Complete Task" },
+        { value: "FieldWorkCompleted", label: "FieldWork Completed" },
       ]);
     } else {
       setActionOptions([
@@ -314,9 +316,9 @@ const CaseInformation = () => {
     } else {
       UpdateDetails();
     }
-
     setIsModelOpenSubmit(false);
     setTimeout(() => {
+      dispatch(getMyTaskTableFetchDetails(username, token));
       window.close();
     }, 5000);
   }
@@ -337,7 +339,8 @@ const CaseInformation = () => {
       role: role,
       childReviewId: childReviewId,
       assignedTo: selectedUser,
-      fieldwork: fieldwork
+      fieldwork: fieldwork,
+
     };
     console.log("inputs in UpdateObligorSpoc", input);
 
@@ -353,6 +356,10 @@ const CaseInformation = () => {
         const data = response.data.result;
         console.log("Obligor Updated Successfully ", data);
         showToastSuccess("SuccessFully Submitted..!");
+        setTimeout(() => {
+          dispatch(getMyTaskTableFetchDetails(username, token));
+        }, 2000);
+
 
       } else if (response.data.status === 404) {
         console.log("Failed to update obligor");
@@ -394,8 +401,10 @@ const CaseInformation = () => {
         console.log("Submited Successfully");
         showToastSuccess("SuccessFully Submitted..!");
         dispatch(setState(true));
+        setTimeout(() => {
+          dispatch(getMyTaskTableFetchDetails(username, token));
+        }, 3000);
         localStorage.setItem('isActive', true);
-
         localStorage.setItem('planning', '');
         localStorage.setItem('action', '');
         localStorage.setItem("role", response.data.result.role);
@@ -404,8 +413,6 @@ const CaseInformation = () => {
         localStorage.setItem('assignedTo', 'null');
         localStorage.setItem('selectedUser', '');
         console.log("on Update assignedTo is null");
-
-
         setAction('');
         setPlanning('');
         setSelectedUser('');
@@ -672,7 +679,6 @@ const CaseInformation = () => {
                     className='inputReviewCS'
                     disabled
                   />
-
                 </div>
 
               </div>
@@ -795,11 +801,24 @@ const CaseInformation = () => {
                   value={planning}
                   onChange={handleValueChange}
                   disabled={isFieldDisabled && planning !== ""}
+                  InputLabelProps={{
+                    sx: {
+                      marginBottom: '8px', 
+                      marginLeft: '5px',  
+                      color: 'black', 
+                      '&.Mui-focused': {
+                        color: 'black',
+                      },
+                    },
+                  }}
                   sx={{
                     width: '300px',
                     textAlign: 'center',
-                    paddingLeft: '10px',
+                    // paddingLeft: '10px',
                     '& .MuiOutlinedInput-root': {
+                      '& input': {
+                        textAlign: 'center',
+                      },
                       '& fieldset': {
                         borderColor: '#FF5E00;',
                       },
@@ -810,6 +829,13 @@ const CaseInformation = () => {
                         borderColor: '#FF5E00',
                       },
                     },
+                    // '& .MuiInputLabel-root': {
+                    //   marginLeft: '5px',
+                    //   color: 'black'
+                    // },
+                    // '& .MuiInputLabel-root.Mui-focused': {
+                    //   color: 'black',
+                    // },
                   }}
                 >
                   <MenuItem value="PlanningCompleted">Planning Completed</MenuItem>
@@ -823,43 +849,43 @@ const CaseInformation = () => {
                   Edit
                 </Button>
                 <Dialog open={isModalOpen} onClose={handleModalCancelSubmit} sx={{ marginBottom: '190px' }}>
-            <div className='loadingScreen' style={{
-              width: '500px', height: '240px',
-              display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
-            }}>
-              <div className='loadingHeader' style={{
-                height: '20vh', display: 'flex',
-                justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
-              }}>
-                <Typography
-                  sx={{ fontWeight: 'bold' }}>
-                  <span style={{
-                    textDecoration: 'underline',
-                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
-                    textUnderlineOffset: '4px'
-                  }}
-                    className='underlineText'>Con</span>firm Change
-                </Typography>
-                <Button onClick={handleModalCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
-              </div>
-              <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
-                <Typography
-                  sx={{ fontWeight: 'bold' }}>
-                  <span style={{
-                    textDecoration: 'underline',
-                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
-                    textUnderlineOffset: '4px'
-                  }}
-                    className='underlineText'>Do</span> you want to change the planning?
-                </Typography>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
-                <Button onClick={handleModalConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
-                  Yes
-                </Button>
-              </div>
-            </div>
-          </Dialog>
+                  <div className='loadingScreen' style={{
+                    width: '500px', height: '240px',
+                    display: 'flex', flexDirection: 'column', border: '1px solid #B2BEB5'
+                  }}>
+                    <div className='loadingHeader' style={{
+                      height: '20vh', display: 'flex',
+                      justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #B2BEB5', backgroundColor: 'whitesmoke', paddingLeft: "15px"
+                    }}>
+                      <Typography
+                        sx={{ fontWeight: 'bold' }}>
+                        <span style={{
+                          textDecoration: 'underline',
+                          textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                          textUnderlineOffset: '4px'
+                        }}
+                          className='underlineText'>Con</span>firm Change
+                      </Typography>
+                      <Button onClick={handleModalCancel}><CloseIcon sx={{ color: 'black' }} /></Button>
+                    </div>
+                    <div className='loader' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', backgroundColor: 'white' }}>
+                      <Typography
+                        sx={{ fontWeight: 'bold' }}>
+                        <span style={{
+                          textDecoration: 'underline',
+                          textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
+                          textUnderlineOffset: '4px'
+                        }}
+                          className='underlineText'>Do</span> you want to change the planning?
+                      </Typography>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', margin: '20px' }}>
+                      <Button onClick={handleModalConfirm} variant='contained' size='small' sx={{ backgroundColor: '#FF5E00', fontSize: '11px' }}>
+                        Yes
+                      </Button>
+                    </div>
+                  </div>
+                </Dialog>
               </div>
             ) : null
           }
