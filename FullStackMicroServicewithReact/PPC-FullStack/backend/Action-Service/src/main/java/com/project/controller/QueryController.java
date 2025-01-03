@@ -50,12 +50,6 @@ public class QueryController {
         return response;
  }
 
-//    @PutMapping("/update")
-//    public QueryDetails updateQuery(@RequestBody QueryDetails queryDetails){
-//
-//        return queryService.updateQuery(queryDetails);
-//    }
-
     @PutMapping("/update")
     public Map<String,Object> updateQuery(@RequestBody QueryDetails queryDetails){
         log.info("QueryDetails updated : {}",queryDetails);

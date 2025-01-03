@@ -35,7 +35,7 @@ const MashreqHeader = () => {
         <img src={logo} alt="MASQ Logo" className='MASQ' style={{ width: '100px', height: '60px' }} />
       </div>
       <div className='MSHP1'>
-        <img src={logoM} alt="MASQ Logo" className='MASQ1' style={{ width: '250px', height: "120px" }} />
+        <img src={logoM} alt="MASQ Logo" className='MASQ1' style={{ width: '250px', height: "120px", paddingLeft : '120px' }} />
       </div>
       <div className='MSHP1'>
         <div className='MSHP1_1'>
@@ -74,44 +74,22 @@ const MashreqHeader = () => {
       <Drawer
         anchor="right"
         open={openDrawer}
-        // onClose={() => toggleDrawer(false)}
+      // onClose={() => toggleDrawer(false)}
       >
         <div
           role="presentation"
           // onClick={() => toggleDrawer(false)}
           // onKeyDown={() => toggleDrawer(false)}
-          style={{ width: '250px' }}
+          style={{ width: '350px' }}
         >
           <List>
             <ListItem button>
               <div className='MyAccess'>
-                <div>
-                <Typography
-                  sx={{ fontWeight: 'bold' }}>
-                  <span style={{
-                    textDecoration: 'underline',
-                    textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
-                    textUnderlineOffset: '4px'
-                  }}
-                    className='underlineText'>My</span> Access
-                </Typography>
-                </div>
-
-                <div >
-                  <IconButton style={{ color : '#FF5E00'}} onClick={() => toggleDrawer(false)}>
-                  <ArrowForwardIosIcon  />
-                  </IconButton>
-          
-          </div>
-              </div>
-            </ListItem>
-            <Divider />
-            <div className='MyAccessRoles'>
               <div className='MyAccessHeading'>
                 <div className='MyAccessIcon'>
                   <WidgetsIcon />
                 </div>
-                <div className='myAccessheading'>
+                <div className='myAccessTitle'>
                   <Typography
                     sx={{ fontWeight: 'bold' }}>
                     <span style={{
@@ -119,23 +97,35 @@ const MashreqHeader = () => {
                       textDecorationThickness: '4px', textDecorationColor: '#FF5E00',
                       textUnderlineOffset: '4px'
                     }}
-                      className='underlineText'>PPC</span>
+                      className='underlineText'></span>
+                    RaghuKrishna
                   </Typography>
                 </div>
               </div>
+
+                <div >
+                  <IconButton style={{ color: '#FF5E00' }} onClick={() => toggleDrawer(false)}>
+                    <ArrowForwardIosIcon />
+                  </IconButton>
+
+                </div>
+              </div>
+            </ListItem>
+            <Divider />
+            <div className='MyAccessRoles'>
               <div className='rolesDisplay'>
-                    {roles.length > 0 ? (
-                      roles.map((role, index) => (
-                        <ListItem key={index} button>
-                                            <Typography
-                    sx={{ fontWeight: 'bold' }}>
-                      {role}
-                  </Typography>
-                        </ListItem>
-                      ))
-                    ): (
-                      <Typography>No roles found</Typography>
-                    )}
+                {roles.length > 0 ? (
+                  roles.map((role, index) => (
+                    <ListItem key={index} button>
+                      <Typography className='roleNames'
+                        sx={{ fontWeight: 'bold' }}>
+                        {role}
+                      </Typography>
+                    </ListItem>
+                  ))
+                ) : (
+                  <Typography>No roles found</Typography>
+                )}
               </div>
             </div>
             {/* <ListItem button onClick={handleLogout}>

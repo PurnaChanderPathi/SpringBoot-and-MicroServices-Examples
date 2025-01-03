@@ -3,6 +3,7 @@ import './Amlak.css'
 import HomePage from './HomePage'
 import Header from '../header/Header'
 import MashreqHeader from '../header/MashreqHeader'
+import FooterScreen from '../footer/FooterScreen'
 
 const Amlak = () => {
   return (
@@ -14,6 +15,7 @@ const Amlak = () => {
       <div className='HomePage'>
             <HomePage />
       </div>
+      <FooterScreen />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 package com.project.controller;
 
 import com.project.Dto.MultiTableSearch;
+import com.project.Dto.QueryMultiSearch;
 import com.project.entity.Obligor;
 import com.project.entity.QueryDetails;
 import com.project.service.MultiTableSearchService;
@@ -129,6 +130,27 @@ public class QueryController {
             response.put("message", "Query Details Search Fetched Successfully...!");
             response.put("result",result);
             log.info("Query Details  Fetched Successfully...! : {}",result);
+        }
+        return response;
+    }
+
+    @GetMapping("/multiSearchTable")
+    public Map<String,Object> getMultiSearchTable(
+            @RequestParam(value = "reviewId", required = false) String reviewId,
+    @RequestParam(value = "childReviewId", required = false) String childReviewId){
+        log.info("Enter multiSearchTable Service with reviewId :{} & childReviewId : {}", reviewId,childReviewId);
+        Map<String,Object> response = new HashMap<>();
+        QueryMultiSearch result = queryDetailsService.getMultiSearchTable(reviewId,childReviewId);
+        log.info("MultiSearch Result : {}",result);
+        if(result == null){
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("message", "multiSearch not found..!");
+            log.warn("multiSearch not found in Search Service");
+        }else{
+            response.put("status", HttpStatus.OK.value() );
+            response.put("message", "multiSearch Search Fetched Successfully...!");
+            response.put("result",result);
+            log.info("multiSearch  Fetched Successfully...! : {}",result);
         }
         return response;
     }
@@ -376,6 +398,30 @@ public class QueryController {
 
         return response;
     }
+
+    @GetMapping("/multiTableSearchGroupTask")
+    public Map<String, Object> getMultiTableSearchGroupTask(@RequestParam String role) {
+        log.info("Entered multiTableSearchGroupTask with assignedTo: {}", role);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<MultiTableSearch> result = multiTableSearchService.getGroupTasks(role);
+            if (result.isEmpty()) {
+                response.put("status", HttpStatus.NOT_FOUND.value());
+                response.put("message", "No Details Found for assignedTo: " + role);
+                log.warn("No multiTableSearchGroupTask Details fetched for assignedTo: {}", role);
+            } else {
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "MultiTableSearchGroupTask Fetched Successfully");
+                response.put("result", result);
+                log.info("multiTableSearchGroupTask Fetched Successfully: {}", result);
+            }
+        } catch (RuntimeException e) {
+            log.error("Error fetching data for assignedTo: {}", role, e);
+            throw new RuntimeException("Error fetching data: " + e.getMessage());
+        }
+        return response;
+    }
+
 }
 
 

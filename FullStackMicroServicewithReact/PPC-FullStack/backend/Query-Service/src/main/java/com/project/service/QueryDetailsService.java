@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.Dto.QueryMultiSearch;
 import com.project.entity.QueryDetails;
 import com.project.repository.QueryDetailsDao;
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,6 +34,10 @@ public class QueryDetailsService {
 
     public List<QueryDetails> getQueryDetails( String reviewId) {
         return queryDetailsDao.getQueryDetails(reviewId);
+    }
+
+    public QueryMultiSearch getMultiSearchTable(String reviewId, String childReviewId){
+        return queryDetailsDao.getMultiSearch(reviewId,childReviewId);
     }
 
     public List<QueryDetails> fetchQueryDetails(String groupName, String division, String reviewId, LocalDate fromDate, LocalDate toDate) {

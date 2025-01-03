@@ -104,7 +104,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
       });
     };
 
-  const fetchTableData = async () => {
+    const fetchTableData = async () => {
     let role = '';
     let createdBy = '';
     let url = "";
@@ -117,68 +117,175 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
 
     console.log("role", role);
     console.log("createdBy", createdBy);
+       url = `http://localhost:9195/api/query/multiTableSearchGroupTask?role=${role}`;
 
-    url = 'http://localhost:9195/api/query/getByRoleAndCreatedBy';
-    const queryParams = [];
-    if (role) {
-      queryParams.push(`role=${role}`);
-    }
-    if (queryParams.length > 0) {
-      url = `${url}?${queryParams.join('&')}&assignedTo=`;
-      console.log("url", url);
-    } else {
-      console.error('Insufficient parameters for RoleAndCreateBy');
-    }
+      try {
+        const response = await axios.get(url,{
+          headers : {
+            'Authorization' : `Bearer ${ApiToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          'Authorization': `Bearer ${ApiToken}`,
-          'Content-Type': 'application/json',
-        }
-      });
-
-      const data = response.data.result || [];
-      console.log("fetchDataTable :", response.data.result);
-
-      const reversedData = data.reverse();
-
-
-      setRows(reversedData);
+        if(response.data.status === 200){
+          const data = response.data.result || [];
+          console.log("MultiTableSearch Result",data);
+          const reversedData = data.reverse();
+          setRows(reversedData);
       setTotalPages(Math.ceil(data.length / rowsPerPage));
+          
+        }else if(response.data.status === 404){
+          console.log("MultiGroupTask Fetched Empty Data");          
+          setRows([]);
+          setTotalPages(0);
+        }
+      } catch (error) {
+        console.error('Axios fetch error:', error);
 
-    } catch (error) {
-      console.error('Axios fetch error:', error);
-
-      if (error.response && error.response.status === 404) {
-        console.error('Data not found due to 404 error');
-        setRows([]);
-        setTotalPages(0);
-        console.log("Rows after clearing:", rows);
-      } else {
-        console.error('Other Axios error:', error);
+            if (error.response && error.response.status === 404) {
+              console.error('Data not found due to 404 error');
+              setRows([]);
+              setTotalPages(0);
+              console.log("Rows after clearing:", rows);
+            } else {
+              console.error('Other Axios error:', error);
+            }
       }
     }
 
-  }
+  // const fetchTableData = async () => {
+  //   let role = '';
+  //   let createdBy = '';
+  //   let url = "";
+  //   const rolesArray = JSON.parse(localStorage.getItem("userRoles"));
+  //   const rolesString = rolesArray.join(",");
+  //   console.log(rolesString);
+
+  //   role = rolesString;
+  //   createdBy = localStorage.getItem('username');
+
+  //   console.log("role", role);
+  //   console.log("createdBy", createdBy);
+
+  //   url = 'http://localhost:9195/api/query/getByRoleAndCreatedBy';
+  //   const queryParams = [];
+  //   if (role) {
+  //     queryParams.push(`role=${role}`);
+  //   }
+  //   if (queryParams.length > 0) {
+  //     url = `${url}?${queryParams.join('&')}&assignedTo=`;
+  //     console.log("url", url);
+  //   } else {
+  //     console.error('Insufficient parameters for RoleAndCreateBy');
+  //   }
+
+  //   try {
+  //     const response = await axios.get(url, {
+  //       headers: {
+  //         'Authorization': `Bearer ${ApiToken}`,
+  //         'Content-Type': 'application/json',
+  //       }
+  //     });
+
+  //     const data = response.data.result || [];
+  //     console.log("fetchDataTable : ", response.data.result);
+
+  //     const reversedData = data.reverse();
+
+
+  //     setRows(reversedData);
+  //     setTotalPages(Math.ceil(data.length / rowsPerPage));
+
+  //   } catch (error) {
+  //     console.error('Axios fetch error:', error);
+
+  //     if (error.response && error.response.status === 404) {
+  //       console.error('Data not found due to 404 error');
+  //       setRows([]);
+  //       setTotalPages(0);
+  //       console.log("Rows after clearing:", rows);
+  //     } else {
+  //       console.error('Other Axios error:', error);
+  //     }
+  //   }
+
+  // }
+
+// const fetchData = async () => {
+//   let url = '';
+
+//   const { reviewId } = searchParams;
+//   // const {childReviewId } = searchParams;
+//   console.log("reviewId", reviewId);
+
+
+//   if (reviewId !== "") {
+//     url = 'http://localhost:9195/api/query/query-details';
+//     const queryParams = [];
+
+//     if (reviewId) {
+//       queryParams.push(`reviewId=${reviewId}`);
+//     }
+//     // if (childReviewId) {
+//     //   queryParams.push(`childReviewId=${childReviewId}`);
+//     // }
+
+//     if (queryParams.length > 0) {
+//       url = `${url}?${queryParams.join('&')}`;
+//     }
+//     try {
+//       const response = await axios.get(url, {
+//         headers: {
+//           'Authorization': `Bearer ${ApiToken}`,
+//           'Content-Type': 'application/json',
+//         }
+//       });
+//       if(response.data.status === 200){
+//         const data = response.data.result || [];
+//         console.log("Search Response:", data);
+//         if (data.length === 0) {
+//           setRows([]);
+//           setTotalPages(0);  
+//           showToast("Empty Data");
+//         } else {
+//           setRows(data);
+//           setTotalPages(Math.ceil(data.length / rowsPerPage));
+//         }
+//       }
+//       else if(response.data.status === 404){
+//         setRows([]);
+//         setTotalPages(0);
+//         showToast("No data found");
+//       }
+//     } catch (error) {
+//       console.error('Axios fetch error:', error);
+//       showToast("An error occurred while fetching data");
+//     }
+//   } else {
+//     console.log("ReviewId and childReviewId Both are empty");
+
+//   }
+// };
+
 
   const fetchData = async () => {
     let url = '';
 
     const { reviewId } = searchParams;
+    const {childReviewId } = searchParams;
     console.log("reviewId", reviewId);
 
 
-    if (reviewId !== "") {
-      url = 'http://localhost:9195/api/query/query-details';
+    if (reviewId !== "" || childReviewId !== "") {
+      url = 'http://localhost:9195/api/query/multiSearchTable';
       const queryParams = [];
 
       if (reviewId) {
         queryParams.push(`reviewId=${reviewId}`);
       }
-      // if (childReviewId) {
-      //   queryParams.push(`childReviewId=${childReviewId}`);
-      // }
+      if (childReviewId) {
+        queryParams.push(`childReviewId=${childReviewId}`);
+      }
 
       if (queryParams.length > 0) {
         url = `${url}?${queryParams.join('&')}`;
@@ -191,7 +298,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
           }
         });
         if(response.data.status === 200){
-          const data = response.data.result || [];
+          const data = response.data.result ? [response.data.result] : [];
           console.log("Search Response:", data);
           if (data.length === 0) {
             setRows([]);
@@ -245,10 +352,6 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
   const startIndex = (currentPage - 1) * rowsPerPage;
   const displayedRows = Array.isArray(rows) ? rows.slice(startIndex, startIndex + rowsPerPage) : [];
 
-  // const handleStartCaseClick = (reviewId) => {
-  //   navigate(`/CaseInformation/${reviewId}`);
-  // }
-
   const userLoad = async () => {
     let assignedTo = "";
     assignedTo = localStorage.getItem('username');
@@ -279,6 +382,18 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
       console.log("Error while processing to update Details", error.message);
 
     }
+  }
+
+  
+  const handleStartCaseChildReview = (childReviewId) => {
+    setLoading(true);
+    const url = `/CaseInformation/${childReviewId}`;
+    console.log("childReviewId hitted");
+    
+    setTimeout(() => {
+      setLoading(false);
+      window.open(url, '_blank');
+    }, 1000);
   }
 
 
@@ -320,7 +435,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
               padding: 1,
             }}
           >
-            <Typography variant="body1" sx={{ color: 'white', marginRight: 1 }}>
+            <Typography variant="body1" sx={{ color: 'black', marginRight: 1 }}>
               Per page:
             </Typography>
             <TextField
@@ -351,9 +466,7 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
                 <TableRow>
                   <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Start Case</TableCell>
                   <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Review ID</TableCell>
-                  {/* <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Child Review ID</TableCell>
-<TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Issue ID</TableCell>
-<TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Track Issue ID</TableCell> */}
+                  <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Child Review Id</TableCell>
                   <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Division</TableCell>
                   <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Group Name</TableCell>
                   <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>Current Status</TableCell>
@@ -366,14 +479,27 @@ export default function BasicTable({ searchParams, buttonClicked, setButtonClick
                 {displayedRows.map((row) => (
                   <TableRow key={row.reviewId} sx={{ backgroundColor: 'white' }}>
                     <TableCell align='center' sx={{ color: 'white', border: '1px solid #B2BEB5' }}
-                      onClick={() => handleStartCaseClick(row.reviewId)}  
+                      // onClick={() => handleStartCaseClick(row.reviewId)}  
+                      onClick={() => {
+                        const childReviewId = row.childReviewId;
+                        console.log("childReviewid in MYQUEUE",childReviewId);
+                        localStorage.setItem('reviewId',row.reviewId);
+                        
+                        
+                        if(childReviewId === ""){
+                          handleStartCaseClick(row.reviewId);
+                          localStorage.setItem("reviewType","reviewId");
+                        }else{
+                          
+                          handleStartCaseChildReview(row.childReviewId);
+                          localStorage.setItem("reviewType","childReviewId");
+                          localStorage.setItem('childReviewId',row.childReviewId);
+                        }
+                        
+                      } }
                     ><PlayArrowIcon style={{ color: 'FF5E00' }} /></TableCell>
-                    <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
-                      {row.reviewId}
-                    </TableCell>
-                    {/* <TableCell align="right" sx={{ border: '1px solid black' }}>{row.childReviewId}</TableCell>
-<TableCell align="right" sx={{ border: '1px solid black' }}>{row.issueId}</TableCell>
-<TableCell align="right" sx={{ border: '1px solid black' }}>{row.trackIssueId}</TableCell> */}
+                    <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>{row.reviewId}</TableCell>  
+                    <TableCell component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>{row.childReviewId}</TableCell>
                     <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.division}</TableCell>
                     <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.groupName}</TableCell>
                     <TableCell align="right" sx={{ border: '1px solid #B2BEB5' }}>{row.currentStatus}</TableCell>

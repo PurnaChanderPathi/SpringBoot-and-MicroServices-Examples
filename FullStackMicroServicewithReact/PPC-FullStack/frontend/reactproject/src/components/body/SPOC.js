@@ -61,12 +61,12 @@ const SPOC = ({ GroupNameToSpoc, DivisionToSpoc,selectedUser,setSelectedUser }) 
      },[selectedGroup, selectedDivision, selectedSpoc, isActive, dispatch])
 
      useEffect(() => {
-        if(selectedSpoc){
-            setSelectedUser(selectedSpoc);
+        // if(selectedSpoc){
+        //     setSelectedUser(selectedSpoc);
             console.log("SelectedUser in Spoc ",selectedUser);
             
-        }
-     })
+        // }
+     },[selectedUser])
  
     useEffect(() => {
         if (GroupNameToSpoc && DivisionToSpoc) {
@@ -82,6 +82,7 @@ const SPOC = ({ GroupNameToSpoc, DivisionToSpoc,selectedUser,setSelectedUser }) 
         const selectedSpoc = event.target.value;
         setSelectedSpoc(selectedSpoc);
         console.log("onChange Spoc :", selectedSpoc);
+        setSelectedUser(selectedSpoc);
         console.log(`GroupName : ${selectedGroup} && Division : ${selectedDivision} && Spoc : ${selectedSpoc}`);
 
     }

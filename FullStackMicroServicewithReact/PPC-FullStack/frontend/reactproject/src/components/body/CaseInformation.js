@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './CaseInformation.css'
 import { useParams } from 'react-router-dom';
 import PlanningTabs from './PlanningStage';
-import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import SPOC from './SPOC';
 import CloseIcon from '@mui/icons-material/Close';
 import { getMyTaskTableFetchDetails } from '../../redux/MyTaskMultiTableSearch';
+import FooterScreen from '../footer/FooterScreen';
 
 
 
@@ -28,6 +29,8 @@ const CaseInformation = () => {
     division: '',
     role: '',
     assignedTo: '',
+    createdDate: '',
+    currentStatus: ''
   })
   const [loading, setLoading] = useState(true);
   const [action, setAction] = useState('');
@@ -68,6 +71,34 @@ const CaseInformation = () => {
   const username = localStorage.getItem("username");
   const reviewStatus = localStorage.getItem('reviewStatus');
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    if (isNaN(date)) {
+      return "Invalid Date";
+    }
+
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  };
+
+  useEffect(() => {
+    if (role === "CreditReviewer") {
+      dispatch(setEmptyState(false));
+      dispatch(setState(false));
+      dispatch(setSelectedChildReview(false));
+    }
+  }, [role])
+
 
   useEffect(() => {
     if (role === "SPOC") {
@@ -76,11 +107,10 @@ const CaseInformation = () => {
       dispatch(setState(true));
       dispatch(setSelectedChildReview(true));
       setDocumentPresent(true);
-      setSelectedUser(username);
     } else if (role === "CreditReviewer" && reviewStatus === "in-Progress") {
       setPlanning("PlanningCompleted");
       setDocumentPresent(true);
-      setSelectedUser(username);
+      // setSelectedUser(username);
     } else if (role === "SrCreditReviewer" && reviewStatus === "in-Progress") {
       setDocumentPresent(true);
       setPlanning("PlanningCompleted");
@@ -172,8 +202,6 @@ const CaseInformation = () => {
           setDocumentPresent(false);
           console.log("document set To False in length = 0", documentPresent);
         }
-
-
       } else {
         console.error("Expected an array, but received:", response.data);
         setRows([]);
@@ -342,8 +370,17 @@ const CaseInformation = () => {
       fieldwork: fieldwork,
 
     };
-    console.log("inputs in UpdateObligorSpoc", input);
+    console.log("Final input payload before API call:", input);
+    console.log("Action value:", action);
+    const normalizedAction = action.trim();
+    console.log("Normalized Action value:", normalizedAction);
 
+    if (normalizedAction.toLowerCase() === "submittocreditreviewer") {
+      const CreditReviewer = localStorage.getItem('createdBy');
+      input.assignedTo = CreditReviewer || selectedUser;
+    } else if (normalizedAction.toLowerCase() === "submittosrcreditreviewer") {
+      input.assignedTo = '';
+    }
     try {
       const response = await axios.put(url, input, {
         headers: {
@@ -356,10 +393,15 @@ const CaseInformation = () => {
         const data = response.data.result;
         console.log("Obligor Updated Successfully ", data);
         showToastSuccess("SuccessFully Submitted..!");
+        localStorage.setItem("taskStatus", data.taskStatus);
+        if (role === "CreditReviewer") {
+          localStorage.setItem("createdBy", username);
+          console.log(`After Obligor Submit isEmpty : ${isEmpty} && isActive : ${isActive} && : isChildReviewSelected ${isChildReviewSelected} `);
+        }
         setTimeout(() => {
           dispatch(getMyTaskTableFetchDetails(username, token));
         }, 2000);
-
+        setSelectedUser('');
 
       } else if (response.data.status === 404) {
         console.log("Failed to update obligor");
@@ -553,7 +595,10 @@ const CaseInformation = () => {
               division: data.division,
               role: data.role,
               assignedTo: data.assignedTo,
-              action: action
+              action: action,
+              createdDate: data.createdOn,
+              currentStatus: data.taskStatus
+
             })
 
           } else {
@@ -563,7 +608,9 @@ const CaseInformation = () => {
               division: data.division,
               role: data.role,
               assignedTo: data.assignedTo,
-              action: action
+              action: action,
+              createdDate: data.createdDate,
+              currentStatus: data.currentStatus
             });
           }
 
@@ -649,7 +696,9 @@ const CaseInformation = () => {
   const asmtAction = localStorage.getItem('currentStatus');
   return (
     <div className='CaseInfoMainDiv'>
-      <MashreqHeader />
+      <div className="MashreqHeader">
+        <MashreqHeader />
+      </div>
       <ToastContainer />
       <div className='CaseInfoScreen'>
         <div className='CaseInfoScreen1'>
@@ -665,69 +714,106 @@ const CaseInformation = () => {
           </div>
           <div className='CDCT'>
             <div className='fetchCaseInformation'>
-              <div className='ReviewIdinfoCS'>
-                <div className='ReviewLabelCS'>
-                  {/* ReviewId */}
-                  {
-                    (
-                      reviewType === "childReviewId" ? ChildReviewIdName : ReviewIdName
-                    )
-                  }
-                </div>
-                <div className='ReviewInputCS'>
-                  <input type='text' value={caseData.reviewId}
+              <div className='CaseDetailsfetch'>
+                <div className='ReviewIdinfoCS'>
+                  <div className='ReviewLabelCS'>
+                    {/* ReviewId */}
+                    {
+                      (
+                        reviewType === "childReviewId" ? ChildReviewIdName : ReviewIdName
+                      )
+                    }
+                  </div>
+                  <div className='ReviewInputCS'>
+                    {/* <input type='text' value={caseData.reviewId}
                     className='inputReviewCS'
                     disabled
-                  />
-                </div>
+                  /> */}
+                    <Typography>{caseData.reviewId}</Typography>
+                  </div>
 
-              </div>
-              <div className='ReviewIdinfoCS'>
-                <div className='ReviewLabelCS'>
-                  GroupName
                 </div>
-                <div className='ReviewInputCS'>
-                  <input type='text'
+                <div className='ReviewIdinfoCS'>
+                  <div className='ReviewLabelCS'>
+                    GroupName
+                  </div>
+                  <div className='ReviewInputCS'>
+                    <Typography>{caseData.groupName}</Typography>
+                    {/* <input type='text'
                     value={caseData.groupName}
                     className='inputReviewCS'
                     disabled
-                  />
+                  /> */}
+                  </div>
                 </div>
-              </div>
-              <div className='ReviewIdinfoCS'>
-                <div className='ReviewLabelCS'>
-                  Division
-                </div>
-                <div className='ReviewInputCS'>
-                  <input type='text'
+                <div className='ReviewIdinfoCS'>
+                  <div className='ReviewLabelCS'>
+                    Division
+                  </div>
+                  <div className='ReviewInputCS'>
+                    {/* <input type='text'
                     value={caseData.division}
                     className='inputReviewCS'
                     disabled
-                  />
+                  /> */}
+                    <Typography>{caseData.division}</Typography>
+                  </div>
                 </div>
-              </div>
-              <div className='ReviewIdinfoCS'>
-                <div className='ReviewLabelCS'>
-                  Role
-                </div>
-                <div className='ReviewInputCS'>
-                  <input type='text'
+                <div className='ReviewIdinfoCS'>
+                  <div className='ReviewLabelCS'>
+                    Role
+                  </div>
+                  <div className='ReviewInputCS'>
+                    {/* <input type='text'
                     value={caseData.role}
                     className='inputReviewCS' disabled
-                  />
+                  /> */}
+                    <Typography>{caseData.role}</Typography>
+                  </div>
                 </div>
-              </div>
-              <div className='ReviewIdinfoCS'>
-                <div className='ReviewLabelCS'>
-                  PPC Initiator
-                </div>
-                <div className='ReviewInputCS'>
-                  <input type='text'
+                <div className='ReviewIdinfoCS'>
+                  <div className='ReviewLabelCS'>
+                    PPC Initiator
+                  </div>
+                  <div className='ReviewInputCS'>
+                    {/* <input type='text'
                     value={caseData.assignedTo}
                     className='inputReviewCS' disabled
-                  />
+                  /> */}
+                    <Typography>{caseData.assignedTo}</Typography>
+                  </div>
+                </div>
+                <div className='ReviewIdinfoCS'>
+                  <div className='ReviewLabelCS'>
+                    Case status
+                  </div>
+                  <div className='ReviewInputCS'>
+                    {/* <input type='text'
+                    value={caseData.role}
+                    className='inputReviewCS' disabled
+                  /> */}
+                    <Typography>{caseData.currentStatus}</Typography>
+                  </div>
                 </div>
               </div>
+              <div className='DividerCIF'>
+                <hr />
+              </div>
+
+              <div>
+                <div className='CaseCreatedDateCIF'>
+                  <div style={{ width: '185px', paddingTop: '8px', fontWeight: 'bold' }}>
+                    CASE CREATED DATE :
+                  </div>
+                  <div >
+                    <input type='text'
+                      value={formatDate(caseData.createdDate)}
+                      className='inputReviewDate' disabled
+                    />
+                  </div>
+                </div>
+              </div>
+
 
             </div>
             <div className='ClassTimeLineDiv'>
@@ -766,8 +852,8 @@ const CaseInformation = () => {
                 }}
               >
                 {/* <MenuItem value="">
-                <em>None</em>
-              </MenuItem> */}
+                  <em>None</em>
+                </MenuItem> */}
                 {actionOptions.length > 0 ? (
                   actionOptions.map((option, index) => (
                     <MenuItem key={index} value={option.value}>
@@ -803,9 +889,9 @@ const CaseInformation = () => {
                   disabled={isFieldDisabled && planning !== ""}
                   InputLabelProps={{
                     sx: {
-                      marginBottom: '8px', 
-                      marginLeft: '5px',  
-                      color: 'black', 
+                      marginBottom: '8px',
+                      marginLeft: '5px',
+                      color: 'black',
                       '&.Mui-focused': {
                         color: 'black',
                       },
@@ -1028,6 +1114,9 @@ const CaseInformation = () => {
             </div>
           </Dialog>
         </div>
+      </div>
+      <div className="FooterScreen">
+        <FooterScreen />
       </div>
     </div>
 

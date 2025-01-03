@@ -24,6 +24,7 @@
     display: flex;
     gap: 20px;
     align-items: center;
+    padding-right: 17px;
 }
 
 .MSHP1_2 {
@@ -58,9 +59,10 @@
 }
 
 .MyAccessHeading {
-    margin: 20px;
+    margin: 10px;
     display: flex;
     gap: 20px;
+    padding-right: 10px;
 }
 
 .MyAccessIcon {
@@ -73,3 +75,14 @@
     align-items: center;
     width: 100%;
 }
+
+.myAccessTitle {
+    color: #FF5E00;
+}
+
+.roleNames {
+    border: 1px solid #999999;
+    padding: 10px;
+    border-radius: 25px;
+}
+

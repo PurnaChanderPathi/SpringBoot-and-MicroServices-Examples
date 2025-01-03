@@ -156,7 +156,7 @@ const rowsToDisplay = Array.isArray(displayedRows) ? displayedRows : [];
           padding: 1,
         }}
       >
-        <Typography variant="body1" sx={{ color: 'white', marginRight: 1 }}>
+        <Typography variant="body1" sx={{ color: 'black', marginRight: 1 }}>
           Per page:
         </Typography>
         <TextField

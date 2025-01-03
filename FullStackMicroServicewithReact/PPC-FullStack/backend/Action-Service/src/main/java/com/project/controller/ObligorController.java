@@ -87,13 +87,16 @@ public class ObligorController {
                     response.put("message","Failed to Update Obligor");
                     log.warn("Failed to update Obligor with spocData: {} ",spocData);
                 }
-            }else {
+            } else{
                 obligor.setReviewStatus("FieldWorkCompleted");
                 obligor.setCreatedBy(spocData.getRole());
-                obligor.setAssignedTo("");
+//                obligor.setAssignedTo("");
                 obligor.setReviewId(spocData.getReviewId());
                 obligor.setChildReviewId(spocData.getChildReviewId());
                 Obligor updateObligor = obligorService.updateObligor(obligor);
+                response.put("status",HttpStatus.OK.value());
+                response.put("message","Obligor Successfully Updated...!");
+                response.put("result",updateObligor);
             }
 
         }else {

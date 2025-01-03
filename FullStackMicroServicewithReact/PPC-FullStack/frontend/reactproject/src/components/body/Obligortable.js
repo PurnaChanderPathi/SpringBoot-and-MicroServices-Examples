@@ -85,11 +85,17 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
     };
 
 
+    // useEffect(() => {
+    //     if (isViewAndUpload && isChildReviewId) {
+    //         handleGetAndUpdateObligor(isChildReviewId);
+    //     }
+    // }, [isChildReviewId])
+
     useEffect(() => {
-        if (isViewAndUpload && isChildReviewId) {
-            handleGetAndUpdateObligor(isChildReviewId);
+        if(isViewAndUpload && isChildReviewId){
+            getObligorDetailsWithChildReviewId(isChildReviewId);
         }
-    }, [isChildReviewId])
+    },[isViewAndUpload,isChildReviewId])
 
     const handleGetAndUpdateObligor = (childReviewId) => {
         console.log("childReviewId in ObligorTable Page :", childReviewId);
@@ -146,7 +152,7 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                     padding: 1,
                 }}
             >
-                <Typography variant="body1" sx={{ color: 'white', marginRight: 1 }}>
+                <Typography variant="body1" sx={{ color: 'black', marginRight: 1 }}>
                     Per page:
                 </Typography>
                 <TextField
@@ -177,9 +183,6 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                         <TableRow>
                             <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }} >  CHILD REVIEW ID  <ArrowUpwardIcon /> </TableCell>
                             <TableCell sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>DIVISION</TableCell>
-                            {/* <TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Child Review ID</TableCell>
-<TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Issue ID</TableCell>
-<TableCell align="right" sx={{ color: 'white', border: '1px solid black' }}>Track Issue ID</TableCell> */}
                             <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>OBLIGOR NAME</TableCell>
                             <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>PREM ID</TableCell>
                             <TableCell align="right" sx={{ color: 'black', border: '1px solid #B2BEB5', fontWeight: 'bold' }}>CIF ID</TableCell>
@@ -195,9 +198,6 @@ const Obligortable = ({ ObligorDetails, handleDelete, handleOpen, getObligorDeta
                                 <TableCell align='center' component="th" scope="row" sx={{ border: '1px solid #B2BEB5' }}>
                                     {row.childReviewId}
                                 </TableCell>
-                                {/* <TableCell align="right" sx={{ border: '1px solid black' }}>{row.childReviewId}</TableCell>
-<TableCell align="right" sx={{ border: '1px solid black' }}>{row.issueId}</TableCell>
-<TableCell align="right" sx={{ border: '1px solid black' }}>{row.trackIssueId}</TableCell> */}
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.division}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorName}</TableCell>
                                 <TableCell align="center" sx={{ border: '1px solid #B2BEB5' }}>{row.obligorPremId}</TableCell>

@@ -63,11 +63,11 @@ flow:
       SubmittoSPOC:
         activityLevel: SPOC
         milestone: SPOC Review
-        caseStatus: Case submitted to SPOC
+        caseStatus: Case submitted to SPOC from CreditReviewer
         profileActivityLevel: SPOC
         auditText: Case submitted by Credit Reviewer to SPOC
       SubmittoSrCreditReviewer:
-        caseStatus: Case Assigned to SrCreditReviewer
+        caseStatus: Case Submit to SrCreditReviewer from CreditReviewer
         milestone: SrCreditReviewer Review
         activityLevel: SrCreditReviewer
         bpmStatus: Submit to SrCreditReviewer
@@ -77,7 +77,7 @@ flow:
       SubmittoCreditReviewer:
         activityLevel: CreditReviewer
         milestone: CreditReviewer Review
-        caseStatus: Case submitted to CreditReviewer
+        caseStatus: Case submitted to CreditReviewer from SPOC
         profileActivityLevel: CreditReviewer
         auditText: Case submitted by SPOC to Credit Reviewer
 

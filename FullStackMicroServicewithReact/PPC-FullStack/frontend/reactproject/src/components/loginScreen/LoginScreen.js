@@ -7,6 +7,7 @@ import { Timer10 } from '@mui/icons-material';
 import ImageMash from './loginMash.PNG'
 import { Typography } from '@mui/material';
 import CircularIndeterminate from './loadingScreen';
+import Swal from 'sweetalert2';
 
 
 const LoginScreen = () => {
@@ -18,6 +19,26 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+
+    const showToast = (message) => {
+      Swal.fire({
+        icon: 'error',
+        // title: 'Oops...',
+        text: message,
+        position: 'bottom-left',
+        toast: true,
+        timer: 5000,
+        showConfirmButton: false,
+        didClose: () => Swal.close(),
+        customClass: {
+          popup: 'swal-toast-popup',
+        },
+        background: 'red',
+        color: 'white',
+        height: '10%'
+      });
+    };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,10 +61,9 @@ const LoginScreen = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Login failed, please check your credentials');
-        
+        setLoading(false);
+        throw new Error('Login failed, please check your credentials');        
       }
-      // setLoading(true);
       const token = await response.text();
       localStorage.setItem('authToken', token);
       localStorage.setItem('username',credentials.username);

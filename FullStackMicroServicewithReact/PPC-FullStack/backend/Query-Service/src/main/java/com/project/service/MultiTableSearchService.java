@@ -23,18 +23,18 @@ public class MultiTableSearchService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<MultiTableSearch> getCombinedData (String assignedTo){
+    public List<MultiTableSearch> getCombinedData(String assignedTo) {
 
         String querydetailsSql = "SELECT * FROM querydetails WHERE role is NOT NULL AND assignedTo = ?";
 
-        String obligorSql = "SELECT * FROM OBLIGOR WHERE role IS NOT NULL AND assignedTo = ?";
-
+//        String obligorSql = "SELECT * FROM OBLIGOR WHERE role IS NOT NULL AND assignedTo = ?";
+        String obligorSql = "SELECT * FROM OBLIGOR WHERE role is NOT NULL AND assignedTo =? AND reviewStatus != 'FieldWorkCompleted' ";
         Object[] args = {assignedTo};
 
-        List<QueryDetails> queryDetails = jdbcTemplate.query(querydetailsSql, BeanPropertyRowMapper.newInstance(QueryDetails.class),args);
-        log.info("Query Details : {}",queryDetails);
-        List<Obligor> obligorDetails = jdbcTemplate.query(obligorSql, BeanPropertyRowMapper.newInstance(Obligor.class),assignedTo);
-        log.info("Obligor Details : {}",obligorDetails);
+        List<QueryDetails> queryDetails = jdbcTemplate.query(querydetailsSql, BeanPropertyRowMapper.newInstance(QueryDetails.class), args);
+        log.info("Query Details : {}", queryDetails);
+        List<Obligor> obligorDetails = jdbcTemplate.query(obligorSql, BeanPropertyRowMapper.newInstance(Obligor.class), assignedTo);
+        log.info("Obligor Details : {}", obligorDetails);
 
         List<MultiTableSearch> combinedData = combineData(queryDetails, obligorDetails);
         log.info("combinedData : {}", combinedData);
@@ -47,34 +47,105 @@ public class MultiTableSearchService {
         List<MultiTableSearch> combinedList = new ArrayList<>();
 
 
-            for (int i =0; i <queryDetailsRecords.size(); i++){
-                MultiTableSearch multiTableSearchForQuery = new MultiTableSearch();
-                QueryDetails getQueryData = queryDetailsRecords.get(i);
-                multiTableSearchForQuery.setReviewId(getQueryData.getReviewId());
-                multiTableSearchForQuery.setDivision(getQueryData.getDivision());
-                multiTableSearchForQuery.setGroupName(getQueryData.getGroupName());
-                multiTableSearchForQuery.setAssignedTo(getQueryData.getAssignedTo());
-                multiTableSearchForQuery.setRole(getQueryData.getRole());
-                multiTableSearchForQuery.setCurrentStatus(getQueryData.getCurrentStatus());
-                multiTableSearchForQuery.setCreatedOn((Timestamp) getQueryData.getCreatedDate());
-                multiTableSearchForQuery.setCreatedBy(getQueryData.getCreatedBy());
-                multiTableSearchForQuery.setChildReviewId("");
-                combinedList.add(multiTableSearchForQuery);
+        for (int i = 0; i < queryDetailsRecords.size(); i++) {
+            MultiTableSearch multiTableSearchForQuery = new MultiTableSearch();
+            QueryDetails getQueryData = queryDetailsRecords.get(i);
+            multiTableSearchForQuery.setReviewId(getQueryData.getReviewId());
+            multiTableSearchForQuery.setDivision(getQueryData.getDivision());
+            multiTableSearchForQuery.setGroupName(getQueryData.getGroupName());
+            multiTableSearchForQuery.setAssignedTo(getQueryData.getAssignedTo());
+            multiTableSearchForQuery.setRole(getQueryData.getRole());
+            multiTableSearchForQuery.setCurrentStatus(getQueryData.getCurrentStatus());
+            multiTableSearchForQuery.setCreatedOn((Timestamp) getQueryData.getCreatedDate());
+            multiTableSearchForQuery.setCreatedBy(getQueryData.getCreatedBy());
+            multiTableSearchForQuery.setChildReviewId("");
+            combinedList.add(multiTableSearchForQuery);
         }
-            for (int p=0; p < obligorRecords.size(); p++){
-                MultiTableSearch multiTableSearchForObligor = new MultiTableSearch();
-                Obligor getObligorData = obligorRecords.get(p);
-                multiTableSearchForObligor.setReviewId(getObligorData.getReviewId());
-                multiTableSearchForObligor.setGroupName(getObligorData.getGroupName());
-                multiTableSearchForObligor.setCreatedBy(getObligorData.getCreatedBy());
-                multiTableSearchForObligor.setCreatedOn(getObligorData.getCreatedOn());
-                multiTableSearchForObligor.setDivision(getObligorData.getDivision());
-                multiTableSearchForObligor.setAssignedTo(getObligorData.getAssignedTo());
-                multiTableSearchForObligor.setCurrentStatus(getObligorData.getTaskStatus());
-                multiTableSearchForObligor.setRole(getObligorData.getRole());
-                multiTableSearchForObligor.setChildReviewId(getObligorData.getChildReviewId());
-                combinedList.add(multiTableSearchForObligor);
-            }
+        for (int p = 0; p < obligorRecords.size(); p++) {
+            MultiTableSearch multiTableSearchForObligor = new MultiTableSearch();
+            Obligor getObligorData = obligorRecords.get(p);
+            multiTableSearchForObligor.setReviewId(getObligorData.getReviewId());
+            multiTableSearchForObligor.setGroupName(getObligorData.getGroupName());
+            multiTableSearchForObligor.setCreatedBy(getObligorData.getCreatedBy());
+            multiTableSearchForObligor.setCreatedOn(getObligorData.getCreatedOn());
+            multiTableSearchForObligor.setDivision(getObligorData.getDivision());
+            multiTableSearchForObligor.setAssignedTo(getObligorData.getAssignedTo());
+            multiTableSearchForObligor.setCurrentStatus(getObligorData.getTaskStatus());
+            multiTableSearchForObligor.setRole(getObligorData.getRole());
+            multiTableSearchForObligor.setChildReviewId(getObligorData.getChildReviewId());
+            combinedList.add(multiTableSearchForObligor);
+        }
+
+        return combinedList;
+    }
+
+
+    public List<MultiTableSearch> getGroupTasks(String role) {
+
+        // SQL for querydetails table
+        String querydetailsSql = "SELECT * FROM querydetails WHERE (assignedTo IS NULL OR assignedTo = '') AND ROLE = ?";
+
+        // SQL for obligor table with dynamic role parameter
+        String obligorSql = """
+        SELECT *
+        FROM OBLIGOR
+        WHERE assignedTo = ''
+          AND ROLE = ?
+          AND reviewStatus != 'FieldWorkCompleted';
+    """;
+
+        // Arguments for the queries
+        Object[] queryArgs = {role};
+
+        // Fetch data from querydetails
+        List<QueryDetails> queryDetails = jdbcTemplate.query(querydetailsSql, BeanPropertyRowMapper.newInstance(QueryDetails.class), queryArgs);
+        log.info("Query Details Retrieved: {}", queryDetails);
+
+        // Fetch data from obligor
+        List<Obligor> obligorDetails = jdbcTemplate.query(obligorSql, BeanPropertyRowMapper.newInstance(Obligor.class), queryArgs);
+        log.info("Obligor Details Retrieved: {}", obligorDetails);
+
+        // Combine results
+        List<MultiTableSearch> combinedData = getCBTask(queryDetails, obligorDetails);
+        log.info("Combined MultiTableSearch Data: {}", combinedData);
+
+        return combinedData;
+    }
+
+
+
+    private List<MultiTableSearch> getCBTask(List<QueryDetails> queryDetailsRecords, List<Obligor> obligorRecords) {
+        List<MultiTableSearch> combinedList = new ArrayList<>();
+
+
+        for (int i = 0; i < queryDetailsRecords.size(); i++) {
+            MultiTableSearch multiTableSearchForQuery = new MultiTableSearch();
+            QueryDetails getQueryData = queryDetailsRecords.get(i);
+            multiTableSearchForQuery.setReviewId(getQueryData.getReviewId());
+            multiTableSearchForQuery.setDivision(getQueryData.getDivision());
+            multiTableSearchForQuery.setGroupName(getQueryData.getGroupName());
+            multiTableSearchForQuery.setAssignedTo(getQueryData.getAssignedTo());
+            multiTableSearchForQuery.setRole(getQueryData.getRole());
+            multiTableSearchForQuery.setCurrentStatus(getQueryData.getCurrentStatus());
+            multiTableSearchForQuery.setCreatedOn((Timestamp) getQueryData.getCreatedDate());
+            multiTableSearchForQuery.setCreatedBy(getQueryData.getCreatedBy());
+            multiTableSearchForQuery.setChildReviewId("");
+            combinedList.add(multiTableSearchForQuery);
+        }
+        for (int p = 0; p < obligorRecords.size(); p++) {
+            MultiTableSearch multiTableSearchForObligor = new MultiTableSearch();
+            Obligor getObligorData = obligorRecords.get(p);
+            multiTableSearchForObligor.setReviewId(getObligorData.getReviewId());
+            multiTableSearchForObligor.setGroupName(getObligorData.getGroupName());
+            multiTableSearchForObligor.setCreatedBy(getObligorData.getCreatedBy());
+            multiTableSearchForObligor.setCreatedOn(getObligorData.getCreatedOn());
+            multiTableSearchForObligor.setDivision(getObligorData.getDivision());
+            multiTableSearchForObligor.setAssignedTo(getObligorData.getAssignedTo());
+            multiTableSearchForObligor.setCurrentStatus(getObligorData.getTaskStatus());
+            multiTableSearchForObligor.setRole(getObligorData.getRole());
+            multiTableSearchForObligor.setChildReviewId(getObligorData.getChildReviewId());
+            combinedList.add(multiTableSearchForObligor);
+        }
 
         return combinedList;
     }

@@ -805,7 +805,7 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                                         </Modal>
                                         <Modal
                                             open={open}
-                                            onClose={handleClose}
+                                            // onClose={handleClose}
                                             aria-labelledby="modal-modal-title"
                                             aria-describedby="modal-modal-description"
                                         >
@@ -949,7 +949,7 @@ const FieldWorkStage = ({ GroupNameToSpoc ,DivisionToSpoc}) => {
                                         </Modal>
                                         <Modal
                                             open={openObservation}
-                                            onClose={handleCloseObservation}
+                                            // onClose={handleCloseObservation}
                                             aria-labelledby="modal-modal-title"
                                             aria-describedby="modal-modal-description"
                                         >

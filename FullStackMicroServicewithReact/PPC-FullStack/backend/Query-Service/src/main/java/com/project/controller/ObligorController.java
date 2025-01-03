@@ -54,7 +54,7 @@ public class ObligorController {
         if(result.isEmpty()){
             response.put("status", HttpStatus.NOT_FOUND.value());
             response.put("message","Obligor Details not found with reviewId :"+reviewId);
-            log.warn("Obligor Details not found with reviewId : {}",reviewId);
+            log.warn("Obligor Document not found with reviewId : {}",reviewId);
         }else {
             response.put("status",HttpStatus.OK.value());
             response.put("message","Obligor Document Fetched Successfully...!");

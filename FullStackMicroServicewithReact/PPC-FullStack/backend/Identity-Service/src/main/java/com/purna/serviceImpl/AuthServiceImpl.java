@@ -3,6 +3,8 @@ package com.purna.serviceImpl;
 import com.purna.entity.UserInfo;
 import com.purna.repository.UserInfoRepository;
 import com.purna.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
     @Autowired
     private UserInfoRepository userInfoRepository;
 
@@ -35,20 +38,50 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    @Override
+//    @Override
+//    public List<String> getUsersWithCreditReviewerRole() {
+//        List<String> usersWithCreditReviewer = new ArrayList<>();
+//
+//        List<UserInfo> userInfoList = userInfoRepository.findAll();
+//        log.info("Users : {}",userInfoList);
+//
+//        for (UserInfo userInfo : userInfoList) {
+//            String roles = Arrays.toString(userInfo.getRoles());
+//            log.info("roles : {}",roles);
+//
+//            if (roles != null && !roles.isEmpty()) {
+//                String[] roleArray = roles.split(",");
+//                log.info("roleArray after cama separated : {}",roleArray);
+//                for (String role : roleArray) {
+//                    if (role.trim().equalsIgnoreCase("CreditReviewer")) {
+//
+//                        usersWithCreditReviewer.add(userInfo.getName());
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//
+//        return usersWithCreditReviewer;
+//    }
+
     public List<String> getUsersWithCreditReviewerRole() {
         List<String> usersWithCreditReviewer = new ArrayList<>();
 
         List<UserInfo> userInfoList = userInfoRepository.findAll();
+        log.info("Users retrieved: {}", userInfoList);
 
         for (UserInfo userInfo : userInfoList) {
             String roles = Arrays.toString(userInfo.getRoles());
+            log.info("Raw roles for user {}: {}", userInfo.getName(), roles);
 
             if (roles != null && !roles.isEmpty()) {
-                String[] roleArray = roles.split(",");
+                roles = roles.replaceAll("[\\[\\]]", "").trim();
+                String[] roleArray = roles.split("\\s*,\\s*");
+                log.info("Split roles array for user {}: {}", userInfo.getName(), Arrays.toString(roleArray));
                 for (String role : roleArray) {
+                    log.info("Checking role: '{}' for user: {}", role.trim(), userInfo.getName());
                     if (role.trim().equalsIgnoreCase("CreditReviewer")) {
-
                         usersWithCreditReviewer.add(userInfo.getName());
                         break;
                     }
@@ -58,6 +91,8 @@ public class AuthServiceImpl implements AuthService {
 
         return usersWithCreditReviewer;
     }
+
+
 
 
     public String generateToken(String userName){

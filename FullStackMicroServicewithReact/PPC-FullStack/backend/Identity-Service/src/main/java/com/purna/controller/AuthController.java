@@ -55,6 +55,33 @@ public class AuthController {
         }
     }
 
+//    @PostMapping("/token")
+//    public Map<String,Object> getToken(@RequestBody AuthRequest authRequest){
+//        Map<String,Object> response = new HashMap<>();
+//        log.info("Enter Token Generation Service with body : {}",authRequest);
+//        try {
+//            Authentication authenticate = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+//            if (authenticate.isAuthenticated()) {
+//                String token = authService.generateToken(authRequest.getUsername());
+//                response.put("status",HttpStatus.OK.value());
+//                response.put("message","Token Generated Successfully...!");
+//                response.put("token",token);
+//                log.info("Generated token : {}",token);
+//            } else {
+//                response.put("status",HttpStatus.NO_CONTENT.value());
+//                response.put("message","Failed to create Token with User Credentials ");
+//                log.warn("failed To Generate Token with UserCredentials with body : {}",authRequest);
+//            }
+//        }catch (Exception e){
+//            response.put("status",HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            response.put("message","Internal_Server_Error"+e.getMessage());
+//            log.error("Internal Service error in Token Generate Service");
+//        }
+//        return response;
+//    }
+
+
 
     @GetMapping("/validate")
     public String validateToken(@RequestParam("token") String token){

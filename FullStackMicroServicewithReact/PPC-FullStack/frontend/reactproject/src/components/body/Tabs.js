@@ -89,8 +89,7 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
         }else{
             setSearchParams({
                 reviewId,
-                childReviewId,
-    
+                childReviewId, 
             });
         }
     };
@@ -405,6 +404,7 @@ export default function BasicTabs(buttonClicked, setButtonClicked) {
                             <input
                                 className='ReviewIdInput'
                                 type='text'
+                                value={childReviewId}
                                 placeholder=''
                                 onChange={(e) => setChildReviewId(e.target.value)} />
                         </div>
