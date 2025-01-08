@@ -33,7 +33,7 @@ public class JdbcQueryRepository implements QueryRepository {
 
 
     public String generateReviewId() {
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date()); // Use YYYYMMDD format for the date
+        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String lastReviewIdQuery = "SELECT reviewId FROM querydetails WHERE reviewId LIKE 'PPC-%' ORDER BY reviewId DESC LIMIT 1";
         log.info("lastReviewIdQuery : {}",lastReviewIdQuery);
 
@@ -44,15 +44,12 @@ public class JdbcQueryRepository implements QueryRepository {
         } catch (EmptyResultDataAccessException e) {
             lastReviewId = null; // No previous review found
         }
-
-        // Start with a default value if no previous reviewId is found
         String newReviewId = "PPC-" + currentDate + "-001";
 
         if (lastReviewId != null) {
-            // Extract the numeric part after the date (e.g., 001, 002, etc.)
             String lastNumericPart = lastReviewId.substring(lastReviewId.lastIndexOf('-') + 1);
-            int newNumericPart = Integer.parseInt(lastNumericPart) + 1;  // Increment the numeric part
-            newReviewId = "PPC-" + currentDate + "-" + String.format("%03d", newNumericPart);  // Format the new number as 3 digits
+            int newNumericPart = Integer.parseInt(lastNumericPart) + 1;
+            newReviewId = "PPC-" + currentDate + "-" + String.format("%03d", newNumericPart);
         }
 
         return newReviewId;

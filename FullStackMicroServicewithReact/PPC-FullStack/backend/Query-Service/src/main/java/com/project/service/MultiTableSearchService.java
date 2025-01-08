@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -80,29 +83,68 @@ public class MultiTableSearchService {
     }
 
 
+//    public List<MultiTableSearch> getGroupTasks(String role) {
+//
+//        String querydetailsSql = "SELECT * FROM querydetails WHERE (assignedTo IS NULL OR assignedTo = '') AND ROLE = ?";
+//
+//        String obligorSql = """
+//        SELECT *
+//        FROM OBLIGOR
+//        WHERE assignedTo = ''
+//          AND ROLE = ?
+//          AND reviewStatus != 'FieldWorkCompleted';
+//    """;
+//
+//        // Arguments for the queries
+//        Object[] queryArgs = {role};
+//
+//        // Fetch data from querydetails
+//        List<QueryDetails> queryDetails = jdbcTemplate.query(querydetailsSql, BeanPropertyRowMapper.newInstance(QueryDetails.class), queryArgs);
+//        log.info("Query Details Retrieved: {}", queryDetails);
+//
+//        // Fetch data from obligor
+//        List<Obligor> obligorDetails = jdbcTemplate.query(obligorSql, BeanPropertyRowMapper.newInstance(Obligor.class), queryArgs);
+//        log.info("Obligor Details Retrieved: {}", obligorDetails);
+//
+//        // Combine results
+//        List<MultiTableSearch> combinedData = getCBTask(queryDetails, obligorDetails);
+//        log.info("Combined MultiTableSearch Data: {}", combinedData);
+//
+//        return combinedData;
+//    }
+
     public List<MultiTableSearch> getGroupTasks(String role) {
+        // Parse the role parameter into a list of roles
+        List<String> roles = Arrays.asList(role.split(","));
 
-        // SQL for querydetails table
-        String querydetailsSql = "SELECT * FROM querydetails WHERE (assignedTo IS NULL OR assignedTo = '') AND ROLE = ?";
+        // Construct SQL queries with IN clause for roles
+        String querydetailsSql = """
+        SELECT *
+        FROM querydetails
+        WHERE (assignedTo IS NULL OR assignedTo = '')
+          AND ROLE IN (:roles)
+    """;
 
-        // SQL for obligor table with dynamic role parameter
         String obligorSql = """
         SELECT *
         FROM OBLIGOR
         WHERE assignedTo = ''
-          AND ROLE = ?
+          AND ROLE IN (:roles)
           AND reviewStatus != 'FieldWorkCompleted';
     """;
 
-        // Arguments for the queries
-        Object[] queryArgs = {role};
+        // Use NamedParameterJdbcTemplate for dynamic parameters
+        NamedParameterJdbcTemplate namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+
+        // Create parameter map
+        Map<String, Object> queryParams = Map.of("roles", roles);
 
         // Fetch data from querydetails
-        List<QueryDetails> queryDetails = jdbcTemplate.query(querydetailsSql, BeanPropertyRowMapper.newInstance(QueryDetails.class), queryArgs);
+        List<QueryDetails> queryDetails = namedJdbcTemplate.query(querydetailsSql, queryParams, BeanPropertyRowMapper.newInstance(QueryDetails.class));
         log.info("Query Details Retrieved: {}", queryDetails);
 
         // Fetch data from obligor
-        List<Obligor> obligorDetails = jdbcTemplate.query(obligorSql, BeanPropertyRowMapper.newInstance(Obligor.class), queryArgs);
+        List<Obligor> obligorDetails = namedJdbcTemplate.query(obligorSql, queryParams, BeanPropertyRowMapper.newInstance(Obligor.class));
         log.info("Obligor Details Retrieved: {}", obligorDetails);
 
         // Combine results

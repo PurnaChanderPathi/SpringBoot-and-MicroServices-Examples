@@ -62,6 +62,4 @@ public class JdbcObligorRepository implements ObligorRepository {
         Object[] args = {assignedTo};
         return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(Obligor.class), args);
     }
-
-
 }
