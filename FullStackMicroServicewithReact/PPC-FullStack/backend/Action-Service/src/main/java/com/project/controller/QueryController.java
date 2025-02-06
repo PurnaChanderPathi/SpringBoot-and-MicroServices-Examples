@@ -30,10 +30,6 @@ public class QueryController {
     @Autowired
     private RolesData rolesData;
 
-//    @PostMapping(value = "/save",consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public String createQuery(@RequestBody QueryDetails queryDetails){
-//        return queryService.saveQueryDetails(queryDetails);
-//    }
 
     @PostMapping("/save")
     public Map<String,Object> createQuery(@RequestBody QueryDetails queryDetails){

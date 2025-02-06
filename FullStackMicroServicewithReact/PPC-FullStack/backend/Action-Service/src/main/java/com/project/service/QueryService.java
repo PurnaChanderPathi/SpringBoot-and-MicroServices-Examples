@@ -4,22 +4,24 @@ import com.project.entity.QueryDetails;
 import com.project.repository.QueryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.Map;
 
 @Service
 public class QueryService {
 
     private static final Logger log = LoggerFactory.getLogger(QueryService.class);
-    @Autowired
-    private QueryRepository queryRepository;
 
-    @Autowired
-    private WebClient.Builder builder;
+    private final QueryRepository queryRepository;
+
+    public QueryService(QueryRepository queryRepository, WebClient.Builder builder) {
+        this.queryRepository = queryRepository;
+        this.builder = builder;
+    }
+
+    private final WebClient.Builder builder;
 
 
     public String saveQueryDetails(QueryDetails queryDetails){
@@ -57,9 +59,7 @@ public class QueryService {
             if (queryDetails.getGroupName() == null) {
                 queryDetails.setGroupName(details.getGroupName());
             }
-//            if (queryDetails.getAssignedTo() == null) {
-//                queryDetails.setAssignedTo(details.getAssignedTo());
-//            }
+
             if (queryDetails.getRole() == null) {
                 queryDetails.setRole(details.getRole());
             }

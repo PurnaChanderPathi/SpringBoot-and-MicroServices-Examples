@@ -85,6 +85,34 @@ public class JdbcQueryRepository implements QueryRepository {
         return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(QueryDetails.class));
     }
 
+    @Override
+    public List<QueryDetails> findByRoleAndAssignedTo(List<String> roles, String assignedTo) {
+        StringBuilder query = new StringBuilder("SELECT * " +
+                "FROM querydetails " +
+                "WHERE " +
+                "    (ROLE IS NULL OR TRIM(ROLE) IN (");
+
+        for (int i = 0; i < roles.size(); i++) {
+            query.append("?");
+            if (i < roles.size() - 1) {
+                query.append(", ");
+            }
+        }
+        query.append(")) " +
+                "AND (assignedTo IS NULL OR TRIM(assignedTo) = ?)");
+
+        Object[] args = new Object[roles.size() + 1];
+        for (int i = 0; i < roles.size(); i++) {
+            args[i] = roles.get(i);
+        }
+        args[roles.size()] = assignedTo != null ? assignedTo : "";
+
+        System.out.println("Executing SQL Query: " + query.toString());
+
+        return jdbcTemplate.query(query.toString(), args, BeanPropertyRowMapper.newInstance(QueryDetails.class));
+
+    }
+
 //    @Override
 //    public List<QueryDetails> findByRoleAndCreatedBy(List<String> role, String createdBy,String assignedTo) {
 //        String query = "SELECT * " +

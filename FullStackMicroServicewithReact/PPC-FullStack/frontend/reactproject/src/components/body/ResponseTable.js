@@ -644,6 +644,7 @@ const updateObligorWithChildId = async () => {
     console.log("childReviewId in ObligorTable Page :", childReviewId);
     localStorage.setItem("childReviewId", childReviewId);
     getObligorDetailsWithChildReviewId(childReviewId);
+    getObligorDocumentByReviewId(childReviewId);
     handleOpen();
 }
 

@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     public String generateToken(String userName){
-        return jwtService.generateToken(userName);
+        return jwtService.generateRefreshToken(userName);
     }
 
 //    public String generateToken(String username) {

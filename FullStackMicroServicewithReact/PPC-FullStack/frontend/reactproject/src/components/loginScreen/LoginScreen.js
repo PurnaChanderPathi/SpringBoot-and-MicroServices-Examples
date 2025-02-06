@@ -64,8 +64,11 @@ const LoginScreen = () => {
         setLoading(false);
         throw new Error('Login failed, please check your credentials');        
       }
-      const token = await response.text();
+      const data = await response.json();
+      const token = data.accessToken;
+      const refreshToken = data.refreshToken;
       localStorage.setItem('authToken', token);
+      localStorage.setItem('refreshToken',refreshToken);
       localStorage.setItem('username',credentials.username);
       await getUser(credentials.username);
 

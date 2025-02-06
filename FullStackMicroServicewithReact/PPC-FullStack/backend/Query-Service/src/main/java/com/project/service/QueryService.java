@@ -34,34 +34,38 @@ public class QueryService {
         return queryRepository.generateReviewId();
     }
 
-    public List<QueryDetails> findByRoleAndCreatedBy(List<String> roles,String assignedTo) {
-        StringBuilder query = new StringBuilder("SELECT * " +
-
-                "FROM querydetails " +
-                "WHERE " +
-                "    (ROLE IS NULL OR TRIM(ROLE) IN (");
-
-        for (int i = 0; i < roles.size(); i++) {
-            query.append("?");
-            if (i < roles.size() - 1) {
-                query.append(", ");
-            }
-        }
-        query.append(")) " +
-                "AND (assignedTo IS NULL OR TRIM(assignedTo) = ?)");
-
-        Object[] args = new Object[roles.size() + 1];
-
-        for (int i = 0; i < roles.size(); i++) {
-            args[i] = roles.get(i);
-        }
-
-        args[roles.size()] = assignedTo != null ? assignedTo : "";
-
-        System.out.println("Executing SQL Query: " + query.toString());
-
-        return jdbcTemplate.query(query.toString(), args, BeanPropertyRowMapper.newInstance(QueryDetails.class));
+    public List<QueryDetails> findByRoleAndCreatedBy(List<String> roles, String assignedTo) {
+        return queryRepository.findByRoleAndAssignedTo(roles, assignedTo);
     }
+
+//    public List<QueryDetails> findByRoleAndCreatedBy(List<String> roles,String assignedTo) {
+//        StringBuilder query = new StringBuilder("SELECT * " +
+//
+//                "FROM querydetails " +
+//                "WHERE " +
+//                "    (ROLE IS NULL OR TRIM(ROLE) IN (");
+//
+//        for (int i = 0; i < roles.size(); i++) {
+//            query.append("?");
+//            if (i < roles.size() - 1) {
+//                query.append(", ");
+//            }
+//        }
+//        query.append(")) " +
+//                "AND (assignedTo IS NULL OR TRIM(assignedTo) = ?)");
+//
+//        Object[] args = new Object[roles.size() + 1];
+//
+//        for (int i = 0; i < roles.size(); i++) {
+//            args[i] = roles.get(i);
+//        }
+//
+//        args[roles.size()] = assignedTo != null ? assignedTo : "";
+//
+//        System.out.println("Executing SQL Query: " + query.toString());
+//
+//        return jdbcTemplate.query(query.toString(), args, BeanPropertyRowMapper.newInstance(QueryDetails.class));
+//    }
 
     public List<QueryDetails> findByRoleAndAssignedTo(List<String> roles, String assignedTo) {
         // Ensure roles are valid

@@ -3,6 +3,7 @@ package com.purna.controller;
 import com.purna.dto.AuthRequest;
 import com.purna.entity.UserInfo;
 import com.purna.serviceImpl.AuthServiceImpl;
+import com.purna.serviceImpl.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,82 +28,115 @@ public class AuthController {
     private AuthServiceImpl authService;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
 //    @PostMapping("/token")
-//    public String getToken(@RequestBody AuthRequest authRequest){
-//
-//        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(),authRequest.getPassword()));
-//        if(authenticate.isAuthenticated()){
-//            return this.authService.generateToken(authRequest.getUsername());
-//        }else{
-//            throw new RuntimeException("user not found");
-//        }
-//    }
-
-    @PostMapping("/token")
-    public ResponseEntity<String> getToken(@RequestBody AuthRequest authRequest) {
-        try {
-            Authentication authenticate = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-            if (authenticate.isAuthenticated()) {
-                return ResponseEntity.ok(authService.generateToken(authRequest.getUsername()));
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
-
-//    @PostMapping("/token")
-//    public Map<String,Object> getToken(@RequestBody AuthRequest authRequest){
-//        Map<String,Object> response = new HashMap<>();
-//        log.info("Enter Token Generation Service with body : {}",authRequest);
+//    public ResponseEntity<String> getToken(@RequestBody AuthRequest authRequest) {
 //        try {
 //            Authentication authenticate = authenticationManager.authenticate(
 //                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 //            if (authenticate.isAuthenticated()) {
-//                String token = authService.generateToken(authRequest.getUsername());
-//                response.put("status",HttpStatus.OK.value());
-//                response.put("message","Token Generated Successfully...!");
-//                response.put("token",token);
-//                log.info("Generated token : {}",token);
+//                return ResponseEntity.ok(authService.generateToken(authRequest.getUsername()));
 //            } else {
-//                response.put("status",HttpStatus.NO_CONTENT.value());
-//                response.put("message","Failed to create Token with User Credentials ");
-//                log.warn("failed To Generate Token with UserCredentials with body : {}",authRequest);
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
 //            }
-//        }catch (Exception e){
-//            response.put("status",HttpStatus.INTERNAL_SERVER_ERROR.value());
-//            response.put("message","Internal_Server_Error"+e.getMessage());
-//            log.error("Internal Service error in Token Generate Service");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
 //        }
-//        return response;
 //    }
 
+    @PostMapping("/token")
+    public ResponseEntity<Map<String, Object>> getToken(@RequestBody AuthRequest authRequest) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+            );
 
+            if (authenticate.isAuthenticated()) {
+                String accessToken = jwtService.generateAccessToken(authRequest.getUsername());
+                String refreshToken = jwtService.generateRefreshToken(authRequest.getUsername());
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Authentication successful");
+                response.put("accessToken", accessToken);
+                response.put("refreshToken", refreshToken);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", HttpStatus.UNAUTHORIZED.value());
+                response.put("message", "Authentication failed");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.put("message", "Error: " + e.getMessage());
+            log.error("Error occurred during authentication: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
     @GetMapping("/validate")
-    public String validateToken(@RequestParam("token") String token){
-        this.authService.validateToken(token);
-        return "token is valid";
+    public ResponseEntity<String> validateToken(@RequestParam("token") String token) {
+        try {
+            jwtService.validateToken(token);
+            return ResponseEntity.ok("Token is valid");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
     }
 
-    @PostMapping("/create-user")
-    public String createUser(@RequestBody UserInfo userInfo){
-        authService.createUser(userInfo);
-        return "user is created";
+    @PostMapping("/refresh-token")
+    public ResponseEntity<Map<String, Object>> refreshAccessToken(@RequestParam("refreshToken") String refreshToken) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            jwtService.validateToken(refreshToken);
+            String userName = jwtService.getUsernameFromToken(refreshToken);
+            String newAccessToken = jwtService.generateAccessToken(userName);
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Token refreshed successfully");
+            response.put("accessToken", newAccessToken);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.UNAUTHORIZED.value());
+            response.put("message", "Invalid or expired refresh token");
+            log.error("Error during token refresh: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
+
+//    @PostMapping("/create-user")
+//    public String createUser(@RequestBody UserInfo userInfo){
+//        authService.createUser(userInfo);
+//        return "user is created";
+//    }
 
     @PostMapping("/createUser")
-    ResponseEntity<Map<String,Object>> createUsers(@RequestBody UserInfo userInfo){
-        Map<String,Object> response = new HashMap<>();
-        UserInfo savedUser = authService.createUser(userInfo);
-        response.put("status", HttpStatus.CREATED.value());
-        response.put("message","user created successfully");
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody UserInfo userInfo) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            UserInfo savedUser = authService.createUser(userInfo);
+            response.put("status", HttpStatus.CREATED.value());
+            response.put("message", "User created successfully");
+            response.put("user", savedUser);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.put("message", "Error: " + e.getMessage());
+            log.error("Error occurred while creating user: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
+
+//    @PostMapping("/createUser")
+//    ResponseEntity<Map<String,Object>> createUsers(@RequestBody UserInfo userInfo){
+//        Map<String,Object> response = new HashMap<>();
+//        UserInfo savedUser = authService.createUser(userInfo);
+//        response.put("status", HttpStatus.CREATED.value());
+//        response.put("message","user created successfully");
+//        return ResponseEntity.ok().body(response);
+//    }
 
     @GetMapping("getByName/{name}")
     ResponseEntity<Map<String,Object>> findByName(@PathVariable String name){
